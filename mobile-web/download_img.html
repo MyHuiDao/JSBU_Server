@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>下载物料</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <link href="css/main.css" rel="stylesheet"/>
+    <link href="js/toastr.css" rel="stylesheet"/>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/toastr.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/Ds_Auto.js"></script>
+    <script>
+        initHead();
+        DApp.init(1080,null,"width");
+    </script>
+    <style>
+        body{
+            margin: 0 auto;
+            text-align: center;
+            background-color:#000;
+            opacity:9;
+        }
+        img{
+            width: 375px;
+            margin-top: 200px;
+        }
+    </style>
+</head>
+<body>
+    <img id="downloadImg"/>
+    <script>
+        var name=getRequest('name');
+        $(function(){
+            $('#downloadImg').attr('src','/game-admin/sysUser/getQrCodeShow?name='+name);
+        });
+    </script>
+</body>
+</html>

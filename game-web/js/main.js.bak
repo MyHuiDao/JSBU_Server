@@ -1,0 +1,443 @@
+var ctxPath = "/mahjong-admin";
+var root = "/mahjong-web";
+function setPermission() {
+    var noneStr = getCookie("permission");
+    if (noneStr != null) {
+        return noneStr;
+    }
+    $.ajax({
+        type: "get",
+        url: ctxPath + '/sysUser/getPermission',
+        async: false,
+        dataType: 'json',
+        success: function (data) {
+            if (data.data) {
+                var permissionNoneStr = "";
+                for (var key in data.data) {
+                    if (!data.data[key]) {
+                        permissionNoneStr += "." + key + ",";
+                    }
+                }
+                if (permissionNoneStr != "") {
+                    permissionNoneStr = permissionNoneStr.substring(0, permissionNoneStr.length - 1);
+                    permissionNoneStr += "{display:none !important;}";
+                }
+                setCookie("permission", permissionNoneStr);
+            }
+        }
+    });
+}
+function initHead(prefix) {
+    var ajax = $.ajax;
+    $.ajax = function (opt) {
+        //备份opt中error和success方法
+        var fn = {
+            success: function (data, textStatus, jqXHR) {
+            }
+        };
+        if (opt.success) {
+            fn.success = opt.success;
+        }
+        //扩展增强处理
+        var _opt = $.extend(opt, {
+            success: function (data, textStatus, jqXHR) {
+                fn.success(data, textStatus, jqXHR);
+            }
+        });
+        _opt.url = encodeURI(_opt.url);
+        var def = ajax.call($, _opt);
+        return def;
+    };
+    if (prefix === null || prefix === undefined) {
+        prefix = "";
+    }
+    var headHtml = "";
+    headHtml += '<style type="text/css">' + setPermission() + '</style>';
+    headHtml += '<link rel="stylesheet" href="' + prefix + 'css/style.css" />';
+    headHtml += '<link rel="stylesheet" href="' + prefix + 'assets/css/bootstrap.min.css" />';
+    headHtml += '<link rel="stylesheet" href="' + prefix + 'assets/css/font-awesome.min.css" />';
+    headHtml += '<link rel="stylesheet" href="' + prefix + 'assets/css/ace-fonts.css" />';
+    headHtml += '<link rel="stylesheet" href="' + prefix + 'assets/css/ace.min.css"';
+    headHtml += '	id="main-ace-style" />';
+    headHtml += '<link rel="stylesheet" href="' + prefix + 'assets/css/ace-custom.css" />';
+    headHtml += '<link rel="stylesheet" href="' + prefix + 'assets/css/ui.jqgrid.css" />';
+    headHtml += '<!--[if lte IE 9]>';
+    headHtml += '		<link rel="stylesheet" href="' + prefix + 'assets/css/ace-part2.min.css" />';
+    headHtml += '	<![endif]-->';
+    headHtml += '<!--[if lte IE 9]>';
+    headHtml += '		 <link rel="stylesheet" href="' + prefix + 'assets/css/ace-ie.min.css" />';
+    headHtml += '	<![endif]-->';
+    headHtml += '<script src="' + prefix + 'assets/js/ace-extra.min.js"></script>';
+    headHtml += '<!--[if lte IE 8]>';
+    headHtml += '		<script src="' + prefix + 'assets/js/html5shiv.min.js"></script>';
+    headHtml += '		<script src="' + prefix + 'assets/js/respond.min.js"></script>';
+    headHtml += '	<![endif]-->';
+    headHtml += '	<script type="text/javascript">';
+    headHtml += '		if (\'ontouchstart\' in document.documentElement)';
+    headHtml += '			document';
+    headHtml += '					.write("<script src=\'' + prefix + 'assets/js/jquery.mobile.custom.min.js\'>"';
+    headHtml += '							+ "<"+"/script>");';
+    headHtml += '	</script>';
+    headHtml += '	<script src="' + prefix + 'assets/js/bootstrap.min.js"></script>';
+    headHtml += '	<!--[if lte IE 8]>';
+    headHtml += '			  <script src="' + prefix + 'assets/js/excanvas.min.js"></script>';
+    headHtml += '		<![endif]-->';
+    headHtml += '	<script src="' + prefix + 'assets/js/jqGrid/jquery.jqGrid.min.js"></script>';
+    headHtml += '	<script src="' + prefix + 'assets/js/jqGrid/i18n/grid.locale-cn.js"></script>';
+    headHtml += '	<script src="' + prefix + 'assets/js/jquery-ui.custom.min.js"></script>';
+    headHtml += '	<script src="' + prefix + 'assets/js/jquery.ui.touch-punch.min.js"></script>';
+    headHtml += '<script src="' + prefix + 'assets/js/jquery.validate.min.js" type="text/javascript"></script>';
+    headHtml += '<script src="' + prefix + 'assets/js/jquery.validate.zh_ch.js"></script>';
+    document.write(headHtml);
+}
+
+function parentShowIframe(href) {
+    parent.$("#showContent").attr("src", href);
+}
+
+/**
+ * cookie操作
+ */
+/**
+ * cookie操作
+ */
+function setCookie(name, value, time) {
+    var exp = new Date();
+    if (time == 0) {
+        time = 1000 * 60 * 60 * 24 * 360;
+    }
+    if (time != null) {
+        exp.setTime(exp.getTime() + time);
+        document.cookie = name + "=" + encodeURIComponent(value) + ";expires="
+            + exp.toGMTString() + ";path=/";
+    } else {
+        document.cookie = name + "=" + encodeURIComponent(value) + ";path=/";
+    }
+
+}
+
+function getCookie(name) {
+    var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+    if (arr = document.cookie.match(reg))
+        return decodeURIComponent(arr[2]);
+    else
+        return null;
+}
+
+function delCookie(name) {
+    var exp = new Date();
+    exp.setTime(exp.getTime() - 1000);
+    var cval = getCookie(name);
+    if (cval!=null) {
+        document.cookie = name + "=" + encodeURIComponent(cval) + ";expires=" + exp.toGMTString() + ";path=/";
+    }
+}
+
+
+function getRequest(pathName) {
+    var url = location.search; // 获取url中"?"符后的字串
+    var theRequest = {};
+    if (url.indexOf("?") != -1) {
+        var str = url.substr(1);
+        var strs = str.split("&");
+        for (var i = 0; i < strs.length; i++) {
+            theRequest[strs[i].split("=")[0]] = decodeURI((strs[i].split("=")[1]));
+        }
+    }
+    return theRequest[pathName];
+}
+
+function jqGrid_init(grid_selector, pager_selector, config) {
+    $(window).on('resize', function () {
+        $(grid_selector).jqGrid('setGridWidth', $(".page-content").width());
+    });
+    var parent_column = $(grid_selector).closest('[class*="col-"]');
+    $(document).on(
+        'settings.ace.jqGrid',
+        function (ev, event_name, collapsed) {
+            if (event_name === 'sidebar_collapsed'
+                || event_name === 'main_container_fixed') {
+                setTimeout(function () {
+                    $(grid_selector).jqGrid('setGridWidth',
+                        parent_column.width());
+                }, 0);
+            }
+        });
+    $(grid_selector).jqGrid({
+        jsonReader: {
+            root: function (obj) {
+                var data = obj.data;
+                return data.rows;
+            },
+            page: function (obj) {
+                var data = obj.data;
+                return data.page;
+            },
+            total: function (obj) {
+                var data = obj.data;
+                return data.total;
+            },
+            records: function (obj) {
+                var data = obj.data;
+                return data.records;
+            },
+            repeatitems: false
+        },
+        url: config.url,
+        initUrl: config.url,
+        datatype: "json",
+        colNames: config.colNames,
+        colModel: config.colModel,
+        mtype: 'POST',
+        sortorder: config.sortorder,
+        multiselect: config.multiselect,
+        viewrecords: true,
+        rowNum: config.rowNum != null ? config.rowNum : 10,
+        rowList: [10, 20, 50, 100],
+        pager: pager_selector,
+        altRows: true,
+        beforeProcessing: function (request) {
+            execAjax(request);
+        },
+        loadComplete: function (request) {
+            $(grid_selector).jqGrid('setGridWidth', $(".page-content").width());
+            var table = this;
+            setTimeout(function () {
+                updatePagerIcons(table);
+            }, 0);
+        },
+        onSelectRow: config.onSelectRow,
+        onSelectAll: config.onSelectAll,
+        gridComplete: config.gridComplete,
+        postData: config.postData,
+        height: 400,
+        beforeRequest: function () {
+            var page = $(grid_selector).getGridParam('page');
+            var size = $(grid_selector).getGridParam('rowNum');
+            var sort = $(grid_selector).getGridParam('sortorder');
+            var order = $(grid_selector).getGridParam('sortname');
+            var url = $(grid_selector).getGridParam('initUrl');
+            if (page !== null && page !== "") {
+                url = addParamUrl(url, "page=" + page);
+            }
+            if (size !== null && size !== "") {
+                url = addParamUrl(url, "size=" + size);
+            }
+            if (sort !== null && sort !== "") {
+                url = addParamUrl(url, "sort=" + sort);
+            }
+            if (order !== null && order !== "") {
+                url = addParamUrl(url, "order=" + order);
+            }
+            $(grid_selector).setGridParam({
+                'url': url
+            });
+        }
+
+    });
+    $(grid_selector).jqGrid('setGridWidth', $(".page-content").width());
+    /* $(grid_selector).closest(".ui-jqgrid-bdiv").css({ 'overflow-y' : 'scroll'
+     });*/
+}
+
+function addParamUrl(url, val) {
+    if (url.indexOf("?") == -1) {
+        url += "?" + val;
+    } else {
+        url += "&" + val;
+    }
+    return url;
+}
+
+function updatePagerIcons(table) {
+    var replacement = {
+        'ui-icon-seek-first': 'ace-icon fa fa-angle-double-left bigger-140',
+        'ui-icon-seek-prev': 'ace-icon fa fa-angle-left bigger-140',
+        'ui-icon-seek-next': 'ace-icon fa fa-angle-right bigger-140',
+        'ui-icon-seek-end': 'ace-icon fa fa-angle-double-right bigger-140'
+    };
+    $('.ui-pg-table:not(.navtable) > tbody > tr > .ui-pg-button > .ui-icon')
+        .each(function () {
+            var icon = $(this);
+            var $class = $.trim(icon.attr('class').replace('ui-icon', ''));
+            if ($class in replacement)
+                icon.attr('class', 'ui-icon ' + replacement[$class]);
+        })
+}
+
+function initInputHtml(obj, data) {
+    $(obj).html("");
+    var objs = $(obj);
+    for (var i = 0; i < objs.length; i++) {
+        var name = $(objs[i]).attr("name");
+        var names = name.split(".");
+        var str = initInputResult(data, names);
+        $(objs[i]).html(str);
+    }
+}
+
+function initInputVal(obj, data) {
+    $(obj).val("");
+    var objs = $(obj);
+    for (var i = 0; i < objs.length; i++) {
+        var name = $(objs[i]).attr("name");
+        var names = name.split(".");
+        var str = initInputResult(data, names);
+        if ($(objs[i]).is("select")) {
+            $(objs[i]).find("option").each(function () {
+                if ($(this).val() == str) {
+                    $(this).attr("selected", "selected");
+                    return;
+                }
+            });
+            continue;
+        }
+        $(objs[i]).val(str);
+    }
+}
+
+function initInputResult(data, names) {
+    var result = data;
+    for (var j = 0; j < names.length; j++) {
+        if (result === null || result === undefined) {
+            return "";
+        }
+        result = result[names[j]];
+    }
+    return result;
+}
+
+
+function resetForm(jobj) {
+    jobj[0].reset();
+}
+
+
+function execAjax(data) {
+    if (data.code == -2) {
+        window.parent.location.href = root + "/login.html";
+        throw  new Error("未登录");
+    }
+}
+
+
+var showLevelZtree = function (treeObj, level) {
+    if (treeObj == null) {
+        return;
+    }
+    var node = treeObj.getNodes();
+    var showLevel = function (node, level) {
+        if (node != null) {
+            for (var i = 0; i < node.length; i++) {
+                if (node[i].level > level) {
+                    continue;
+                }
+                treeObj.expandNode(node[i], true);
+                var childrenNode = node[i].children;
+                showLevel(childrenNode, level);
+            }
+        }
+    };
+    showLevel(node, level);
+};
+
+//获取相差月份
+function getMonths(date1, date2) {
+    //用-分成数组
+    date1 = date1.split("-");
+    date2 = date2.split("-");
+    //获取年,月数
+    var year1 = parseInt(date1[0]),
+        month1 = parseInt(date1[1]),
+        year2 = parseInt(date2[0]),
+        month2 = parseInt(date2[1]),
+    //通过年,月差计算月份差
+        months = (year2 - year1) * 12 + (month2 - month1) + 1;
+    return months;
+}
+
+//获取周
+function getYearWeek(dayWeek) {
+    var date = new Date(dayWeek);
+    var date2 = new Date(date.getFullYear(), 0, 1);
+    var day1 = date.getDay();
+    if (day1 == 0) day1 = 7;
+    var day2 = date2.getDay();
+    if (day2 == 0) day2 = 7;
+    var d = Math.round((date.getTime() - date2.getTime() + (day2 - day1) * (24 * 60 * 60 * 1000)) / 86400000);
+    return Math.ceil(d / 7);
+}
+
+//获取相差天数
+function getDays(strDateStart, strDateEnd) {
+    var strSeparator = "-"; //日期分隔符
+    var oDate1;
+    var oDate2;
+    var iDays;
+    oDate1 = strDateStart.split(strSeparator);
+    oDate2 = strDateEnd.split(strSeparator);
+    var strDateS = new Date(oDate1[0], oDate1[1] - 1, oDate1[2]);
+    var strDateE = new Date(oDate2[0], oDate2[1] - 1, oDate2[2]);
+    iDays = parseInt(Math.abs(strDateS - strDateE) / 1000 / 60 / 60 / 24)//把相差的毫秒数转换为天数
+    return iDays;
+}
+
+function DateAdd(interval, number, date) {
+    /*
+     *   功能:实现VBScript的DateAdd功能.
+     *   参数:interval,字符串表达式，表示要添加的时间间隔.
+     *   参数:number,数值表达式，表示要添加的时间间隔的个数.
+     *   参数:date,时间对象.
+     *   返回:新的时间对象.
+     *   var   now   =   new   Date();
+     *   var   newDate   =   DateAdd( "d ",5,now);
+     *---------------   DateAdd(interval,number,date)   -----------------
+     */
+    switch (interval) {
+        case   "y"   :
+        {
+            date.setFullYear(date.getFullYear() + number);
+            return date;
+        }
+        case   "q"   :
+        {
+            date.setMonth(date.getMonth() + number * 3);
+            return date;
+        }
+        case   "m"   :
+        {
+            date.setMonth(date.getMonth() + number);
+            return date;
+        }
+        case   "w"   :
+        {
+            date.setDate(date.getDate() + number * 7);
+            return date;
+        }
+        case   "d"   :
+        {
+            date.setDate(date.getDate() + number);
+            return date;
+        }
+        case   "h"   :
+        {
+            date.setHours(date.getHours() + number);
+            return date;
+        }
+        case   "m"   :
+        {
+            date.setMinutes(date.getMinutes() + number);
+            return date;
+        }
+        case   "s"   :
+        {
+            date.setSeconds(date.getSeconds() + number);
+            return date;
+        }
+        default   :
+        {
+            date.setDate(d.getDate() + number);
+            return date;
+        }
+    }
+}

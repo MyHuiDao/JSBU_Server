@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>辉道科技</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+</head>
+
+<style>
+    html,body{margin: 0;padding:0;width: 100%;}
+    .main{margin: 0 auto;width: 720px;position: relative;}
+    .pz{left:50%;width: 720px;position: fixed;margin-left:-360px;top:0px;height: 100%;background-color: #000000;opacity: 0.8;display: none; }
+    .buttonImg{position: absolute;top: 245px;left:414px;
+        cursor: pointer;  }
+</style>
+<body>
+    <div class="main">
+        <img src="img/main.jpg">
+        <img class="buttonImg" src="img/download_btn.png" id="downloadBtn">
+    </div>
+
+    <div class="pz" id="pz">
+        <img src="img/zs.png"/>
+    </div>
+</body>
+
+<script>
+    if(window.location.hash=="weixin"){
+        setCookie("weixin","weixin");
+        window.location.hash="";
+    }
+
+  /*  if(!getCookie("weixin")){
+        window.location.href="hd.com/user/recommendWeixin?recommendId="+getRequest("recommendId");
+    }*/
+    var ua = window.navigator.userAgent.toLowerCase();
+    var isWeixin=false;
+    if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+        isWeixin=true;
+    }
+    if(isWeixin){
+
+    }
+    document.getElementById("downloadBtn").onclick=function(){
+        var u = navigator.userAgent, app = navigator.appVersion;
+        var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //g
+        var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+
+        if (isAndroid) {
+            if(isWeixin){
+                document.getElementById("pz").style.display="block";
+            }else{
+                window.location.href="xxx.apk";
+            }
+            return;
+        }
+        if (isIOS) {
+            return;
+        }
+
+        window.location.href="xxx.apk";
+
+    };
+    function getRequest(pathName) {
+        var url = location.search; // 获取url中"?"符后的字串
+        var theRequest = {};
+        if (url.indexOf("?") != -1) {
+            var str = url.substr(1);
+            var strs = str.split("&");
+            for (var i = 0; i < strs.length; i++) {
+                theRequest[strs[i].split("=")[0]] = decodeURI((strs[i].split("=")[1]));
+            }
+        }
+        return theRequest[pathName];
+    }
+
+    /**
+     * cookie操作
+     */
+    /**
+     * cookie操作
+     */
+    function setCookie(name, value, time) {
+        var exp = new Date();
+        if (time == 0) {
+            time = 1000 * 60 * 60 * 24 * 360;
+        }
+        if (time != null) {
+            exp.setTime(exp.getTime() + time);
+            document.cookie = name + "=" + encodeURIComponent(value) + ";expires="
+                + exp.toGMTString() + ";path=/";
+        } else {
+            document.cookie = name + "=" + encodeURIComponent(value) + ";path=/";
+        }
+
+    }
+
+    function getCookie(name) {
+        var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+        if (arr = document.cookie.match(reg))
+            return decodeURIComponent(arr[2]);
+        else
+            return null;
+    }
+
+</script>
+</html>

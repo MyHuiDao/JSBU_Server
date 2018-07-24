@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>在线客服</title>
+    <style>
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            background-image: url("img/chat_back.jpg");
+            background-repeat: no-repeat;
+            background-size: 100% 100%
+        }
+
+        * {
+            padding: 0;
+            margin: 0;
+            border: none;
+            outline: none;
+        }
+
+        .main {
+            width: 900px;
+            height: 580px;
+            top: 50%;
+            left: 50%;
+            position: absolute;
+            margin-top: -290px;
+            margin-left: -450px;
+            border: 1px solid #CCCCCC;
+            border-radius: 4px;
+            -moz-box-shadow: 2px 2px 11px #CCCCCC, 2px 2px 5px #CCCCCC;
+            -webkit-box-shadow: 2px 2px 11px #CCCCCC, 2px 2px 5px #CCCCCC;
+            box-shadow: 2px 2px 11px #CCCCCC, 2px 2px 5px #CCCCCC;
+            background-color: #D0CC9E;
+        }
+
+        .top {
+            width: 100%;
+            height: 50px;
+        }
+
+        .top p {
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 50px;
+        }
+
+        .left {
+            float: left;
+            width: 200px;
+            height: 530px;
+            overflow-y: auto;
+        }
+
+        .left ul {
+            list-style: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        .left ul li {
+            width: 100%;
+            height: 60px;
+        }
+
+        .left .active {
+            background-color: #BFBC91;
+        }
+
+        .left-head {
+            width: 40px;
+            height: 40px;
+            border-radius: 44px;
+            float: left;
+            margin-top: 8px;
+            margin-left: 4px;
+        }
+
+        .left-easy-info {
+            float: left;
+            margin-left: 4px;
+            width: 97px;
+            height: 40px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .left-msg-time {
+            margin-top: 10px;
+            font-size: 10px;
+            color: #62604A;
+            float: left;
+        }
+
+        .left-last-msg {
+            font-size: 10px;
+            color: #62604A;
+        }
+
+        .left-nickName {
+            font-size: 12px;
+            float: left;
+            color: #000000;
+        }
+
+        .left-close {
+            background-color: #595743;
+            border-radius: 50px;
+            color: #E8E7E4;
+            width: 16px;
+            height: 16px;
+            display: block;
+            text-align: center;
+            line-height: 16px;
+            margin-left: 14px;
+            margin-top: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .left-close:hover {
+            background-color: #D43A20;
+        }
+
+        .left-msg-count {
+            background-color: #D43A20;
+            border-radius: 50px;
+            color: #E8E7E4;
+            width: 16px;
+            height: 16px;
+            display: block;
+            text-align: center;
+            line-height: 16px;
+            margin-left: 14px;
+            margin-top: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .right {
+            float: left;
+            width: 700px;
+            height: 530px;
+            background-color: white;
+        }
+
+        .right-top {
+            width: 700px;
+            height: 380px;
+            border-bottom: 1px solid #cccccc;
+            overflow-y: auto;
+        }
+
+        .right-bottom-edit {
+            width: 690px;
+            height: 100px;
+            outline: none;
+            margin-left: 5px;
+            color: #000000;
+            font-size: 14px;
+            margin-top: 5px;
+            max-width: 690px;
+            max-height: 100px;
+        }
+
+        .right-btn {
+            width: 100%;
+            height: 30px;
+            text-align: right;
+        }
+
+        .right-send-btn {
+            background-color: #D0CB9D;
+            width: 80px;
+            height: 30px;
+            color: #000000;
+            margin-left: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 20px;
+        }
+
+        .right-close-btn {
+            width: 80px;
+            height: 30px;
+            background-color: #FFFFFF;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .right-close-btn:hover {
+            background-color: #EFEFF0;
+        }
+
+        .right-send-btn:hover {
+            background-color: #DAD7B3;
+        }
+
+        .right-other-time {
+            font-size: 12px;
+            color: #808080;
+            margin-top: 5px;
+            margin-left: 10px;
+        }
+
+        .right-other-content {
+            font-size: 14px;
+            color: #535252;
+            margin-top: 5px;
+            margin-left: 10px;
+            max-width: 450px;
+            background-color: #cccccc;
+            padding: 5px 10px;
+            word-wrap: break-word;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .right-other-jt {
+            color: #cccccc;
+            display: block;
+            margin-top: -16px;
+        }
+
+        .right-self {
+            text-align: right;
+        }
+
+        .right-self-time {
+            font-size: 12px;
+            color: #808080;
+            margin-top: 5px;
+            margin-right: 10px;
+        }
+
+        .right-self-content {
+            font-size: 14px;
+            color: #535252;
+            margin-top: 5px;
+            margin-right: 10px;
+            max-width: 450px;
+            background-color: #cccccc;
+            padding: 5px 10px;
+            word-wrap: break-word;
+            border-radius: 10px;
+            display: inline-block;
+            text-align: left;
+        }
+
+        .right-self-jt {
+            color: #cccccc;
+            display: block;
+            margin-top: -16px;
+            float: right;
+        }
+
+    </style>
+    <script type="text/javascript" src="assets/js/jquery.min.js"></script>
+</head>
+<body>
+<div class="main">
+    <div class="top">
+        <p id="currentNickName"></p>
+    </div>
+    <div class="left">
+        <ul id="leftUl">
+            <!-- <li class="active">
+                 <img class="left-head" src="img/head.png"/>
+
+                 <div class="left-easy-info">
+                     <p class="left-nickName">玩家123456</p><br>
+
+                     <p class="left-last-msg">你们这个游戏怎么玩的？</p>
+                 </div>
+                 <div class="left-msg-time">
+                     <sapn>12:23</sapn>
+                     <br>
+                     <span class="left-close">×</span></div>
+                 <div style="clear: both"></div>
+             </li>-->
+        </ul>
+    </div>
+    <div class="right" id="right">
+        <!-- <div class="right-top" id="right-top123456">
+             <div class="right-other">
+                 <p class="right-other-time">2018年5月8日14:59:01</p>
+
+                 <p class="right-other-content"><span class="right-other-jt">▲</span>你们这个游戏怎么玩的啊</p>
+             </div>
+
+             <div class="right-other">
+                 <p class="right-other-time">2018年5月8日14:59:01</p>
+
+                 <p class="right-other-content"><span class="right-other-jt">▲</span>你们这个游戏怎么玩的啊</p>
+             </div>
+             <div class="right-self">
+                 <p class="right-self-time">2018年5月8日14:59:01</p>
+
+                 <p class="right-self-content"><span class="right-self-jt">▲</span>你们这个游戏怎么玩的啊</p>
+             </div>
+         </div>
+         <div class="right-bottom">
+             <div class="right-bottom-edit" contenteditable="true">
+             </div>
+             <div class="right-btn">
+                 <button class="right-close-btn">关闭</button>
+                 <button class="right-send-btn">发送</button>
+             </div>-->
+    </div>
+</div>
+<div style="clear: both"></div>
+</div>
+</body>
+
+
+<script>
+    Date.prototype.format = function (fmt) {
+        var o = {
+            "M+": this.getMonth() + 1,                 //月份
+            "d+": this.getDate(),                    //日
+            "h+": this.getHours(),                   //小时
+            "m+": this.getMinutes(),                 //分
+            "s+": this.getSeconds(),                 //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds()             //毫秒
+        };
+        if (/(y+)/.test(fmt)) {
+            fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        }
+        for (var k in o) {
+            if (new RegExp("(" + k + ")").test(fmt)) {
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            }
+        }
+        return fmt;
+    }
+    var ctxPath = "/game-admin/";
+    var root = "/game-web";
+    var ajax = $.ajax;
+    $.ajax = function (opt) {
+        //备份opt中error和success方法
+        var fn = {
+            success: function (data, textStatus, jqXHR) {
+            }
+        };
+        if (opt.success) {
+            fn.success = opt.success;
+        }
+        //扩展增强处理
+        var _opt = $.extend(opt, {
+            success: function (data, textStatus, jqXHR) {
+                if (opt.successExec) {
+                    fn.success(data, textStatus, jqXHR);
+                    return;
+                }
+                if (data.code == "-1") {
+                    alert(data.msg);
+                    return;
+                }
+                if (data.code == "-2") {
+                    alert(data.msg);
+                    if (window.parent) {
+                        window.parent.location.href = root + "/login.html";
+                    } else {
+                        window.location.href = root + "/login.html";
+                    }
+                    return;
+                }
+                fn.success(data, textStatus, jqXHR);
+            }
+        });
+        _opt.url = ctxPath + encodeURI(_opt.url);
+        var def = ajax.call($, _opt);
+        return def;
+    };
+
+    function addOtherMsg(userId, time, content) {
+        if (!content) {
+            content = "";
+        }
+        var subTime = time.substring(time.lastIndexOf(" "), time.lastIndexOf(":"));
+        content = content.replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/\n/g, "<br>");
+        $("#lastMsg" + userId).html(content);
+        $("#leftTime" + userId).html(subTime);
+        var html = '';
+        html += '<div class="right-other">';
+        html += ' <p class="right-other-time">' + time + '</p>';
+        html += '<p class="right-other-content"><span class="right-other-jt">▲</span>' + content + '</p>';
+        html += '</div>';
+        $("#right-top" + userId).append(html);
+        var classStr = $("#leftUserLi" + userId).attr("class");
+        if (!classStr) {
+            classStr = "";
+        }
+        if (classStr.indexOf("active") == -1) {
+            $("#close" + userId).attr("class", "left-msg-count");
+            var str = $("#close" + userId).html()
+            if (str == "×") {
+                $("#close" + userId).html(1);
+            } else {
+                $("#close" + userId).html(parseInt(str) + 1);
+            }
+        }
+        if (userId == currentUserId) {
+            $("#right-top" + userId).scrollTop(10000000);
+        }
+    }
+
+    function addSelfMsg(userId, time, content) {
+        $("#edit" + userId).val("");
+        if (!content) {
+            content = "";
+        }
+        var subTime = time.substring(time.lastIndexOf(" "), time.lastIndexOf(":"));
+        content = content.replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/\n/g, "<br>");
+        $("#leftTime" + userId).html(subTime);
+        $("#lastMsg" + userId).html(content);
+        var html = '';
+        html += '<div class="right-self">';
+        html += ' <p class="right-self-time">' + time + '</p>';
+        html += '<p class="right-self-content"><span class="right-self-jt">▲</span>' + content + '</p>';
+        html += '</div>';
+        $("#right-top" + userId).append(html);
+        if (userId == currentUserId) {
+            $("#right-top" + userId).scrollTop(10000000);
+        }
+
+    }
+    var leftUserCount = 0;
+    function addLeftUser(userId, nickName, head, content, time) {
+        if ($("#leftUserLi" + userId).html()) {
+            addOtherMsg(userId, time, content);
+            return;
+        }
+        if (head.indexOf("http") == -1) {
+            head = "img/" + head + ".png";
+        }
+        var html = '';
+        html += '<li userId="' + userId + '" nickName="' + nickName + '" id="leftUserLi' + userId + '" onclick="selectLi(\'' + userId + '\',\'' + nickName + '\')">';
+        html += ' <img class="left-head" src="' + head + '"/>';
+        html += ' <div class="left-easy-info">';
+        html += ' <p class="left-nickName">' + nickName + '</p><br>';
+        html += ' <p class="left-last-msg" id="lastMsg' + userId + '">' + content + '</p>';
+        html += '</div>';
+        html += '<div class="left-msg-time">';
+        html += ' <sapn id="leftTime' + userId + '"></sapn>';
+        html += '<br>';
+        html += '<span class="left-close" id="close' + userId + '" onclick="closeChat(\'' + userId + '\',event)">×</span></div>';
+        html += '<div style="clear: both"></div>';
+        html += '                </li>';
+        $("#leftUl").append(html);
+        html = '<div class="allRight" id="allRight' + userId + '" style="display:none">';
+        html += '<div class="right-top" id="right-top' + userId + '">';
+        html += '</div>';
+        html += '<div class="right-bottom">';
+        html += '  <textarea class="right-bottom-edit" id="edit' + userId + '" contenteditable="true">';
+        html += '  </textarea>';
+        html += '  <div class="right-btn">';
+        html += '  <button class="right-close-btn" onclick="closeChat(\'' + userId + '\',event)">关闭</button>';
+        html += '  <button class="right-send-btn" onclick="sendMsg(\'' + userId + '\')">发送</button>';
+        html += '  <button class="right-send-btn" style="width:120px;" onclick="getProxyRegister(\'' + userId + '\')">发送申请代理页面</button>';
+        html += '  </div>';
+        html += '  </div>';
+        $("#right").append(html);
+        if (leftUserCount == 0) {
+            $("#leftUserLi" + userId).addClass("active");
+            $("#allRight" + userId).css("display", "block");
+            $("#currentNickName").html(nickName);
+            currentUserId = userId;
+        }
+        leftUserCount++;
+        addOtherMsg(userId, time, content);
+    }
+
+    function addLeftUserBySend(userId, nickName, head, time) {
+        if ($("#leftUserLi" + userId).html()) {
+            return;
+        }
+        if (head.indexOf("http") == -1) {
+            head = "img/" + head + ".png";
+        }
+        var html = '';
+        html += '<li userId="' + userId + '" nickName="' + nickName + '" id="leftUserLi' + userId + '" onclick="selectLi(\'' + userId + '\',\'' + nickName + '\')">';
+        html += ' <img class="left-head" src="' + head + '"/>';
+        html += ' <div class="left-easy-info">';
+        html += ' <p class="left-nickName">' + nickName + '</p><br>';
+        html += ' <p class="left-last-msg" id="lastMsg' + userId + '"></p>';
+        html += '</div>';
+        html += '<div class="left-msg-time">';
+        html += ' <sapn id="leftTime' + userId + '"></sapn>';
+        html += '<br>';
+        html += '<span class="left-close" id="close' + userId + '" onclick="closeChat(\'' + userId + '\',event)">×</span></div>';
+        html += '<div style="clear: both"></div>';
+        html += '                </li>';
+        $("#leftUl").append(html);
+        html = '<div class="allRight" id="allRight' + userId + '" style="display:none">';
+        html += '<div class="right-top" id="right-top' + userId + '">';
+        html += '</div>';
+        html += '<div class="right-bottom">';
+        html += '  <textarea class="right-bottom-edit" id="edit' + userId + '" contenteditable="true">';
+        html += '  </textarea>';
+        html += '  <div class="right-btn">';
+        html += '  <button class="right-close-btn" onclick="closeChat(\'' + userId + '\',event)">关闭</button>';
+        html += '  <button class="right-send-btn" onclick="sendMsg(\'' + userId + '\')">发送</button>';
+        html += '  <button class="right-send-btn" style="width:120px;" onclick="getProxyRegister(\'' + userId + '\')">发送申请代理页面</button>';
+        html += '  </div>';
+        html += '  </div>';
+        $("#right").append(html);
+        if (leftUserCount == 0) {
+            $("#leftUserLi" + userId).addClass("active");
+            $("#allRight" + userId).css("display", "block");
+            $("#currentNickName").html(nickName);
+            currentUserId = userId;
+        }
+        leftUserCount++;
+    }
+
+    function selectLi(userId, nickName) {
+        $(".allRight").css("display", "none");
+        $(".active").removeClass("active");
+        $("#close" + userId).html("×");
+        $("#close" + userId).attr("class", "left-close");
+        $("#leftUserLi" + userId).addClass("active");
+        $("#allRight" + userId).css("display", "block");
+        $("#currentNickName").html(nickName);
+        currentUserId = userId;
+    }
+    function closeChat(userId, e) {
+        window.event ? window.event.cancelBubble = true : e.stopPropagation();
+        leftUserCount--;
+        var classStr = $("#leftUserLi" + userId).attr("class");
+        $("#leftUserLi" + userId).remove();
+        $("#allRight" + userId).remove();
+        $("#currentNickName").html("");
+        if (classStr && classStr.indexOf("active") != -1) {
+            var firstLi = $("#leftUl").children("li:first-child");
+            if ($(firstLi).html()) {
+                $("#leftUserLi" + userId).remove();
+                $("#allRight" + userId).remove();
+                var userId1 = $(firstLi).attr("userId");
+                var nickName = $(firstLi).attr("nickName");
+                selectLi(userId1, nickName);
+                return;
+            }
+        }
+    }
+    function sendMsg(userId) {
+        var html = $("#edit" + userId).val();
+        sendMsgContent(userId, html);
+    }
+
+    function sendMsgContent(userId, content) {
+        var data = {};
+        data.code = "10001";
+        data.data = {};
+        data.data.userId = userId;
+        data.data.data = content;
+        ws.send(JSON.stringify(data));
+    }
+
+    var ws = null;
+    $(function () {
+        $.ajax({
+            url: 'sysUser/getToken',
+            type: 'get',
+            success: function (data) {
+                websocket(data);
+            }
+        });
+    })
+
+    function getProxyRegister(userId) {
+        $.ajax({
+            url: 'sysUser/getProxyRegister?userId='+userId,
+            type: 'get',
+            success: function (data) {
+                sendMsgContent(userId,data.data);
+            }
+        });
+    }
+    var handler = {};
+    handler["10000"] = function (data) {
+        addLeftUser(data.userId, data.nickName, data.headImg, data.msg, data.time);
+    };
+
+    handler["10001"] = function (data) {
+        addSelfMsg(data.userId, data.time, data.msg);
+    };
+    function websocket(httpData) {
+        var wsUrl = "ws://" + window.location.host + "/game/game/hall/2/";
+        wsUrl += httpData.data;
+        ws = new WebSocket(wsUrl);
+        ws.onopen = function (evn) {
+            console.log("打开连接");
+            var userId = getRequest("userId");
+            var nickName = getRequest("nickName");
+            var headImg = getRequest("headImg");
+            if (userId && nickName) {
+                addLeftUserBySend(userId, nickName, headImg, new Date().format("yyyy-MM-dd HH:mm"));
+            }
+        };
+        ws.onmessage = function (evn) {
+            var data1 = JSON.parse(evn.data);
+            if (handler[data1.code]) {
+                handler[data1.code](data1.data);
+            }
+        };
+        ws.onclose = function () {
+            console.log("连接关闭");
+            setTimeout(function () {
+                websocket(httpData);
+            }, 3000);
+        };
+        ws.onerror = function () {
+            console.log("报错连接关闭");
+        };
+    }
+
+    var currentUserId = null;
+    $(window).keydown(function (e) {
+        if (e.ctrlKey && e.keyCode == 13) {
+            sendMsg(currentUserId);
+        }
+    });
+
+    function getRequest(pathName) {
+        var url = location.search; // 获取url中"?"符后的字串
+        var theRequest = {};
+        if (url.indexOf("?") != -1) {
+            var str = url.substr(1);
+            var strs = str.split("&");
+            for (var i = 0; i < strs.length; i++) {
+                theRequest[strs[i].split("=")[0]] = decodeURI((strs[i].split("=")[1]));
+            }
+        }
+        return theRequest[pathName];
+    }
+
+
+</script>
+</html>

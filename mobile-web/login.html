@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>金沙渔港管理后台</title>
+    <link href="css/main.css" rel="stylesheet"/>
+    <link href="js/toastr.css" rel="stylesheet"/>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/toastr.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/Ds_Auto.js"></script>
+    <script>
+        initHead1();
+        DApp.init(1080,null,"width");
+    </script>
+</head>
+<body>
+    <div class="main">
+        <div class="title">
+            <p>金沙渔港后台管理系统</p>
+        </div>
+        <form id="userLogin">
+            <div class="input_div">
+                <div class="account"><span>用户名</span><input name="account" id="account" type="text"/></div>
+                <div class="password"><span>密码</span><input name="password" id="password" type="password"/></div>
+                <div class="validate"><span>验证码</span><input id="validateCode" name="validateCode" type="text"/>
+                <img id="validateImg" src=""/></div>
+                <div class="login_btn"><button type="button" id="login">登录</button></div>
+            </div>
+        </form>
+    </div>
+    <script>
+        $(function(){
+            $("#validateImg").attr('src','/game-admin/validate/imageCode?'+Math.random());
+        });
+        $("#validateImg").on('click',function(){
+            $("#validateImg").attr('src','/game-admin/validate/imageCode?'+Math.random());
+        });
+        $("#login").on('click',function(){
+            var validateCode=$("#validateCode").val();
+            $.ajax({
+                url:'/sysUser/userLogin',
+                headers:{
+                    "validateCode":validateCode
+                },
+                successExec:true,
+                data:$("#userLogin").serialize(),
+                type:"post",
+                success:function(msg){
+                    if(msg.code==-1){
+                        toastr.error(msg.msg);
+                        $("#validateImg").attr('src','/game-admin/validate/imageCode?'+Math.random());
+                        return;
+                    }
+                    var obj=msg.data;
+                    setCookie('userId',obj.id);
+                    setCookie('gameUserId',obj.gameUserId);
+                    setCookie('money',obj.money);
+                    toastr.success('登录成功');
+                    toastr.call(function(){
+                       window.location.href='main.html';
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>赌神模式</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <script type="text/javascript" src="../../../assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../js/My97DatePicker/WdatePicker.js"></script>
+    <script src="../../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div class="table-responsive">
+        <form class="form-horizontal" id="add-form">
+            <div>
+                <div class="page-header">
+                    <h1>
+                        <small>修改游戏公告</small>
+                    </h1>
+                </div>
+                <div class="row padding_top_buttom_10">
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label
+                                    class="col-sm-3 control-label no-padding-right text-right">
+                                <span class="red">*</span> 内容:
+                            </label>
+
+                            <div class="col-sm-6">
+                               <input type="hidden" name="id" id="id"/>
+                               <textarea class="inputVal" rows="3" cols="20" style="margin: 0px; width: 600px; height: 212px;" id="content" name="content"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                    	<div class="form-group">
+                            <label
+                                    class="col-sm-3 control-label no-padding-right text-right">
+                                <span class="red">*</span> 类型:
+                            </label>
+
+                            <div class="col-sm-6">
+                                <select name="type" id="type" class="form-control inputVal" style="width:100%">
+                                        <option value="0">登录公告</option>
+                                        <option value="1">即时公告</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label
+                                    class="col-sm-3 control-label no-padding-right text-right">
+                                <span class="red">*</span>是否自动删除:
+                            </label>
+
+                            <div class="col-sm-6">
+                               <select name="isAutoDelete" id="isAutoDelete" class="form-control inputVal" style="width:100%">
+                                        <option value="Y">是</option>
+                                        <option value="N">否</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label
+                                    class="col-sm-3 control-label no-padding-right text-right">
+                                <span class="red">*</span>失效时间:
+                            </label>
+
+                            <div class="col-sm-6">
+                               <input class="form-control form-control1 search-query Wdate inputVal" id="invalidDateStr"
+                                       onFocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'%y-%M-%d'})"
+                                       name="invalidDateStr" readonly/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clearfix form-actions">
+                    <div class="center">
+                        <button class="btn btn-primary  btn-sm" type="button"
+                                onclick="javascript:history.back();">
+                            返 回
+                        </button>
+                        <button class="btn btn-primary  btn-sm" type="submit"
+                                id="submitButton">
+                            提交
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+	var pkId = getRequest("id");
+
+    var add_url = ctxPath + "/gameAffiche/update";
+    var formValidate = $('#add-form').validate(
+    		{
+                rules: {
+                    'content': {
+                        required: true
+                    },
+                    'type': {
+                        required: true
+                    },
+                    'isAutoDelete': {
+                        required: true
+                    },
+                    'invalidDateStr': {
+                    	required: true
+                    }
+                },
+                submitHandler: function (form) {
+                    $.ajax({
+                        url: add_url,
+                        data: $(form).serialize(),
+                        type: 'post',
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.state) {
+                                window.location.href = 'game_affiche_list.html';
+                            } else {
+                                alert(data.msg);
+                            }
+                        }
+                    });
+                }
+            });
+    
+    $(function(){
+        if (!pkId) {
+            alert("参数错误");
+            return;
+        }
+        $("#id").val(pkId);
+
+        $.ajax({
+            url: ctxPath + '/gameAffiche/get?id=' + pkId,
+            dataType: 'json',
+            type: 'get',
+            success: function (data) {
+                execAjax(data);
+                if (data.state) {
+                	initInputVal('.inputVal', data.data);
+                	$("#invalidDateStr").val(data.data.invalidDate);
+                } else {
+                    alert(data.msg);
+                }
+            }
+        });
+    })
+</script>
+</body>
+</html>

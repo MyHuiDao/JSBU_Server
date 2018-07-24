@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml-body>
+<sql-query name="findPageOrder">
+	<![CDATA[
+		SELECT
+	o.*, u.nick_name nickName,
+	u. code,
+	g.`name` goodsName
+	FROM
+		`order` o
+	LEFT JOIN goods g ON o.goods_id = g.id
+	LEFT JOIN `user` u ON o.game_user_id = u.id
+	where 
+	1=1
+	{ and u.code=:code }
+	{ and o.status=:status}
+	{ and u.id=:userId}
+	order by o.create_date desc
+		]]>
+</sql-query>
+	
+</xml-body>

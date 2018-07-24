@@ -1,0 +1,130 @@
+<html lang="zh-CN" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>设置用户捕鱼数值控制</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <link rel="stylesheet" href="../../../js/toastr.css"/>
+    <script type="text/javascript" src="../../../assets/js/jquery.min.js"></script>
+    <script src="../../../js/main.js"></script>
+    <script type="text/javascript" src="../../../js/toastr.js"></script>
+    <script type="text/javascript">
+        initHead("../../../");
+    </script>
+</head>
+
+<body>
+<div class="page-content">
+    <div class="table-responsive">
+        <form class="form-horizontal" id="upd-form">
+            <input type="hidden" id="id" name="id" />
+
+            <div>
+                <div class="page-header">
+                    <h1><small>设置用户捕鱼数值控制</small></h1>
+                </div>
+
+                <div class="row padding_top_buttom_10">
+                    <div class="col-xs-6">
+
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right text-right">玩家档位:</label>
+
+                            <div class="col-sm-6">
+                               <span style="color: red;line-height: 35px;">注意:当选择未设置时为删除该用户的档位</span>
+                                <br/>
+                               <select name="playerDangWei" id="playerDangWei">
+                                   <option value="0">未设置</option>
+                               </select>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+                <div class="clearfix form-actions">
+                    <div class="center">
+                        <button class="btn btn-primary btn-sm" type="button" onclick="window.location.href='game_user_list.html'">返 回</button> <button class="btn btn-primary btn-sm" type="submit" id="submitButton">保存</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div><script type="text/javascript">
+    var pkId = getRequest("id");
+    var getVal_url="fcp/getUserFishControllerProperty";
+    $(function () {
+        //点击编辑时获取人民币和金币以及id
+        $.ajax({
+            url: getVal_url + '?userId=' + pkId,
+            dataType: 'json',
+            type: 'get',
+            success: function (data) {
+                var obj=data.data;
+                var html='';
+                if(obj==null){
+                    for(var i=1;i<=5;i++){
+                        html+='<option value="'+i+'">'+i+'</option>';
+                    }
+                    $('#playerDangWei').append(html);
+                    return;
+                }
+                for(var i=1;i<=5;i++){
+                    if(obj.playerDangWei==i){
+                        html+='<option value="'+i+'" selected="selected">'+i+'</option>';
+                    }else{
+                        html+='<option value="'+i+'">'+i+'</option>';
+                    }
+                }
+                $('#playerDangWei').append(html);
+            }
+        });
+    });
+
+    //保存
+    var formValidate = $('#upd-form').validate(
+        {submitHandler: function (form) {
+                var playerDangWei=$('#playerDangWei').val();
+                if(playerDangWei==0){
+                    $.ajax({
+                        async: false,
+                        url:'fcp/deleteUserGameFishControllerProperty',
+                        data:{
+                            "userId":pkId,
+                            "type":2
+                        },
+                        type: 'post',
+                        success: function (data) {
+                            toastr.success("设置成功");
+                            toastr.call(function(){
+                                window.location.href = 'game_user_list.html';
+                            });
+                        }
+                    });
+                }else{
+                    $.ajax({
+                        async: false,
+                        url:'fcp/addFishControllerProperty',
+                        data:{
+                            "playerDangWei":playerDangWei,
+                            "userId":pkId
+                        },
+                        type: 'post',
+                        success: function (data) {
+                            toastr.success("设置成功");
+                            toastr.call(function(){
+                                window.location.href = 'game_user_list.html';
+                            });
+                        }
+                    });
+                }
+            }
+        });
+</script>
+</body>
+</html>

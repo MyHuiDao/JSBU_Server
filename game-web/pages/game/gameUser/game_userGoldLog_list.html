@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>用户金币消耗详情</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <link rel="stylesheet" href="../../../js/toastr.css"/>
+    <script type="text/javascript" src="../../../assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../js/toastr.js"></script>
+    <script src="../../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div>
+        <form id="queryForm">
+            <div class="widget-box">
+                <div class="widget-header widget-header-flat search_tj_bar_tit">
+                    <h5 class="widget-title">查询条件</h5>
+                </div>
+                <div class="row search_tj_bar">
+                    <div class="col-xs-12">
+                        <div class="col-xs-4">
+                            <label class="col-sm-4">来源</label>
+
+                            <div class="input-group col-sm-8">
+                                <select name="sourceType" id="sourceType">
+                                    <option value="">请选择</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-4">
+                            <label class="col-sm-4">游戏类型</label>
+
+                            <div class="input-group col-sm-8">
+                                <select name="gameType" id="gameType">
+                                    <option value="">请选择</option>
+                                    <option value="fishing">美人鱼</option>
+                                    <option value="likui_fishing">李逵捕鱼</option>
+                                    <option value="danaotiangong">大闹天宫</option>
+                                    <option value="app">app</option>
+                                    <option value="admin">管理员后台</option>
+                                    <option value="match_fish">鱼儿快跑</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="bs_btn">
+            <button class="btn btn-primary btn-sm" type="button" onclick="window.location.href='game_user_list.html'">返
+                回
+            </button>
+            <button class="btn btn-primary  btn-sm" type="button" id="resetBtn">
+                重 置
+            </button>
+            <button id="seachBtn" type="button" class="btn btn-primary  btn-sm">
+                查找
+            </button>
+        </div>
+        <table id="grid-table"></table>
+        <div id="grid-pager"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    var id = getRequest("id");
+    var list_url = 'sysUserGoldLog/getUserGoldLogData?userId=' + id;
+    var grid_selector = "#grid-table";
+    $(function () {
+        paging_query(grid_selector, list_url, [{
+            field: 'id',
+            title: 'id',
+            align: 'center',
+            visible: false
+        },{
+            field: 'gameType',
+            title: '游戏类型',
+            align: 'center',
+            formatter: function (value, row, index) {
+                if(value=="fishing"){
+                    return "美人鱼";
+                }else if(value=="likui_fishing"){
+                    return "李逵捕鱼";
+                }else if(value=="danaotiangong"){
+                    return "大闹天宫";
+                }else if(value=="match_fish"){
+                    return "鱼儿快跑";
+                }else if(value=="app"){
+                    return "app大厅"
+                }else if(value=="admin"){
+                    return "后台管理系统"
+                }
+            }
+        }, {
+            field: 'type',
+            title: '类型',
+            align: 'center',
+            formatter: function (value, row, index) {
+                if (value == 0) {
+                    return "增加";
+                } else {
+                    return "减少";
+                }
+            }
+        }, {
+            field: 'sourceType',
+            title: '来源',
+            align: 'center',
+            formatter: function (value, row, index) {
+                switch (value) {
+                    case 0:
+                        return "充值";
+                        break;
+                    case 1:
+                        return "赠送";
+                        break;
+                    case 2:
+                        return "游戏消耗";
+                        break;
+                    case 3:
+                        return "购买商品";
+                        break;
+                    case 4:
+                        return "赢的金币";
+                        break;
+                    case 5:
+                        return "输的金币";
+                        break;
+                    default:
+                        return "未知";
+                }
+            }
+        }, {
+            field: 'goldNum',
+            title: '金币数量',
+            align: 'center'
+        }, {
+            field: 'goldAgo',
+            title: '添加之前金币数',
+            align: 'center'
+        }, {
+            field: 'goldAfter',
+            title: '添加之后金币数',
+            align: 'center'
+        }, {
+            field: 'createDate',
+            title: '创建时间',
+            align: 'center'
+        }, {
+            field: 'desc',
+            title: '描述',
+            align: 'center'
+        }
+            // ,{
+            //     field: 'operating',
+            //     title: '操作',
+            //     align: 'center',
+            //     formatter:formaterDataAction,
+            //     widht:30
+            // }
+        ], null);
+        $.ajax({
+            url: "sysUserGoldLog/getSourceType",
+            type: "get",
+            success: function (msg) {
+                var obj = msg.data;
+                var html = "";
+                for (var i = 0; i < obj.length; i++) {
+                    html += '<option value="' + i + '">' + obj[i] + '</option>';
+                }
+                $("#sourceType").append(html);
+            }
+        });
+    });
+
+    $("#seachBtn").on('click', function () {
+        var sourceType = $("#sourceType").val();
+        var gameType = $("#gameType").val();
+        $(grid_selector).bootstrapTable('refresh', {
+            'query': {'sourceType': sourceType, 'gameType': gameType},
+            silent: true
+        });
+    });
+
+    // function formaterDataAction(cellvalue,rowObject,options) {
+    //     var html = '';
+    //     html += '<div class="small">';
+    //     html += '<button onclick="viewEvent(\''
+    //         + rowObject['id']
+    //         + '\')" class="btn btn-xs btn-info sys_user_manager_view user_view" title="查看" >'
+    //         + '<i class="ace-icon fa fa-eye bigger-120"></i>'
+    //         + '</button>';
+    //     html += '</div>';
+    //     return html;
+    // }
+    // function viewEvent(id) {
+    //     window.location.href = "user_view.html?id=" + id;
+    // }
+</script>
+</body>
+</html>

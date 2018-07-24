@@ -1,0 +1,201 @@
+<html lang="zh-CN" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>人民币兑换金币修改</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="description" content="overview &amp; stats" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <link rel="stylesheet" href="../../js/toastr.css"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/toastr.js"></script>
+    <script src="../../js/main.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+
+<body>
+<div class="page-content">
+    <div class="table-responsive">
+        <form class="form-horizontal" id="upd-form">
+            <input type="hidden" id="id" name="id" />
+
+            <div>
+                <div class="page-header">
+                    <h1><small>人民币兑换金币修改</small></h1>
+                </div>
+
+                <div class="row padding_top_buttom_10">
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right text-right"><span class="red">*</span>人民币:</label>
+
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control inputVal" id="rmb" name="rmb" value="" autocomplete="off" style="width: 100%" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right text-right"><span class="red">*</span>金币:</label>
+
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control inputVal" id="gold" name="gold" value="" autocomplete="off" style="width: 100%" />
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label
+                                    class="col-sm-3 control-label no-padding-right text-right">
+                                <span class="red">*</span> 图片
+                            </label>
+                            <div class="col-sm-6">
+                                <select id="img">
+                                    <option value="gold_1">图片1</option>
+                                    <option value="gold_2">图片2</option>
+                                    <option value="gold_3">图片3</option>
+                                    <option value="gold_4">图片4</option>
+                                    <option value="gold_5">图片5</option>
+                                    <option value="gold_6">图片6</option>
+                                    <option value="gold_7">图片7</option>
+                                </select>
+                            </div>
+                            <!--<div>-->
+                                <!--<input type="file" class="form-actions" name="fileImg" id="fileImg">-->
+                            <!--</div>-->
+                            <!--<div align="center"><img width ="50"  height="50" src="" id="imgShow" name="imgShow"/></div>-->
+                        </div>
+                        <div class="form-group">
+                            <label
+                                    class="col-sm-3 control-label no-padding-right text-right">
+                                <span class="red">*</span> 赠送金币:
+                            </label>
+
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="freeGold"
+                                       name="freeGold" autocomplete="new-password" style="width: 100%"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right text-right"><span class="red">*</span>排序:</label>
+
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control inputVal" id="seq" name="seq" value="" autocomplete="off" style="width: 100%" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label
+                                    class="col-sm-3 control-label no-padding-right text-right">
+                                <span class="red">*</span> 支付类型
+                            </label>
+                            <div class="col-sm-6">
+                                <select id="type">
+                                    <option value="0">支付宝/微信支付</option>
+                                    <option value="1">apple支付</option>
+                                    <option value="2">代理购买</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<input type="hidden" name="img" id="img"/>-->
+
+                </div>
+
+                <div class="clearfix form-actions">
+                    <div class="center">
+                        <button class="btn btn-primary btn-sm" type="button" onclick="window.location.href='exchange_list.html'">返 回</button> <button class="btn btn-primary btn-sm" type="submit" id="submitButton">修改</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div><script type="text/javascript">
+    var pkId = getRequest("id");
+    var getVal_url="gameGoldExchange/getGameGoldEchange";
+    $(function () {
+        //点击编辑时获取人民币和金币以及id
+        $.ajax({
+            url: getVal_url + '?id=' + pkId,
+            dataType: 'json',
+            type: 'get',
+            success: function (data) {
+                $("#rmb").val(data.data.rmb);
+                $("#gold").val(data.data.gold);
+                $("#seq").val(data.data.seq);
+                $("#img").find("option[value='"+data.data.img+"']").attr("selected",true);
+                $("#freeGold").val(data.data.freeGold);
+                $("#type").find("option[value='"+data.data.type+"']").attr("selected",true);
+                // $("#imgShow").attr("src","http://hd.com/"+data.data.img);
+            }
+        });
+    });
+
+    //提交时修改角色名称
+    var formValidate = $('#upd-form').validate(
+        {//显示角色名称的值
+            rules: {
+                'rmb': {
+                    required: true
+                },
+                'gold': {
+                    required: true
+                }
+            },
+            submitHandler: function (form) {
+                var rmb = $("#rmb").val();
+                var gold = $("#gold").val();
+                var seq=$("#seq").val();
+                var img=$("#img option:selected").val();
+                var freeGold=$("#freeGold").val();
+                var type=$("#type").val();
+                $.ajax({
+                    async: false,
+                    url:'gameGoldExchange/updateGameGoldEchange',
+                    data:{
+                        "id":pkId,
+                        "rmb":rmb,
+                        "gold":gold,
+                        "seq":seq,
+                        "img":img,
+                        "freeGold":freeGold,
+                        "type":type
+                    },
+                    type: 'post',
+                    success: function (data) {
+                        toastr.success("修改成功");
+                        toastr.call(function(){
+                            window.location.href = 'exchange_list.html';
+                        });
+                    }
+                });
+            }
+        });
+    // $("#fileImg").change(function(){
+    //     var formData = new FormData();
+    //     var file=$( "#fileImg" )[0].files[0];
+    //     formData.append("file",file);
+    //     $.ajax({
+    //         url:"gameGoldExchange/uploadGameGoldEchangeImg",
+    //         type:"post",
+    //         data:formData,
+    //         dataType: "json",
+    //         cache:false,//上传文件无需缓存
+    //         processData:false,//用于对data参数序列化处理 必须是false
+    //         contentType:false,//必须
+    //         success:function(msg){
+    //             $("#img").val(msg.data[0]);
+    //             $("#imgShow").attr("src","http://hd.com/"+msg.data[0]);
+    //         }
+    //     });
+    // });
+</script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml-body>
+	<sql-query name="findMyPromotion">
+		<![CDATA[SELECT
+		u.id id,
+		u.nick_name nickName,
+		u2.nick_name bonusNickName,
+		IFNULL(result.price, 0) price,
+		IFNULL(result.bonusMoney, 0) bonusMoney,
+		IFNULL(result.bonusProportion, 0) bonusProportion,
+		u.create_time createTime
+		FROM
+			`user` u
+		LEFT JOIN (
+			SELECT
+				pl.price price,
+				al.bonus_money bonusMoney,
+				al.bonus_proportion bonusProportion,
+				al.create_date createTime,
+				pl.user_id userId
+			FROM
+				agent_bonus_log al
+			INNER JOIN pay_log pl ON pl.id = al.pay_id
+			INNER JOIN `user` u ON u.id = pl.user_id
+			AND al.parent_bonus_id IS NULL
+			WHERE
+				al.user_id =:id
+		) result ON u.id = result.userId
+		LEFT JOIN `user` u2 ON u2.id = u.recommend_user_id
+		WHERE
+			u.recommend_user_id =:id
+		ORDER BY
+			result.createTime DESC
+			]]>
+	</sql-query>
+	
+	<sql-query name="findMyPromotion2">
+		<![CDATA[SELECT
+			al.bonus_money bonusMoney,
+			al.bonus_proportion bonusProportion,
+			u.nick_name nickName,
+			pl.price price,
+			u.create_time createTime
+		FROM
+			agent_bonus_log al
+		INNER JOIN pay_log pl ON pl.id = al.pay_id
+		INNER JOIN `user` u ON u.id = pl.user_id 
+		where 
+		 al.parent_bonus_id is not null
+		 and al.user_id=:id
+		order by pl.create_date desc
+
+			]]>
+	</sql-query>
+	
+	
+	<!-- <sql-query name="getProportionl">
+		select al.proportion1 from sys_user su inner join agen_level al
+		on su.agen_level_id=al.id
+		where 
+		1=1 
+		and su.game_user_id=:id
+	</sql-query> -->
+	
+	<sql-query name="getSubagent">
+		select a.* from (
+		select id from user where recommend_user_id=:id
+		union
+		select id from user where recommend_user_id in (select id from user where recommend_user_id=:id)
+		) a
+	</sql-query>
+	
+	<sql-query name="findPersonalRechargeAmount">
+		select  u.code,u.nick_name,IFNULL(sum(pl.price),0) amount from pay_log pl 
+		left join `user` u on pl.user_id=u.id
+		where u.code=:code and pl.status='1'
+	</sql-query>
+	
+	<sql-query name="findSubagentRechargeAmount">
+		select u.code,u.nick_name,IFNULL(sum(pl.price),0) amount from `user` u 
+		left join `user` tu on u.recommend_user_id=tu.id
+		left join pay_log pl on pl.user_id=u.id and pl.status='1'
+		where tu.code=:code GROUP BY u.id
+	</sql-query>
+	
+</xml-body>

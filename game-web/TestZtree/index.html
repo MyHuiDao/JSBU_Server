@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="ztree/js/jquery-1.4.4.min.js"></script>
+    <script src="ztree/js/jquery.ztree.core.js"></script>
+    <link rel="stylesheet" href="ztree/css/demo.css" />
+    <link rel="stylesheet" href="ztree/css/zTreeStyle/zTreeStyle.css" />
+    <SCRIPT type="text/javascript">
+        var setting = {
+            data: {
+                simpleData: {
+                    enable: true,
+                    idKey: "id",
+                    pIdKey: "parentId",
+                    rootPId: null
+                }
+            },
+        };
+
+        function filter(treeId, parentNode, childNodes) {
+            if (!childNodes) return null;
+            for (var i=0, l=childNodes.length; i<l; i++) {
+                childNodes[i].name = childNodes[i].name.replace(/\.n/g, '.');
+            }
+            return childNodes;
+        }
+        var zNodes;
+
+        function get(){
+            $.ajax({
+                type:"post",
+                async:false,
+                url:"http://hd.com/game-admin/auto/getAuthorityList",
+                success:function(msg){
+                    zNodes=msg.data;
+                    $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+                }
+            });
+        }
+
+        $(document).ready(function(){
+            get();
+        });
+    </SCRIPT>
+</head>
+<body>
+<ul id="treeDemo" class="ztree"></ul>
+</body>
+</html>

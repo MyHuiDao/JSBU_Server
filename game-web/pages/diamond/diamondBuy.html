@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>钻石购买</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+    <style type="text/css">
+    	.cursor{
+    		cursor: pointer;
+    	}
+    </style>
+    
+    
+</head>
+<body>
+<div class="page-content">
+    <div class="table-responsive">
+        <form class="form-horizontal" id="add-form">
+            <input type="hidden" id="id" name="id">
+
+            <div>
+                <div class="page-header">
+                    <h1>
+                        <small>钻石设置</small>
+                    </h1>
+                </div>
+                
+                <div class="row padding_top_buttom_10">
+                
+                	<div class="col-xs-9" >
+                		<div>
+                            <div class="form-group">
+                            	<label
+                                        class="col-sm-2 control-label no-padding-right text-right">
+                                </label>
+                                
+                                <div class="package_price" style="padding-left: 210px;"></div>
+							</div>
+						</div>
+                	</div>
+                    <div class="col-xs-6">
+                        <div>
+                            <div class="form-group">
+                                <label
+                                        class="col-sm-3 control-label no-padding-right text-right">
+                                    <span class="red">*</span> 数量:
+                                </label>
+
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" id="num"
+                                           name="num" value="" autocomplete="off" style="width: 100%" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')" onafterpaste="this.value=this.value.replace(/[^0-9]/g,'')"/>
+                                    <label class="exchange_price"></label>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row padding_top_buttom_10">
+                    <div class="col-xs-6">
+                        <div>
+                            <div class="form-group" style="height: auto;">
+                                <label
+                                        class="col-sm-3 control-label no-padding-right text-right">
+                                    	购买钻石规则：
+                                </label>
+								<div class="col-sm-9" style="width: 240px;">
+									<div>
+										<div>
+										<p><span class="red">首次充值优惠福利：</span></p>
+											<p><span class="red">单次充值满750钻，额外赠送150钻</span></p>
+											<p><span class="red">单次充值满2000钻，额外赠送526钻</span></p>
+											<p><span class="red">单次充值满3750钻，额外赠送987钻</span></p>
+											<p><span class="red">单次充值满7500钻，额外赠送2500钻</span></p>
+											<p><span class="red">更多首次充值优惠福利请咨询客服</span></p>
+										</div>
+										<div>
+										<p><span class="red">7月优惠：</span></p>
+											<p><span class="red">单次充值满888钻，额外赠送99钻</span></p>
+											<p><span class="red">单次充值满1888钻，额外赠送210钻</span></p>
+											<p><span class="red">单次充值满3888钻，额外赠送686钻</span></p>
+											<p><span class="red">单次充值满6888钻，额外赠送1216钻</span></p>
+											<p><span class="red">单笔充值在活动期间内不限次数，以单次充值额度为准</span></p>
+											<p><span class="red">更多单次充值优惠福利请咨询客服</span></p>
+										</div>
+									</div>
+								</div>
+                        	</div>
+                		</div>
+                	</div>
+               	</div>
+                <div class="clearfix form-actions">
+                    <div class="center">
+                        <button class="btn btn-primary  btn-sm" type="button"
+                                onclick="javascript:history.back();">
+                            返 回
+                        </button>
+                        <button class="btn btn-primary  btn-sm" type="submit"
+                                id="submitButton">
+                            购买
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+	var user_type_price = null;
+    var buy_url = ctxPath + "/pay/buyDiamond";
+    var formValidate = $('#add-form').validate(
+            {
+                /* rules: {
+                    'num': {
+                        required: true,
+                        number: true,
+                        min: 1
+                    }
+                }, */
+                submitHandler: function (form) {
+                    var num = $("#num").val();
+                    if(num == ""){
+                    	$(".cursor").each(function(){
+                			if($(this).attr("style")){
+                				num = $(this).find(".diamonds_num").html();
+                				return;
+                			}
+                		});
+                    }
+                    if(num != ""){
+                    	window.open('diamondBuy_pay.html?num='+num,'_blank');	
+                    }else{
+                    	alert("参数错误");
+                    }
+                }
+            });
+    
+    
+    $(function(){
+    	$.ajax({
+            url: ctxPath + '/diamond/sysUserDiamondPrice',
+            dataType: 'json',
+            type: 'get',
+            success: function (data) {
+                execAjax(data);
+                if (data.state) {
+                	user_type_price = data.data;
+                	$(".package_price").html(packagePrice(user_type_price));
+                	$(".cursor").bind('click',function(){
+                		$("#num").val($(this).find(".diamonds_num").html());
+                		$(".exchange_price").html("价格为："+$(this).find(".diamonds_num").html()*user_type_price+"RMB");
+                		if($(this).attr("style")){
+                			this.style="";
+                		}else{
+                			$(".cursor").each(function(){
+                    			this.style = "";                			
+                    		});
+                			this.style="background:black;";	
+                		}
+                    });
+                } else {
+                    alert(data.msg);
+                }
+            }
+        });
+    });
+    
+    function packagePrice(price){
+    	var html = "";
+    	html += '<div class="infobox infobox-grey infobox-small infobox-dark cursor">'+
+		'<div class="infobox-icon">'+
+		'<i class="ace-icon fa fa-shopping-cart"></i>'+
+		'</div>'+
+		'<div class="infobox-data">'+
+		'<div class="infobox-content"><span class="diamonds_num">'+100+'</span>钻石</div>'+
+		'<div class="infobox-content"><span class="diamonds_price">'+100*price+'</span>RMB</div>'+
+		'</div>'+
+		'</div>';
+    	html += '<div class="infobox infobox-grey infobox-small infobox-dark cursor">'+
+		'<div class="infobox-icon">'+
+		'<i class="ace-icon fa fa-shopping-cart"></i>'+
+		'</div>'+
+		'<div class="infobox-data">'+
+		'<div class="infobox-content"><span class="diamonds_num">'+300+'</span>钻石</div>'+
+		'<div class="infobox-content"><span class="diamonds_price">'+300*price+'</span>RMB</div>'+
+		'</div>'+
+		'</div>';
+    	html += '<div class="infobox infobox-grey infobox-small infobox-dark cursor">'+
+		'<div class="infobox-icon">'+
+		'<i class="ace-icon fa fa-shopping-cart"></i>'+
+		'</div>'+
+		'<div class="infobox-data">'+
+		'<div class="infobox-content"><span class="diamonds_num">'+500+'</span>钻石</div>'+
+		'<div class="infobox-content"><span class="diamonds_price">'+500*price+'</span>RMB</div>'+
+		'</div>'+
+		'</div>';
+    	return html;
+    }
+    
+    
+    $("#num").keyup(function(){
+    	$(".cursor").each(function(){
+			this.style = "";                			
+		});
+    	$(".exchange_price").html("价格为："+this.value*user_type_price+"RMB");
+    })
+
+</script>
+</body>
+</html>

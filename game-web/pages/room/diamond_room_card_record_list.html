@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>钻石兑换房卡记录</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div>
+        <table id="grid-table"></table>
+        <div id="grid-pager"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    var list_url = ctxPath + '/roomCardRecord/page';
+    var grid_selector = "#grid-table";
+    var pager_selector = "#grid-pager";
+
+    $(function () {
+        jqGrid_init(grid_selector, pager_selector, {
+            url: list_url,
+            colNames: ['id', '游戏编码', '消耗钻石', '兑换房卡', '类型', '创建时间', '备注'],
+            colModel: [{
+                name: 'id',
+                index: 'id',
+                hidden: true
+            }, {
+                name: 'gameCode',
+                index: 'gameCode',
+                width: 30
+            }, {
+                name: 'diamondNum',
+                index: 'diamondNum',
+                width: 30
+            }, {
+                name: 'num',
+                index: 'num',
+                width: 30
+            }, {
+                name: 'type',
+                formatter: formaterType,
+                width: 30
+            }, {
+                name: 'createDate',
+                index: 'createDate',
+                width: 33
+            }, {
+                name: 'remark',
+                index: 'remark',
+                width: 50
+            }]
+        });
+        function formaterType(val) {
+            if (val == "player") {
+                return "游戏玩家";
+            }
+            if (val == "agent") {
+                return "代理商";
+            }
+            if (val == "group") {
+                return "群主";
+            }
+            return val;
+        }
+    });
+</script>
+</body>
+</html>

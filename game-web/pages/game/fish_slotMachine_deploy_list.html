@@ -1,0 +1,122 @@
+<html lang="zh-CN" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>鱼类老虎游戏配置列表</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="description" content="overview &amp; stats" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <link rel="stylesheet" href="../../js/toastr.css"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js">
+    </script>
+    <script type="text/javascript" src="../../js/toastr.js"></script>
+    <script src="../../js/main.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+
+<body>
+
+<div class="page-content">
+    <!--<div>
+        <form id="queryForm">
+            <div class="widget-box">
+                <div class="widget-header widget-header-flat search_tj_bar_tit">
+                    <h5 class="widget-title">查询条件</h5>
+                </div>
+                <div class="row search_tj_bar">
+                    <div class="col-xs-12">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>-->
+    <div>
+        <div class="bs_btn">
+
+            <button id="addBtn" class="btn btn-primary  btn-sm fish_slotmachine_deploy_add">
+                新增
+            </button>
+        </div>
+    </div>
+    <div>
+        <table id="grid-table" class="table table-bordered game_email_get"></table>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    $(function(){
+        paging_query("#grid-table","fsd/findAll",[{
+            field: 'id',
+            title: '主键',
+            align: 'center',
+            visible:false//隐藏列
+        }, {
+            field: 'name',
+            title: '配置名称',
+            align: 'center'
+        }, {
+            field: 'type',
+            title: '类型',
+            align: 'center',
+            formatter:function(value,row,index){
+                switch (value){
+                    case 0:
+                        return "首次游戏特殊配置表";
+                    case 1:
+                        return "通常游戏配置表";
+                    case 2:
+                        return "第一阶段特殊配置表";
+                    case 3:
+                        return "第二阶段特殊配置表";
+                    case 4:
+                        return "第三阶段特殊配置表";
+                }
+            }
+        }, {
+            field: 'incomeRatio',
+            title: '收支比',
+            align: 'center'
+        }, {
+            field: 'createDate',
+            title: '创建时间',
+            align: 'center'
+        }, {
+            field: 'operation',
+            title: '操作',
+            align: 'center',
+            formatter:formaterDataAction,
+            width:200
+        }],null);
+    });
+
+
+    function formaterDataAction(cellvalue, rowObject, options) {
+        var html = '';
+        html += '<div class="small">'
+        html += '<button onclick="editEvent(\''
+            + rowObject['id']
+            + '\')" class="btn btn-xs btn-yellow setting_edit fish_slotmachine_deploy_update" title="编辑" >'
+            + '<i class="ace-icon fa fa-pencil bigger-120"><\/i>'
+            + '<\/button>';
+
+        html += '<\/div>';
+        return html;
+    }
+
+    function editEvent(obj){
+        window.location.href='fish_slotMachine_deploy_update.html?id='+obj;
+    }
+
+    $("#addBtn").on('click', function () {
+        window.location.href = 'fish_slotMachine_deploy.html';
+    });
+
+
+
+</script>
+</body>
+</html>

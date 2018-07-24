@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>玩家钻石存量</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div>
+        <div class="bs_btn">
+            <button id="addBtn" class="btn btn-primary  btn-sm diamond_circle_add">
+                新增
+            </button>
+            <button id="seachBtn" type="button" class="btn btn-primary  btn-sm">
+                刷新缓存
+            </button>
+        </div>
+        <table id="grid-table"></table>
+        <div id="grid-pager"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    var list_url = ctxPath + '/gameUserDiamond/page';
+    var grid_selector = "#grid-table";
+    var pager_selector = "#grid-pager";
+    $(function () {
+        jqGrid_init(grid_selector, pager_selector, {
+            url: list_url,
+            colNames: ['id', '用户名','用户编码', '钻石'],
+            colModel: [{
+                name: 'id',
+                index: 'id',
+                hidden: true
+            }, {
+                name: 'name',
+                index: 'name',
+                width: 30,
+                sortable: false
+            }, {
+                name: 'code',
+                index: 'code',
+                width: 30,
+                sortable: false
+            },{
+                name: 'diamond',
+                index: 'diamond',
+                width: 30,
+                sortable: false
+            }]
+        });
+
+        $("#seachBtn").on('click', function () {
+            $.ajax({
+                url: ctxPath + '/gameDiamondCircle/refresh',
+                type: 'get',
+                success: function (data) {
+                    execAjax(data);
+                    if (data.state) {
+                    } else {
+                        alert(data.msg);
+                    }
+                }
+            });
+        });
+    });
+
+
+</script>
+</body>
+</html>

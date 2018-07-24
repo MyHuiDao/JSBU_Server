@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>签到赠送道具</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <script type="text/javascript" src="../../../assets/js/jquery.min.js"></script>
+    <script src="../../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div class="table-responsive">
+        <form class="form-horizontal" id="add-form">
+            <div>
+                <div class="page-header">
+                    <h1>
+                        <small>新增签到赠送道具</small>
+                    </h1>
+                </div>
+                <div class="row padding_top_buttom_10">
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label
+                                    class="col-sm-3 control-label no-padding-right text-right">
+                                <span class="red">*</span> 签到天数:
+                            </label>
+
+                            <div class="col-sm-6">
+                               <input type="text" class="form-control"
+                                       name="signNum" style="width: 100%"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label
+                                    class="col-sm-3 control-label no-padding-right text-right">
+                                <span class="red">*</span> 类型:
+                            </label>
+
+                            <div class="col-sm-6">
+                                <select name="type" id="type" class="form-control" style="width:100%">
+                                        <option value="0">累计签到</option>
+                                        <option value="1">天数签到</option>
+                                    </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label
+                                    class="col-sm-3 control-label no-padding-right text-right">
+                                <span class="red">*</span>数量:
+                            </label>
+
+                            <div class="col-sm-6">
+                               <input type="text" class="form-control"
+                                       name="num" style="width: 100%"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label
+                                    class="col-sm-3 control-label no-padding-right text-right">
+                                <span class="red">*</span> 游戏道具:
+                            </label>
+
+                            <div class="col-sm-6">
+                                <select name="propId" id="propId" class="form-control" style="width:100%"></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clearfix form-actions">
+                    <div class="center">
+                        <button class="btn btn-primary  btn-sm" type="button"
+                                onclick="javascript:history.back();">
+                            返 回
+                        </button>
+                        <button class="btn btn-primary  btn-sm" type="submit"
+                                id="submitButton">
+                            提交
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    var add_url = ctxPath + "/gameSignProp/add";
+    var formValidate = $('#add-form').validate(
+    		{
+                rules: {
+                    'signNum': {
+                        required: true,
+                        number: true,
+                        min: 1,
+                        checkSignNum: true
+                    },
+                    'type': {
+                        required: true
+                    },
+                    'propId': {
+                        required: true
+                    },
+                    'num': {
+                        required: true,
+                        number: true,
+                        min: 1
+                    }
+                },
+                submitHandler: function (form) {
+                    $.ajax({
+                        url: add_url,
+                        data: $(form).serialize(),
+                        type: 'post',
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.state) {
+                                window.location.href = 'game_sign_prop_list.html';
+                            } else {
+                                alert(data.msg);
+                            }
+                        }
+                    });
+                }
+            });
+    
+    $.ajax({
+        url: ctxPath + '/gameProp/getTypeName',
+        type: 'get',
+        success: function (data) {
+            execAjax(data);
+            if (data.state) {
+            	var html = '';
+            	for(var i = 0;i < data.data.length;i++){
+            		html += '<option value='+data.data[i].id+'>'+data.data[i].name+'</option>';
+            	}
+            	$("#propId").html(html);
+            } else {
+                alert(data.msg);
+            }
+        }
+    })
+    
+    $.validator.addMethod("checkSignNum", function (val) {
+        var flag = false;
+        $.ajax({
+            url: ctxPath + "/gameSignProp/uniqueCheck?signNum=" + val+"&type="+$("#type").val(),
+            type: 'get',
+            async: false,
+            success: function (data) {
+            	execAjax(data);
+                if (data.state) {
+                    flag = true;
+                } else {
+                    flag = false;
+                }
+                return flag;
+            }
+        });
+        return flag;
+    }, "该签到类型已存在");
+    
+    
+</script>
+</body>
+</html>

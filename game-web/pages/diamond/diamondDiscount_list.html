@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>钻石优惠列表</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div>
+        <div class="bs_btn">
+            <button id="addBtn" class="btn btn-primary  btn-sm diamond_discount_add">
+                新增
+            </button>
+            <button id="seachBtn" type="button" class="btn btn-primary  btn-sm refresh_diamond_discount">
+                刷新缓存
+            </button>
+        </div>
+        <table id="grid-table"></table>
+        <div id="grid-pager"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    var list_url = ctxPath + '/diamond/findDiscount';
+    var grid_selector = "#grid-table";
+    var pager_selector = "#grid-pager";
+    $(function () {
+        jqGrid_init(grid_selector, pager_selector, {
+            url: list_url,
+            colNames: ['id', '最小购买量', '最大购买量','赠送钻石量', '用户类型', '操作'],
+            colModel: [{
+                name: 'id',
+                index: 'id',
+                hidden: true
+            }, {
+                name: 'min',
+                index: 'min',
+                width: 30,
+                sortable: false
+            }, {
+                name: 'max',
+                index: 'max',
+                width: 30,
+                sortable: false
+            }, {
+                name: 'diamond',
+                index: 'diamond',
+                width: 30,
+                sortable: false
+            }, {
+                name: 'type',
+                formatter: formaterType,
+                width: 33
+            }, {
+                name: 'data_action',
+                formatter: formaterDataAction,
+                width: 33
+            }]
+        });
+        function formaterType(val){
+            if(val=="agent"){
+                return "总代理";
+            }else if(val=="group"){
+                return "群主";
+            }
+
+        }
+        function formaterDataAction(cellvalue, options, rowObject) {
+            var html = '';
+            html += '<div class="small">'
+            html += '<button onclick="editEvent(\''
+                    + rowObject['id']
+                    + '\')" class="btn btn-xs btn-yellow diamond_discount_update" title="编辑" >'
+                    + '<i class="ace-icon fa fa-pencil bigger-120"></i>'
+                    + '</button>';
+           	html += '<button onclick="deleteEvent(\''
+	               + rowObject['id']
+	               + '\')" class="btn btn-xs btn-danger goods_manager_delete" title="删除" >'
+	               + '<i class="ace-icon fa fa-trash-o bigger-120"></i>'
+	               + '</button>';
+            html += '</div>';
+            return html;
+        }
+    });
+    $("#addBtn").on('click', function () {
+        window.location.href = 'diamondDiscount_add.html';
+    });
+    function editEvent(id) {
+        window.location.href = "diamondDiscount_update.html?id=" + id;
+    }
+    function deleteEvent(id){
+    	if (confirm("请确认是否删除！")) {
+            $.ajax({
+            	url: ctxPath + '/diamond/deleteDiscount?id='+id,
+                type: 'get',
+                success: function (data) {
+                    execAjax(data);
+                    if (!data.state) {
+                        alert(data.msg);
+                        return;
+                    }
+                    $(grid_selector).trigger("reloadGrid");
+                }
+            });
+        }
+    }
+    $("#seachBtn").on('click', function () {
+        $.ajax({
+            url: ctxPath + '/diamond/refreshDiscount',
+            type: 'get',
+            success: function (data) {
+                execAjax(data);
+                if (data.state) {
+                    alert("刷新成功");
+                } else {
+                    alert(data.msg);
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

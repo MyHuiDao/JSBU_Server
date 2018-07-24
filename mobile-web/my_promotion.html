@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>我的推广客户</title>
+    <link href="css/main.css" rel="stylesheet"/>
+    <link href="js/toastr.css" rel="stylesheet"/>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/toastr.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/Ds_Auto.js"></script>
+    <script>
+        initHead();
+        DApp.init(1080,null,"width");
+    </script>
+</head>
+<body>
+    <div class="promotion-background">
+        <div class="login">
+            <img src="img/jinshayugang.png"/>
+        </div>
+        <div class="my-promotion-title">
+            <img src="img/my_promotion_client.png"/>
+        </div>
+        <div style="height: 10px;"></div>
+        <div class="proxy-info">
+            <div id="topHeight">
+                <!--<div class="proxy-info-template">
+                    <div class="number-style">
+                        <span class="zfDate">2018-06-19 10:47</span>
+                        <span class="proxyRegistLink" id="proxyRegistLink"onclick="sendLink('455b1f34-c849-4dc4-a25b-3be378f222d1')">代理注册链接</span>
+                        <span class="proportion">50</span>
+                    </div>
+                    <div class="order-style">
+                        <div class="userName">李冯威</div>
+                        <div class="userAmount">消费￥9.999</div>
+                        <div class="userObtainReward">+￥9.999</div>
+                    </div>
+                </div>-->
+            </div>
+        </div>
+        <!--<div class="load-more">
+            <button id="loadMore" onclick="loadData()">加载更多</button>
+        </div>-->
+        <div class="proxy-link" id="proxyLink" style="display: none;">
+            <div class="proxy-link-div">
+                <span style="color: #2785B9; font-size: 22px;line-height: 40px;">长按下方链接复制</span>
+                <br/>
+                <a id="proxyLinkDiv" style="color: black; font-size: 16px;"></a>
+            </div>
+            <div class="proxy-link-button">
+                <button onclick="shutDown()">关闭</button>
+            </div>
+        </div>
+        <div class="return-style">
+                <button onclick="window.location.href='main.html'">返回</button>
+        </div>
+    </div>
+    <script>
+        var _page=1;
+        var _size=10;
+        var _total=0;
+        $(function(){
+            loadMore(_page,_size);
+        });
+
+        function sendLink(userId){
+            $('#proxyLink').show();
+            $.ajax({
+                url: '/sysUser/getProxyRegister?userId='+userId,
+                type: 'get',
+                success: function (data) {
+                    $('#proxyLinkDiv').text(data.data);
+                    $('#proxyLinkDiv').select();
+                }
+            });
+        }
+        function loadMore(_page,_size){
+            $.ajax({
+                url:'/sysUser/findMyPromotionAll',
+                data:{
+                    '_page':_page,
+                    '_size':_size
+                },
+                success:function(msg){
+                    var obj=msg.data.rows;
+                    var html='';
+                    _total=msg.data.total;
+                    for(var i=0;i<obj.length;i++) {
+                        html += '<div class="proxy-info-template">';
+                        html += '<div class="number-style">';
+                        html += '<span class="zfDate">' + obj[i].createTime + '</span>';
+                        html+='<span class="proxyRegistLink send_proxy_apply_link" id="proxyRegistLink" onclick="sendLink(\''+obj[i].id+'\')">代理注册链接</span>';
+                        html += '<span class="proportion">' + obj[i].bonusProportion + '</span>';
+                        html += '</div>';
+                        html += '<div class="order-style">';
+                        html += '<div class="userName">' + obj[i].nickName + '</div>';
+                        html += '<div class="userAmount">消费￥' + obj[i].price + '</div>';
+                        html += '<div class="userObtainReward">+￥' + obj[i].bonusMoney + '</div>';
+                        html += '</div></div>';
+                        $("#topHeight").append(html);
+                        html='';
+                    }
+                    flag=false;
+                    if(_total==_page){
+                        toastr.success("已经到底了");
+                    }
+                }
+            });
+        }
+        function loadData(){
+            _page+=1;
+            loadMore(_page,_size);
+        }
+        var flag=false;
+        $('.proxy-info').scroll(function(){
+            var scrollTop = $(this).scrollTop();
+            var windowHeight = $(this).height();
+            var sumHeight=$("#topHeight").height();
+            if(scrollTop+20>=(sumHeight-windowHeight)){
+                if(!flag){
+                    if(_total>_page){
+                        _page+=1;
+                        flag=true;
+                        loadMore(_page,_size);
+                    }
+                }
+
+            }
+        });
+        function shutDown(){
+            $('#proxyLink').hide();
+        }
+    </script>
+</body>
+</html>

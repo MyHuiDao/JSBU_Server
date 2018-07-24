@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta charset="utf-8"/>
+    <title>辉道游戏后台管理系统</title>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache" content="no-cache">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <script type="text/javascript" src="assets/js/jquery.min.js"></script>
+    <script src="js/main.js"></script>
+    <script type="text/javascript">
+        initHead();
+    </script>
+    <script src="assets/js/ace-elements.min.js"></script>
+    <script src="assets/js/ace.min.js"></script>
+    <style>
+        html,body{width: 100%;height: 100%;}
+        *{padding: 0;margin: 0;border: none;}
+        .leftUser{width: 10%;float: left;}
+        .leftUser ul{margin: 0;border: 1px solid darkgrey;border-bottom: 0;}
+        .leftUser ul li{list-style: none;padding: 5px 10px;cursor: pointer;margin-top: 1px;border-bottom: 1px solid darkgrey;
+        }
+        .right{
+            width: 80%;
+            height: 100%;
+            float: left;
+            border-top: 1px solid darkgrey;
+        }
+        .right-top{
+            width: 100%;
+            height: 80%;
+            border-bottom: 1px solid darkgrey;
+            border-left: 1px solid darkgrey;
+            border-right: 1px solid darkgrey;
+            overflow: auto;
+        }
+        .right-bottom{
+            width: 100%;
+            height: 10%;
+            overflow: auto;
+            border-bottom: 1px solid darkgrey;
+            border-left: 1px solid darkgrey;
+            border-right: 1px solid darkgrey;
+        }
+        .showMsg{
+            background-color: yellow !important;
+        }
+        button{padding: 5px 20px;color: white;background-color: #034c50;float: right;margin-top: 20px;margin-right: 20px;}
+    </style>
+</head>
+<body>
+<div class="leftUser">
+    <ul id="ul_li">
+       <!-- <li id="liid">小仙女</li>
+        <li>小奶狗</li>
+        <li>老狗比</li>-->
+    </ul>
+</div>
+<div id="showChat" style="width: 80%;height: 100%">
+<!--<div class="right">
+    <div class="right-top" id="msg">
+        <p><span>2018年5月7日12:28:45[老狗比]：</span>你们这个游戏怎么玩啊</p>
+        <p><span>2018年5月7日12:28:45[我]：</span>傻屌，不会玩， 你下载干什么。</p>
+    </div>
+    <div class="right-bottom" contenteditable="true">
+    </div>
+    <button>发送</button>
+</div>-->
+</div>
+</body>
+<script>
+    var ws=null;
+    $.ajax({
+        url:'sysUser/getToken',
+        type:'get',
+        success:function(data){
+            websocket(data);
+        }
+    });
+
+    function websocket(httpData){
+        var wsUrl="ws://127.0.0.1:8080/game//game/hall/2/";
+        wsUrl+=httpData.data;
+        ws = new WebSocket(wsUrl);
+        ws.onopen = function(evn){
+            console.log("打开连接");
+        };
+        ws.onmessage = function(evn){
+            var data1=JSON.parse(evn.data);
+            if(data1.code=="10000"){
+                var data=data1.data;
+                var html= $("#li"+data.userId).html();
+                if(html){
+                    $("#li"+data.userId).addClass("showMsg");
+                    $("#msg"+data.userId).append('<p><span>'+data.time+'['+data.nickName+']：</span>'+data.msg+'</p>');
+                }else{
+                    $("#ul_li").append('<li id="li'+data.userId+'" onclick="showRightChat(\''+data.userId+'\')">'+data.nickName+'['+data.code+']'+'</li>');
+                    var showHtml='';
+                    showHtml+='<div class="right" id="rightShowMsg'+data.userId+'" style="display: none">';
+                    showHtml+='<div class="right-top" id="msg'+data.userId+'">';
+                    showHtml+='<p><span>'+data.time+'['+data.nickName+']：</span>'+data.msg+'</p>';
+                    showHtml+='</div>';
+                    showHtml+='<div class="right-bottom" id="content'+data.userId+'" contenteditable="true">';
+                    showHtml+='       </div>';
+                    showHtml+='        <button onclick="sendMsg(\''+data.userId+'\')">发送</button>';
+                    showHtml+='      </div>';
+                    $("#showChat").append(showHtml);
+                }
+            }else if(data1.code=="10001"){
+                var data=data1.data;
+                $("#content"+data.userId).html("");
+                $("#msg"+data.userId).append('<p><span>'+data.time+'[我]：</span>'+data.msg+'</p>');
+            }
+        };
+        ws.onclose = function(){
+            console.log("连接关闭");
+            websocket(httpData);
+        };
+        ws.onerror=function(){
+            console.log("报错连接关闭");
+        };
+    }
+
+    function showRightChat(userId){
+        $(".right").css("display","none");
+        $("#li"+userId).removeClass("showMsg");
+        $("#rightShowMsg"+userId).css("display","block");
+    }
+
+    function sendMsg(userId){
+        var html=$("#content"+userId).html();
+        var data={};
+        data.code="10001";
+        data.data={};
+        data.data.userId=userId;
+        data.data.data=html;
+        ws.send(JSON.stringify(data));
+    }
+
+
+
+
+
+
+    function setCookie(name, value, time) {
+        var exp = new Date();
+        if (time == 0) {
+            time = 1000 * 60 * 60 * 24 * 360;
+        }
+        if (time != null) {
+            exp.setTime(exp.getTime() + time);
+            document.cookie = name + "=" + encodeURIComponent(value) + ";expires="
+                    + exp.toGMTString() + ";path=/";
+        } else {
+            document.cookie = name + "=" + encodeURIComponent(value) + ";path=/";
+        }
+
+    }
+
+    function getCookie(name) {
+        var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+        if (arr = document.cookie.match(reg))
+            return decodeURIComponent(arr[2]);
+        else
+            return null;
+    }
+
+    function delCookie(name) {
+        var exp = new Date();
+        exp.setTime(exp.getTime() - 1000);
+        var cval = getCookie(name);
+        if (cval != null) {
+            document.cookie = name + "=" + encodeURIComponent(cval) + ";expires=" + exp.toGMTString() + ";path=/";
+        }
+    }
+
+</script>
+</html>

@@ -1,0 +1,173 @@
+<html lang="zh-CN" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>游戏公告</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="description" content="overview &amp; stats" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <link rel="stylesheet" href="../../js/toastr.css"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js">
+    </script>
+    <script type="text/javascript" src="../../js/toastr.js"></script>
+    <script src="../../js/main.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+
+<body>
+
+<div class="page-content">
+    <div>
+        <form id="queryForm">
+            <div class="widget-box">
+                <div class="widget-header widget-header-flat search_tj_bar_tit">
+                    <h5 class="widget-title">查询条件</h5>
+                </div>
+                <div class="row search_tj_bar">
+                    <div class="col-xs-12">
+                        <div class="col-xs-4">
+                            <label class="col-sm-4">类型：</label>
+                            <div class="input-group col-sm-8">
+                               <select id="type" name="type">
+                                   <option value="0">首页公告</option>
+                                   <option value="1">捕鱼游戏公告</option>
+                               </select>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <button id="seachBtn" type="button" class="btn btn-primary btn-sm game_notice_get">查找</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div>
+        <div class="bs_btn">
+
+            <button id="addBtn" class="btn btn-primary  btn-sm game_notice_add">
+                新增
+            </button>
+        </div>
+    </div>
+    <div>
+        <table id="grid-table" class="table table-bordered">
+            <thead>
+            <tr>
+                <th>内容</th>
+                <th>类型</th>
+                <th>状态</th>
+                <th>排序</th>
+                <th>创建时间</th>
+                <th>发布时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    $(function(){
+        $.ajax({
+            url:"gameNotice/findGameNoticeAll",
+            type:"get",
+            success:function(data){
+                var html="";
+                var type="";//类型
+                var status="";//状态
+                var obj=data.data;
+                for(var i=0;i<obj.length;i++){
+                    if(obj[i].type=="0"){
+                        type="首页公告";
+                    }else if(obj[i].type=="1"){
+                        type="捕鱼类游戏公告";
+                    }
+                    if(obj[i].status=="0"){
+                        status="未发布";
+                    }else{
+                        status="已发布";
+                    }
+                    html='<tr><td>'+obj[i].centen+'</td>'+
+                        '<td>'+type+
+                        '<td>'+status+'</td>'+
+                        '<td>'+obj[i].seq+'</td>'+
+                        '<td>'+obj[i].createTime+'</td>'+
+                        '<td>'+obj[i].releaseTime+'</td>'+
+                        '<td><button type="button" class="btn btn-primary btn-xs game_notice_update" onclick="editEvent(\''+obj[i].id+'\')">修改</button>'+
+                        '<button type="button" class="btn btn-xs btn-danger game_notice_delete" onclick="delEvent(\''+obj[i].id+'\')">删除</button>'+
+                        '</tr>';
+                    $("#grid-table tbody").append(html);
+                }
+            }
+        });
+    });
+    function delEvent(obj){
+        if(confirm("确定删除吗？")) {
+            $.ajax({
+                url: "gameNotice/deleteGameNotice?id=" + obj,
+                type: "get",
+                async: false,
+                success: function (msg) {
+                    alert("删除成功!");
+                    window.location.reload();
+                }
+            });
+        }
+    }
+    function editEvent(obj) {
+        window.location.href = 'gameNotice_update.html?id='+obj;
+    }
+
+    $("#addBtn").on('click', function () {
+        window.location.href = 'gameNotice_add.html';
+    });
+
+    $("#seachBtn").on('click',function(){
+        var type=$("#type").val();
+        $.ajax({
+            type:"get",
+            url:"gameNotice/findGameNoticeAll",
+            data:{"type":type},
+            success:function(data){
+                $("#grid-table tbody").remove();
+                $("#grid-table").append("<tbody></tbody>");
+                var html="";
+                var type="";//类型
+                var status="";//状态
+                var obj=data.data;
+                for(var i=0;i<obj.length;i++){
+                    if(obj[i].type=="0"){
+                        type="首页公告";
+                    }else if(obj[i].type=="1"){
+                        type="捕鱼类游戏公告";
+                    }
+                    if(obj[i].status=="0"){
+                        status="未发布";
+                    }else{
+                        status="已发布";
+                    }
+                    html='<tr><td>'+obj[i].centen+'</td>'+
+                        '<td>'+type+
+                        '<td>'+status+'</td>'+
+                        '<td>'+obj[i].seq+'</td>'+
+                        '<td>'+obj[i].createTime+'</td>'+
+                        '<td>'+obj[i].releaseTime+'</td>'+
+                        '<td><button type="button" class="btn btn-primary btn-xs game_area_update" onclick="editEvent(\''+obj[i].id+'\')">修改</button>'+
+                        '<button type="button" class="btn btn-xs btn-danger game_area_delete" onclick="delEvent(\''+obj[i].id+'\')">删除</button>'+
+                        '</tr>';
+                    $("#grid-table tbody").append(html);
+                }
+            }
+        });
+    });
+
+</script>
+</body>
+</html>

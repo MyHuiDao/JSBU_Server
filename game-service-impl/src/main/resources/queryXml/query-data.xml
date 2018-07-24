@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml-body>
+<sql-query name="findUserLoginAll">
+	<![CDATA[
+	select u.code code,u.nick_name nickName,ul.* 
+	from user u 
+	inner join user_login ul on u.id=ul.user_id 
+	where
+	1=1
+	{and ul.login_time>=:startDate}
+	{and ul.login_time <=:endDate} 
+	order by ul.login_time desc
+	]]>
+</sql-query>
+
+<sql-query name="findRankActiveByDate">
+	<![CDATA[
+		SELECT
+		sum(IFNULL(
+		UNIX_TIMESTAMP(uo.online_time_end),UNIX_TIMESTAMP( :currentTime )
+	 ) - UNIX_TIMESTAMP(uo.online_time_start)) num,
+	 u.nick_name nickName,
+		u.head_img head
+	FROM
+		user_online uo 
+	LEFT JOIN `user` u 
+	on uo.user_id=u.id 
+	WHERE
+		uo.online_time_start >= :startTime 
+		AND IFNULL(uo.online_time_end,:currentTime) < :endTime 
+	GROUP BY
+		uo.user_id
+	order by 
+   num
+	desc
+	limit 100
+
+	]]>
+</sql-query>
+
+
+<sql-query name="findRankPayByDate">
+	<![CDATA[
+	SELECT
+		sum(ug.gold) num, 
+		u.nick_name nickName,
+		u.head_img head
+	FROM
+		pay_log ug
+	LEFT JOIN `user` u ON ug.user_id = u.id
+	WHERE
+		ug.pay_date >= :startTime
+	 AND ug.pay_date < :endTime
+	 AND ug.status=1
+		GROUP BY
+		ug.user_id
+	order by num desc	
+		]]>
+</sql-query>
+
+<sql-query name="findUserOnlineDuration">
+	select u.`code`,u.nick_name,uo.`name` gameName,u.gold,(select  SUM(UNIX_TIMESTAMP(IFNULL(uso.online_time_end,:currentDate))*1000-UNIX_TIMESTAMP(uso.online_time_start)*1000) from user_online uso where uso.user_id=uo.user_id GROUP BY uso.user_id) onlineTime from `user` u 
+	INNER JOIN user_online uo on
+	uo.user_id=u.id 
+	where uo.online_time_end is null {and u.code=:code}
+	
+</sql-query>
+
+<sql-query name="getDangerGetCashUserAll">
+	<![CDATA[
+		select dgcu.id id,u.id userId,u.`code` code,u.nick_name nickName,dgcu.`status`,su.nick_name sysNickName,dgcu.update_date,dgcu.create_date 
+		from danger_get_cash_user dgcu
+		left join `user` u on u.id=dgcu.user_id
+		left join sys_user su on su.id=dgcu.sys_user_id
+		where
+		1=1
+		{and u.code=:code}
+		and dgcu.status=0
+		]]>
+</sql-query>
+
+<sql-query name="getDangerGetCashUserSelf">
+	<![CDATA[
+		select dgcu.id id,u.id userId,u.`code` code,u.nick_name nickName,dgcu.`status`,su.nick_name sysNickName,dgcu.update_date,dgcu.create_date 
+		from danger_get_cash_user dgcu
+		left join `user` u on u.id=dgcu.user_id
+		left join sys_user su on su.id=dgcu.sys_user_id
+		where
+		1=1
+		{and dgcu.user_id=:userId}
+		and dgcu.status=1
+		]]>
+</sql-query>
+
+
+<sql-query name="findFishControllerProperty">
+	<![CDATA[
+		select fcp.*,u.nick_name nickName,ga.`name` name from fish_controller_property fcp 
+		LEFT join `user` u on u.id=fcp.join_id
+		LEFT join  game_area ga on ga.id=fcp.join_id
+		where 
+		1=1
+		{and fcp.type=:type}
+	]]>
+</sql-query>
+
+
+
+</xml-body>

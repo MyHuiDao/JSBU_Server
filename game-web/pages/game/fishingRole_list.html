@@ -1,0 +1,164 @@
+<html lang="zh-CN" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>捕鱼规则设置</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="description" content="overview &amp; stats" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <link rel="stylesheet" href="../../js/toastr.css"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js">
+    </script>
+    <script type="text/javascript" src="../../js/toastr.js"></script>
+    <script src="../../js/main.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+
+<body>
+<div class="page-content">
+    <div>
+        <div class="bs_btn">
+            <button id="addBtn" class="btn btn-primary btn-sm setting_add fishing_rule_new">新增</button>
+        </div>
+        <div class="bs_btn">
+            <button id="removePublicCaching" class="btn btn-primary btn-sm setting_add fishing_rule_new" style="margin-right: 5px;">刷新公共规则</button>
+        </div>
+        <div class="bs_btn">
+            <button id="removePrivateCaching" class="btn btn-primary btn-sm setting_add fishing_rule_new" style="margin-right: 5px;">刷新私人规则</button>
+        </div>
+        <table id="grid-table" class="table  table-bordered table-hover">
+            <thead>
+                <tr>
+                    <td>规则名称</td>
+                    <td>最大金币</td>
+                    <td>最小金币</td>
+                    <td>赢的概率(%)</td>
+                    <td>房间类型</td>
+                    <td>类型</td>
+                    <td>操作</td>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+
+        <div id="grid-pager"></div>
+    </div>
+</div>
+
+<table id="reloadGrid"></table>
+<script type="text/javascript">
+    var grid_selector = "#grid-table";
+
+    function formaterDataAction(cellvalue, rowObject, options) {
+        var html = '';
+        html += '<div class="small">'
+        html += '<button onclick="editEvent(\''
+            + rowObject['id']
+            + '\')" class="btn btn-xs btn-yellow game_setting_edit fishing_rule_update" title="编辑" >'
+            + '<i class="ace-icon fa fa-pencil bigger-120"><\/i>'
+            + '<\/button>';
+        html += '<button onclick="delEvent(\''
+            + rowObject['id']
+            + '\')" class="btn btn-xs btn-danger sys_user_manager_delete fishing_rule_delete" title="删除" >'
+            + '<i class="ace-icon fa fa-trash-o bigger-120"></i>'
+            + '</button>';
+        html += '<\/div>';
+        return html;
+    }
+    function editEvent(id) {
+        window.location.href = "fishingRole_update.html?id=" + id;
+    }
+    function delEvent(id) {
+        if (confirm("请确认是否删除！")) {
+            $.ajax({
+                url: 'fishingRule/deleteFishingRule?id=' + id,
+                type: 'get',
+                async:true,
+                success: function (data) {
+                   if(data.code==0){
+                       window.location.reload();
+                   }
+                }
+            });
+        }
+    }
+    $(function(){
+        $.ajax({
+            url:"fishingRule/findFishingRuleAll",
+            type:"get",
+            success:function(msg){
+                var obj=msg.data;
+                var html='';
+                var type='';
+                for(var i=0;i<obj.length;i++){
+                    if(obj[i].type==1){
+                        type='个人规则';
+                    }else if(obj[i].type==0){
+                        type='公共规则';
+                    }else{
+                        type='房间规则';
+                    }
+                    var roomType="金币场";
+                    if(obj[i].roomType!="gold"){
+                        roomType="体验场";
+                    }
+
+                    html+='<tr>' +
+                        '<td>'+obj[i].name+'</td>' +
+                        '<td>'+obj[i].maxGold+'</td>'+
+                        '<td>'+obj[i].minGold+'</td>'+
+                        '<td>'+obj[i].winNum+'</td>'+
+                        '<td>'+roomType+'</td>'+
+                        '<td>'+type+'</td>'+
+                        '<td>'+
+                        '<button onclick="editEvent(\''+obj[i].id+'\')" class="btn btn-xs btn-yellow game_setting_edit fishing_rule_update" title="编辑">' +
+                        '<i class="ace-icon fa fa-pencil bigger-120"></i>'+
+                        '</button>'+
+                        '<button onclick="delEvent(\''+obj[i].id+'\')" class="btn btn-xs btn-danger sys_user_manager_delete fishing_rule_delete" title="删除">' +
+                        '<i class="ace-icon fa fa-trash-o bigger-120"></i>'+
+                        '</button>'
+                        +'</td>'
+                        '</tr>';
+                }
+                $("#grid-table").append(html);
+            }
+        });
+
+    });
+    $("#addBtn").on('click', function () {
+        window.location.href = 'fishingRole_add.html';
+    });
+
+    $("#removePublicCaching").on('click',function(){
+        $.ajax({
+            url:"fishingRule/removePublicCaching",
+            type:"get",
+            async:false,
+            success:function(msg){
+                if(msg.code){
+                    window.location.reload();
+                }
+            }
+        });
+    });
+
+    $("#removePrivateCaching").on('click',function(){
+        $.ajax({
+            url:"fishingRule/removePrivateCaching",
+            type:"get",
+            async:false,
+            success:function(msg){
+                if(msg.code){
+                    window.location.reload();
+                }
+            }
+        });
+    });
+
+</script>
+</body>
+</html>

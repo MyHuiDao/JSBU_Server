@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>钻石兑换金币价格</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div class="table-responsive">
+        <form class="form-horizontal" id="add-form">
+            <div>
+                <div class="page-header">
+                    <h1>
+                        <small>钻石兑换金币价格</small>
+                    </h1>
+                </div>
+                <div class="row padding_top_buttom_10">
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label
+                                    class="col-sm-3 control-label no-padding-right text-right">
+                                <span class="red">*</span>钻石数量:
+                            </label>
+
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control inputVal" id="diamondNum"
+                                       name="diamondNum" value="" autocomplete="off" style="width: 100%"/>
+                            </div>
+                        </div>
+						<div class="form-group">
+                            <label
+                                    class="col-sm-3 control-label no-padding-right text-right">
+                                <span class="red">*</span>金币数量:
+                            </label>
+
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control inputVal" id="num"
+                                       name="num" value="" autocomplete="off" style="width: 100%"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label
+                                    class="col-sm-3 control-label no-padding-right text-right">
+                                <span class="red">*</span>用户类型:
+                            </label>
+
+                           <div class="col-sm-6">
+                                <select class="form-control" id="type" name="type">
+									<option value="player">游戏玩家</option>
+									<option value="agent">代理商</option>
+									<option value="group">群主</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix form-actions">
+                    <div class="center">
+                        <button class="btn btn-primary  btn-sm" type="button"
+                                onclick="javascript:history.back();">
+                            返 回
+                        </button>
+                        <button class="btn btn-primary  btn-sm" type="submit"
+                                id="submitButton">
+                            提交
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    var add_url = ctxPath + "/gold/add";
+    var formValidate = $('#add-form').validate(
+            {
+                rules: {
+                    'diamondNum': {
+                        required: true,
+                        number: true,
+                        min: 1
+                    },
+                    'num': {
+                        required: true,
+                        number: true,
+                        min: 1
+                    }
+
+                },
+                submitHandler: function (form) {
+                    $.ajax({
+                        url: add_url,
+                        data: $(form).serialize(),
+                        type: 'post',
+                        success: function (data) {
+                            execAjax(data);
+                            if (!data.state) {
+                                alert(data.msg);
+                            } else {
+                                window.location.href = 'diamond_gold_list.html';
+                            }
+                        }
+                    });
+                }
+            });
+</script>
+</body>
+</html>

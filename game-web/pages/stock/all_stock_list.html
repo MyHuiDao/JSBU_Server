@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>钻石发放记录</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/My97DatePicker/WdatePicker.js"></script>
+    <!-- ECharts单文件引入 -->
+    <script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div>
+        <form id="queryForm">
+            <div class="widget-box">
+                <div class="widget-header widget-header-flat search_tj_bar_tit">
+                    <h5 class="widget-title">查询条件</h5>
+                </div>
+                <div class="row search_tj_bar">
+                    <div class="col-xs-12">
+                        <div class="col-xs-4">
+                            <label class="col-sm-4">玩家ID：</label>
+
+                            <div class="input-group col-sm-8">
+                                <input class="form-control form-control1 search-query"
+                                       name="params['uCode']"/>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <label class="col-sm-4">代理商ID：</label>
+
+                            <div class="input-group col-sm-8">
+                                <input class="form-control form-control1 search-query"
+                                       name="params['sCode']"/>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <label class="col-sm-4">发放人ID：</label>
+
+                            <div class="input-group col-sm-8">
+                                <input class="form-control form-control1 search-query"
+                                       name="params['grantSysCode']"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row search_tj_bar">
+                    <div class="col-xs-12">
+                        <div class="col-xs-4">
+                            <label class="col-sm-4">开始日期：</label>
+
+                            <div class="input-group col-sm-8">
+                                <input class="form-control form-control1 search-query Wdate" id="startDate"
+                                       onFocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'endDate\',{d:-1}) || \'%y-%M-%d\' }'})"
+                                       name="params['startDate']" readonly/>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <label class="col-sm-4">结束日期：</label>
+
+                            <div class="input-group col-sm-8">
+                                <input class="form-control form-control1 search-query Wdate" id="endDate"
+                                       onFocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'startDate\',{d:+1})}',maxDate:'%y-%M-%d'})"
+                                       name="params['endDate']" readonly/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bs_btn">
+                <button class="btn btn-primary  btn-sm" type="button" id="resetBtn">
+                    重 置
+                </button>
+                <button id="seachBtn" type="button" class="btn btn-primary  btn-sm">
+                    查找
+                </button>
+            </div>
+        </form>
+        <div id="main" style="height:400px;display:none;margin-bottom: 50px"></div>
+        <table id="grid-table"></table>
+        <div id="grid-pager"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    var list_url = ctxPath + '/stock/allPage';
+    var grid_selector = "#grid-table";
+    var pager_selector = "#grid-pager";
+    $(function () {
+        jqGrid_init(grid_selector, pager_selector, {
+            url: list_url,
+            colNames: ['代理商ID', '代理商姓名', '玩家ID', '玩家姓名', '发放数量', '发放人ID', '发放人', '发放时间'],
+            colModel: [{
+                name: 'sCode',
+                index: 'sCode',
+                hidden: false
+            }, {
+                name: 'sName',
+                index: 'sName',
+                hidden: false
+            }, {
+                name: 'uCode',
+                index: 'uCode',
+                hidden: false
+            }, {
+                name: 'uName',
+                index: 'sName',
+                hidden: false
+            }, {
+                name: 'num',
+                index: 'num',
+                sortable: false
+            }, {
+                name: 'grantSysId',
+                index: 'grantSysId',
+                sortable: false
+            }, {
+                name: 'grantSysName',
+                index: 'grantSysName',
+                sortable: false
+            }, {
+                name: 'grantDate',
+                index: 'grantDate',
+                sortable: false
+            }]
+
+        });
+
+        $('#resetBtn').on('click', function () {
+            resetForm($('#queryForm'));
+        });
+        $("#seachBtn").on('click', function () {
+            $(grid_selector).jqGrid('setGridParam', {
+                postData: $('#queryForm').serialize(),
+                page: 1
+            }).trigger("reloadGrid");
+        })
+        var type = getCookie("type");
+        if (type == "admin") {
+            $("#sType").html('<option value="agent">群主</option><option value="group">代理商</option>');
+        } else {
+            $("#sType").html('<option value="agent">群主</option>');
+        }
+    });
+</script>
+</body>
+</html>

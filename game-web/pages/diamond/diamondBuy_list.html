@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>钻石价格列表</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div>
+        <table id="grid-table"></table>
+        <div id="grid-pager"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    var list_url = ctxPath + '/pay/buyPage';
+    var grid_selector = "#grid-table";
+    var pager_selector = "#grid-pager";
+    function editEvent(id) {
+        window.location.href = "diamondPrice_update.html?id=" + id;
+    }
+
+    $(function () {
+        jqGrid_init(grid_selector, pager_selector, {
+            url: list_url,
+            colNames: ['id', '购买数量', '赠送数量', '金额', '状态', '支付时间', '订单生成时间', '操作'],
+            colModel: [{
+                name: 'id',
+                index: 'id',
+                hidden: true
+            }, {
+                name: 'diamond',
+                index: 'diamond',
+                width: 30
+            }, {
+                name: 'giveNum',
+                formatter: formaterGiveNum,
+                width: 30
+            }, {
+                name: 'amount',
+                index: 'amount',
+                width: 30
+            }, {
+                name: 'state',
+                formatter: formaterState,
+                width: 33
+            }, {
+                name: 'modifyTime',
+                index: 'modifyTime',
+                width: 30
+            }, {
+                name: 'createDate',
+                index: 'createDate',
+                width: 33
+            }, {
+                name: 'dataAction',
+                formatter: formaterDataAction,
+                width: 33
+            }]
+        });
+        function formaterGiveNum(val) {
+            if (val == null || val == "") {
+                return 0;
+            }
+            return val;
+        }
+        function formaterState(val) {
+            if (val == "-1") {
+                return "待支付";
+            } else if (val == "2") {
+                return "支付成功";
+            } else {
+                return "支付失败";
+            }
+        }
+
+        function formaterDataAction(cellvalue, options, rowObject) {
+            var html = '';
+            if (rowObject['state'] == "-1") {
+                html += '<div class="small">';
+                html += '<button onclick="payEvent(\''
+                        + rowObject['id']
+                        + '\')" class="btn btn-xs btn-yellow buy_diamond" title="支付" >'
+                        + '<i class="ace-icon fa fa-pencil bigger-120"></i>'
+                        + '</button>';
+                html += '</div>';
+            }
+            return html;
+        }
+    });
+    function payEvent(id) {
+        window.open('diamondBuy_pay.html?id=' + id, '_blank');
+    }
+</script>
+</body>
+</html>

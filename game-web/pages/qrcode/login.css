@@ -1,0 +1,78 @@
+*{
+    margin: 0 0;
+    padding: 0 0;
+}
+.center{
+    text-align:center;
+}
+.color{
+    background-color:#6cc5dc;
+}
+.div_a{
+    max-width:100%;
+    max-height:100%;
+    text-align:center;
+    width:720px;
+}
+.login_tb{
+    width:30%;
+    max-width:100%;
+    max-height:100%;
+    margin-top:30%;
+}
+input{
+    border:solid 2px #6cc5dc;
+    border-radius:5px;
+    width:80%;
+    height:30px;
+    outline:none;
+}
+.line_height{
+    line-height:60px;
+}
+.container_check {margin: 20px auto;}
+.container_check span {position: relative;}
+.container_check .input_check {position: absolute;visibility: hidden;}
+.container_check .input_check+label {display: inline-block;width: 16px;height: 16px;border: 2px solid #6cc5dc;border-radius:5px;}
+.container_check .input_check:checked+label:after {content: "";position: absolute;left: 2px;bottom: 7px;width: 9px;height: 4px;
+    border: 2px solid #6cc5dc;border-top-color: transparent;border-right-color: transparent;
+    -ms-transform: rotate(-60deg);
+    -moz-transform: rotate(-60deg);
+    -webkit-transform: rotate(-60deg);
+    transform: rotate(-45deg);
+}
+
+.container_radio {margin: 20px auto;}
+.container_radio span {position: relative;}
+.container_radio .input_radio {position: absolute;visibility: hidden;}
+.container_radio .input_radio+label {display: inline-block;width: 16px;height: 16px;background-color:#6cc5dc;border: 2px solid #6cc5dc;border-radius:10px;}
+.container_radio .input_radio:checked+label:after {content: "";position: absolute;left: 2px;bottom: 8px;width: 9px;height: 4px;
+    border: 2px solid #ffffff;border-top-color: transparent;border-right-color: transparent;
+    -ms-transform: rotate(-60deg);
+    -moz-transform: rotate(-60deg);
+    -webkit-transform: rotate(-60deg);
+    transform: rotate(-45deg);
+}
+
+.label_check{
+    margin-bottom: -5px;
+}
+.label_radio{
+    margin-bottom: -4px;
+}
+.button-style{
+    background-color:#6cc5dc;
+    font-size:15px;
+    color:#ffffff;
+    letter-spacing: 5px; /* 字间距，相对数值 */
+}
+.margin_a{
+    margin-left:-218px;
+}
+.margin_b{
+    margin-left:-75px;
+    margin-top:-35px;
+}
+.login_tb2{
+    width:100%;
+}

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>捕鱼概率添加</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <link rel="stylesheet" href="../../js/toastr.css"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/toastr.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div class="table-responsive">
+        <form class="form-horizontal" id="add-form">
+            <div class="page-header">
+                <h1>
+                    <small>捕鱼概率添加</small>
+                </h1>
+            </div>
+            <div class="row padding_top_buttom_10">
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label
+                                class="col-sm-3 control-label no-padding-right text-right">
+                            <span class="red">*</span> 收支比起点:
+                        </label>
+
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="shouzhibiKs"
+                                   name="shouzhibiKs" autocomplete="off" style="width: 100%"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label
+                                class="col-sm-3 control-label no-padding-right text-right">
+                            <span class="red">*</span> 收支比结束:
+                        </label>
+
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="shouzhibiJs"
+                                   name="shouzhibiJs" autocomplete="new-password" style="width: 100%"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label
+                                class="col-sm-3 control-label no-padding-right text-right">
+                            <span class="red">*</span> 赔率:
+                        </label>
+
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="odds"
+                                   name="odds" autocomplete="new-password" style="width: 100%"/>
+                        </div>
+                    </div>
+                    <!--<input type="hidden" name="img" id="img"/>-->
+                </div>
+            </div>
+            <div class="clearfix form-actions">
+                <div class="center">
+                    <button class="btn btn-primary  btn-sm" type="button"
+                            onclick="window.location.href='exchange_list.html'">
+                        返 回
+                    </button>
+                    <button class="btn btn-primary  btn-sm" type="submit"
+                            id="submitButton">
+                        提交
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    var add_url = "fishOdds/addFishOdds";
+    var formValidate = $('#add-form').validate(
+        {
+            submitHandler: function (form) {
+                var shouzhibiKs=$("#shouzhibiKs").val();
+                var shouzhibiJs=$("#shouzhibiJs").val();
+                var odds=$("#odds").val();
+                $.ajax({
+                    url: add_url,
+                    data: {
+                        "shouzhibiKs":shouzhibiKs,
+                        "shouzhibiJs":shouzhibiJs,
+                        "odds":odds
+                    },
+                    type: 'post',
+                    success: function (data) {
+                        if (data.code) {
+                            toastr.success("添加成功");
+                            toastr.call(function(){
+                                window.location.href = 'fishOdds_list.html';
+                            });
+                        } else {
+                            toastr.success(data.msg);
+                        }
+                    }
+                });
+            }
+        });
+
+
+</script>
+</body>
+</html>

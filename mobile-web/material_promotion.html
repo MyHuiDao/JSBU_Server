@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>物料推广</title>
+    <link href="css/main.css" rel="stylesheet"/>
+    <link href="js/toastr.css" rel="stylesheet"/>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/toastr.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/Ds_Auto.js"></script>
+    <script>
+        initHead();
+        DApp.init(1080,null,"width");
+    </script>
+</head>
+<body>
+    <div class="material-promotion">
+        <div class="login">
+            <img src="img/jinshayugang.png"/>
+        </div>
+        <div class="my-qrCode-style">
+            <span>我的二维码</span>
+        </div>
+        <div class="qrCode-show">
+            <img id="getQrCodeShow" src="img/download_qrCode.png"/>
+        </div>
+        <div class="material-img-style">
+            <span>物料图片下载</span>
+        </div>
+        <div class="meterial-download">
+            <div class="meterial-download-img">
+                <div class="wl-sum">
+                    <div class="wl">
+                        <img src="img/materials/1.jpg"/>
+                        <button onclick="download('1.jpg')">下载</button>
+                    </div>
+                    <div class="wl">
+                        <img src="img/materials/2.jpg"/>
+                        <button onclick="download('2.jpg')">下载</button>
+                    </div>
+                    <div class="wl">
+                        <img src="img/materials/3.jpg"/>
+                        <button onclick="download('3.jpg')">下载</button>
+                    </div>
+                    <div class="wl">
+                        <img src="img/materials/4.jpg"/>
+                        <button onclick="download('4.jpg')">下载</button>
+                    </div>
+                    <div class="wl">
+                        <img src="img/materials/5.jpg"/>
+                        <button onclick="download('5.jpg')">下载</button>
+                    </div>
+
+                    <div class="wl">
+                        <img src="img/materials/6.jpg"/>
+                        <button onclick="download('6.jpg')">下载</button>
+                    </div>
+
+                    <div class="wl">
+                        <img src="img/materials/7.jpg"/>
+                        <button onclick="download('7.jpg')">下载</button>
+                    </div>
+
+                    <div class="wl">
+                        <img src="img/materials/8.jpg"/>
+                        <button onclick="download('8.jpg')">下载</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="prompt">
+            <span>手指滑动图片可切换不同物料</span>
+        </div>
+        <div class="meterial-download-btn">
+            <button onclick="window.location.href='main.html'">返回</button>
+        </div>
+    </div>
+<script>
+    $(function(){
+        $('#getQrCodeShow').attr('src','/game-admin/sysUser/getQrCode');
+    });
+    function download(name){
+        window.location.href='download_img.html?name='+name;
+    }
+</script>
+</body>
+</html>

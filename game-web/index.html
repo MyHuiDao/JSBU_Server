@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta charset="utf-8"/>
+    <title>金沙渔港后台管理系统</title>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache" content="no-cache">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <link rel="stylesheet" href="js/toastr.css"/>
+    <script type="text/javascript" src="assets/js/jquery.min.js"></script>
+    <script src="js/toastr.js"></script>
+    <script src="js/main.js"></script>
+    <script type="text/javascript">
+        initHead();
+    </script>
+    <script src="assets/js/ace-elements.min.js"></script>
+    <script src="assets/js/ace.min.js"></script>
+    <style>
+        ul li{
+            list-style: none;
+        }
+    </style>
+</head>
+<body class="no-skin" onresize="setMainContentHeight()">
+<div id="navbar" class="navbar navbar-default">
+    <div class="navbar-container" id="navbar-container">
+        <button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler" data-target="#sidebar">
+            <span class="sr-only">Toggle sidebar</span>
+
+            <span class="icon-bar"></span>
+
+            <span class="icon-bar"></span>
+
+            <span class="icon-bar"></span>
+        </button>
+        <div class="navbar-header pull-left">
+            <a href="javascript:;" class="navbar-brand">
+                <small><i
+                        class="fa fa-leaf"></i> 金沙渔港后台管理系统
+                </small>
+            </a>
+        </div>
+
+        <div class="navbar-buttons navbar-header pull-right"
+             role="navigation">
+            <ul class="nav ace-nav">
+                <li class="light-blue"><a data-toggle="dropdown" href="javascript:;"
+                                          class="dropdown-toggle"> <span class="user-info"> <small>欢迎</small>
+								<span id="nickName">管理员</span>
+						</span> <i class="ace-icon fa fa-caret-down"></i>
+                </a>
+
+                    <ul
+                            class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+                        <li><a href="javascript:;" id="logout"> <i
+                                class="ace-icon fa fa-power-off"></i> 登出
+                        </a></li>
+                    </ul>
+                </li>
+
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+<div class="main-container" id="main-container">
+    <div id="sidebar" class="sidebar responsive ace-save-state" data-sidebar="true" data-sidebar-scroll="true" data-sidebar-hover="true">
+        <script type="text/javascript">
+            try{ace.settings.loadState('sidebar')}catch(e){}
+        </script>
+
+        <ul class="nav nav-list">
+            <li class="open"><a href="javascript:void(0)" class="dropdown-toggle">
+                <i class="menu-icon fa fa-list"></i> <span class="menu-text">
+							个人中心 </span> <b class="arrow fa fa-angle-down"></b>
+            </a> <b class="arrow"></b>
+                <ul class="submenu" id="personalCenter">
+                    <li class="modify_password"><a href="javascript:addIframe('menu_modify_password')"> <i
+                            class="ace-icon fa fa-cog"></i>　
+                        修改密码
+                    </a></li>
+
+                    <li class="modify_password"><a href="javascript:addIframe('menu_personalCenter')">
+                        <i class="ace-icon fa fa-user"></i>　
+                        个人资料
+                    </a></li>
+
+                    <li id="balanceLi"><a id="balance" href="javascript:addIframe('menu_extract_balance')"> <i
+                            class="ace-icon fa fa-shopping-cart bigger-110"></i>　<!--账户总余额:<span id="balanceText"></span>-->
+                        <span style="font-size: 12px;">余额提现</span>
+                    </a></li>
+                </ul>
+            </li>
+            <li class="game_management"><a href="javascript:void(0)" class="dropdown-toggle">
+                <i class="menu-icon fa fa-list"></i> <span class="menu-text">
+							游戏管理 </span> <b class="arrow fa fa-angle-down"></b>
+            </a> <b class="arrow"></b>
+                <ul class="submenu" id="gameSetting">
+                    <li class="game_settings"><a href="javascript:addIframe('menu_setting')"
+                                               id="menu_setting_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>游戏设置
+                    </a> <b class="arrow"></b></li>
+
+                    <li class="game_setting_gold_exchange"><a href="javascript:addIframe('menu_exchange')"
+                                               id="menu_exchange_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>人民币兑换金币
+                    </a> <b class="arrow"></b></li>
+
+                    <!--<li class="game_setting_fishing_rule"><a href="javascript:addIframe('menu_fishingRole')"
+                                               id="menu_FishingRole_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>捕鱼规则设置
+                    </a> <b class="arrow"></b></li>-->
+
+                    <li class="game_setting_game_fish"><a href="javascript:addIframe('menu_GameFirh')"
+                                               id="menu_GameFirh_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>捕鱼种类设置
+                    </a> <b class="arrow"></b></li>
+
+                    <li class="game_fish_type_setting"><a href="javascript:addIframe('menu_FishTypeSetting')"
+                                                          id="menu_FishTypeSetting_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>鱼类型设置
+                    </a> <b class="arrow"></b></li>
+
+                    <li class="game_fire_get"><a href="javascript:addIframe('menu_GameFire')"
+                                                          id="menu_GameFire_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>游戏炮权重
+                    </a> <b class="arrow"></b></li>
+
+                    <!--<li class="system_role fish_odds_get"><a href="javascript:addIframe('menu_fishOdds')"
+                                                                      id="menu_FishOdds_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>捕鱼赔率设置
+                    </a> <b class="arrow"></b></li>-->
+
+                    <li class="system_role share_bonus_get"><a href="javascript:addIframe('menu_shareBouns')"
+                                                             id="menu_ShareBouns_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>分享奖励配置
+                    </a> <b class="arrow"></b></li>
+
+
+                    <li class="system_role game_area_get"><a href="javascript:addIframe('menu_gameArea')"
+                                                              id="menu_GameArea_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>游戏区类别
+                    </a> <b class="arrow"></b></li>
+
+                    <li class="system_role game_notice_get"><a href="javascript:addIframe('menu_gameNotice')"
+                                                             id="menu_GameNotice_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>游戏公告
+                    </a> <b class="arrow"></b></li>
+
+                    <li class="system_role game_email_get"><a href="javascript:addIframe('menu_gameEmail')"
+                                                               id="menu_gameEmail_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>邮件管理
+                    </a> <b class="arrow"></b></li>
+
+                    <li class="system_role game_email_get"><a href="javascript:window.open('chat.html')"
+                                                              > <i
+                            class="menu-icon fa fa-caret-right"></i>客服
+                    </a> <b class="arrow"></b></li>
+
+                </ul>
+            </li>
+        </ul>
+
+        <ul class="nav nav-list">
+            <li class="game_user"><a href="javascript:void(0)" class="dropdown-toggle">
+                <i class="menu-icon fa fa-list"></i> <span class="menu-text">
+							捕鱼控制 </span> <b class="arrow fa fa-angle-down"></b>
+            </a> <b class="arrow"></b>
+                <ul class="submenu" id="fishingControl">
+                    <li class="fish_controller_property"><a href="javascript:addIframe('menu_fishing_control')"
+                                                  id="menu_fishing_control_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>捕鱼数值控制
+                    </a> <b class="arrow"></b></li>
+                </ul>
+            </li>
+        </ul>
+
+
+        <ul class="nav nav-list">
+            <li class="game_user"><a href="javascript:void(0)" class="dropdown-toggle">
+                <i class="menu-icon fa fa-list"></i> <span class="menu-text">
+							鱼类老虎机 </span> <b class="arrow fa fa-angle-down"></b>
+            </a> <b class="arrow"></b>
+                <ul class="submenu" id="fishSlotMachine">
+                    <li class="fish_magni_fication_deploy"><a href="javascript:addIframe('menu_fish_multiple')"
+                                                            id="fish_multiple_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>鱼类倍数
+                    </a> <b class="arrow"></b></li>
+                    <li class="fish_slotmachine_deploy"><a href="javascript:addIframe('menu_fish_slotMachine')"
+                                                            id="fish_slotMachine_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>老虎机游戏配置列表
+                    </a> <b class="arrow"></b></li>
+                </ul>
+            </li>
+        </ul>
+
+        <ul class="nav nav-list">
+            <li class="proxy_management"><a href="javascript:void(0)" class="dropdown-toggle">
+                <i class="menu-icon fa fa-list"></i> <span class="menu-text">
+							代理管理 </span> <b class="arrow fa fa-angle-down"></b>
+            </a> <b class="arrow"></b>
+                <ul class="submenu" id="proxySetting">
+                    <li class="agen_level_get"><a href="javascript:addIframe('menu_agenLevel')"
+                                                              id="menu_AgenLevel_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>代理级别设置
+                    </a> <b class="arrow"></b></li>
+
+                    <li class="agent_bouns_log_get"><a href="javascript:addIframe('agentBonusLog')"
+                                                              id="menu_agentBonusLog_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>代理分红记录
+                    </a> <b class="arrow"></b></li>
+
+                    <li class="agent_my_promotion"><a href="javascript:addIframe('menu_myPromotion')"
+                                                                   id="menu_myPromotion_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>我的推广统计
+                    </a> <b class="arrow"></b></li>
+
+                    <li class="agent_my_subagent"><a href="javascript:addIframe('menu_mySubagent')"
+                                               id="menu_mySubagent_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>我的代理推广统计
+                    </a> <b class="arrow"></b></li>
+
+                    <li class="agent_material_download"><a href="javascript:addIframe('menu_spreadMaterials')"
+                                               id="menu_spreadMaterials_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>推广物料
+                    </a> <b class="arrow"></b></li>
+
+                    <li class="user_agent_upgrade"><a href="javascript:addIframe('menu_agentUpgrade')"
+                                               id="menu_agentUpgrade_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>申请升级
+                    </a> <b class="arrow"></b></li>
+
+                </ul>
+            </li>
+        </ul>
+
+        <ul class="nav nav-list">
+            <li class="mall_settings"><a href="javascript:void(0)" class="dropdown-toggle">
+                <i class="menu-icon fa fa-list"></i> <span class="menu-text">
+							商城设置 </span> <b class="arrow fa fa-angle-down"></b>
+            </a> <b class="arrow"></b>
+
+                <ul class="submenu" id="goodsSetting">
+                    <li class="shop_class_view"><a href="javascript:addIframe('menu_shop_class_management')"
+                                               id="menu_shop_class_management_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>商品分类
+                    </a> <b class="arrow"></b></li>
+
+                    <li class="goods_view"><a href="javascript:addIframe('menu_goods_management')"
+                                               id="menu_goods_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>商品管理
+                    </a> <b class="arrow"></b></li>
+
+                    <li class="order_get"><a href="javascript:addIframe('menu_order_management')"
+                                               id="menu_order_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>订单管理
+                    </a> <b class="arrow"></b></li>
+
+                    <li class="user_pay_log"><a href="javascript:addIframe('menu_paylog_management')"
+                                               id="menu_paylog_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>充值记录
+                    </a> <b class="arrow"></b></li>
+
+                    <li class="sysUserGetCash_get"><a href="javascript:addIframe('menu_sysUserGetCash_management')"
+                                                            id="menu_sysUserGetCash_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>提现记录
+                    </a> <b class="arrow"></b></li>
+
+                </ul>
+            </li>
+        </ul>
+
+        <ul class="nav nav-list">
+            <li class="game_user"><a href="javascript:void(0)" class="dropdown-toggle">
+                <i class="menu-icon fa fa-list"></i> <span class="menu-text">
+							游戏用户 </span> <b class="arrow fa fa-angle-down"></b>
+            </a> <b class="arrow"></b>
+                <ul class="submenu" id="gemeUser">
+                    <li class="game_user_list"><a href="javascript:addIframe('menu_game_user_list')"
+                                               id="menu_game_user_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>游戏用户列表
+                    </a> <b class="arrow"></b></li>
+                </ul>
+            </li>
+        </ul>
+
+        <ul class="nav nav-list">
+            <li class="high_risk_user_disabled"><a href="javascript:void(0)" class="dropdown-toggle">
+                <i class="menu-icon fa fa-list"></i> <span class="menu-text">
+							高危用户管理 </span> <b class="arrow fa fa-angle-down"></b>
+            </a> <b class="arrow"></b>
+                <ul class="submenu" id="highRiskUser">
+                    <li class="high_risk_user_disabled"><a href="javascript:addIframe('menu_high_risk_user_disabled')"
+                                                  id="high_risk_user_disabled"> <i
+                            class="menu-icon fa fa-caret-right"></i>高危用户禁用
+                    </a> <b class="arrow"></b></li>
+                </ul>
+            </li>
+        </ul>
+
+        <ul class="nav nav-list">
+            <li class="system_statistics"><a href="javascript:void(0)" class="dropdown-toggle">
+                <i class="menu-icon fa fa-list"></i> <span class="menu-text">
+							数据统计 </span> <b class="arrow fa fa-angle-down"></b>
+            </a> <b class="arrow"></b>
+                <ul class="submenu" id="statistics">
+
+                    <li class="system_statistics_userLogin"><a href="javascript:addIframe('menu_user_login_statistics')"
+                                                              id="menu_user_login_data_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>用户登录数据统计
+                    </a> <b class="arrow"></b></li>
+
+                    <li class="system_statistics_user_online"><a href="javascript:addIframe('menu_user_online_statistics')"
+                                                              id="menu_user_online_data_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>用户在线统计
+                    </a> <b class="arrow"></b></li>
+
+                    <li class="system_statistics_user_added"><a href="javascript:addIframe('menu_new_user_statistics')"
+                                                              id="menu_new_user_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>新增用户统计
+                    </a> <b class="arrow"></b></li>
+
+                </ul>
+            </li>
+        </ul>
+
+        <ul class="nav nav-list">
+            <li class="system_settings"><a href="javascript:void(0)" class="dropdown-toggle">
+                <i class="menu-icon fa fa-list"></i> <span class="menu-text">
+							系统设置 </span> <b class="arrow fa fa-angle-down"></b>
+            </a> <b class="arrow"></b>
+                <ul class="submenu" id="treeDemo">
+
+                    <li class="system_user"><a href="javascript:addIframe('menu_user_management')"
+                                               id="menu_user_management_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>用户管理
+                    </a> <b class="arrow"></b></li>
+                    <li class="system_role"><a href="javascript:addIframe('menu_role_management')"
+                                               id="menu_role_management_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>角色管理
+                    </a> <b class="arrow"></b></li>
+
+                    <li class="system_authority"><a href="javascript:addIframe('menu_authority_management')"
+                                                    id="menu_authority_management_li"> <i
+                            class="menu-icon fa fa-caret-right"></i>权限管理
+                    </a> <b class="arrow"></b></li>
+                </ul>
+            </li>
+        </ul>
+
+        <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+            <i class="ace-icon fa fa-angle-double-left"
+               data-icon1="ace-icon fa fa-angle-double-left"
+               data-icon2="ace-icon fa fa-angle-double-right"></i>
+        </div>
+
+    </div>
+    <div class="main-content">
+        <div class="breadcrumbs" id="breadcrumbs">
+            <div class="content-tabs">
+                <button class="roll-nav roll-left J_tabLeft" id="leftPage">
+                    <i class="fa fa-backward"></i>
+                </button>
+                <nav class="page-tabs J_menuTabs" id="taps">
+                    <div class="page-tabs-content" id="tapsDiv"></div>
+                </nav>
+                <button class="roll-nav roll-right J_tabRight" id="rightPage">
+                    <i class="fa fa-forward"></i>
+                </button>
+            </div>
+
+        </div>
+        <div class="main-content" id="main-content"></div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+
+    var menuUrls = [];
+    menuUrls['menu_user_management'] = {url: "pages/system/user_list.html", title: "用户管理"};
+    menuUrls['menu_authority_management'] = {url: "pages/system/permission_list.html", title: "权限管理"};
+    menuUrls['menu_role_management'] = {url: "pages/system/role_list.html", title: "角色管理"};
+    menuUrls['menu_user_login_statistics'] = {url: "pages/data/user_online_data.html", title: "用户数据统计"};
+    menuUrls['menu_user_online_statistics'] = {url: "pages/data/user_login_data.html", title: "用户在线统计"};
+    menuUrls['menu_new_user_statistics'] = {url: "pages/data/user_add_data.html", title: "新增用户统计"};
+    menuUrls['menu_setting'] = {url: "pages/game/setting_list.html", title: "游戏管理"};
+    menuUrls['menu_exchange'] = {url: "pages/game/exchange_list.html", title: "人民币兑换金币"};
+    menuUrls['menu_fishingRole'] = {url: "pages/game/fishingRole_list.html", title: "捕鱼规则设置"};
+    menuUrls['menu_GameFirh'] = {url: "pages/game/gameFirh_list.html", title: "捕鱼种类设置"};
+    menuUrls['menu_FishTypeSetting'] = {url: "pages/game/fishTypeSetting_list.html", title: "鱼类型设置"};
+    menuUrls['menu_GameFire'] = {url: "pages/game/gameFire_list.html", title: "游戏炮权重"};
+
+
+    /*menuUrls['menu_fishOdds'] = {url: "pages/game/fishOdds_list.html", title: "捕鱼赔率设置"};*/
+    menuUrls['menu_shareBouns'] = {url: "pages/game/shareBouns_list.html", title: "分享奖励配置"};
+    menuUrls['menu_agenLevel'] = {url: "pages/game/agenLevel_list.html", title: "代理级别设置"};
+    menuUrls['agentBonusLog'] = {url: "pages/game/agentBonusLog_list.html", title: "代理分红记录"};
+    menuUrls['menu_myPromotion'] = {url: "pages/game/myPromotion_list.html", title: "我的推广统计"};
+    menuUrls['menu_mySubagent'] = {url: "pages/game/mySubagent_list.html", title: "我的代理推广统计"};
+    menuUrls['menu_spreadMaterials'] = {url: "pages/game/spreadMaterials_list.html", title: "推广物料"};
+    menuUrls['menu_agentUpgrade'] = {url: "pages/game/agentUpgrade_list.html", title: "申请升级"};
+
+    menuUrls['menu_gameArea'] = {url: "pages/game/gameArea_list.html", title: "游戏区类别"};
+    menuUrls['menu_gameNotice'] = {url: "pages/game/gameNotice_list.html", title: "游戏公告"};
+
+    menuUrls['menu_gameEmail'] = {url: "pages/game/gameEmail_list.html", title: "邮件管理"};
+
+    menuUrls["menu_modify_password"] = {url: "pages/modify_password.html", title: "修改密码"};
+    menuUrls['menu_personalCenter'] = {url: "pages/modify_info.html", title: "个人中心"};
+    menuUrls["menu_extract_balance"] = {url: "pages/extract_balance.html", title: "提现"};
+    menuUrls['menu_goods_management'] = {url: "pages/shop/goods_list.html", title: "商品管理"};
+    menuUrls['menu_order_management'] = {url: "pages/shop/order_list.html", title: "订单管理"};
+    menuUrls['menu_paylog_management'] = {url: "pages/shop/paylog_list.html", title: "用户充值记录"};
+    menuUrls['menu_sysUserGetCash_management'] = {url: "pages/shop/sysUserGetCash_list.html", title: "用户提现记录"};
+    menuUrls['menu_shop_class_management'] = {url: "pages/shop/shop_class_list.html", title: "商品分类"};
+    menuUrls['menu_game_user_list'] = {url: "pages/game/gameUser/game_user_list.html", title: "游戏用户列表"};
+    menuUrls['menu_fishing_control'] = {url: "pages/game/fishing_control_list.html", title: "捕鱼数值控制"};
+    menuUrls['menu_fish_multiple'] = {url: "pages/game/fish_multiple.html", title: "鱼类倍数配置"};
+    menuUrls['menu_fish_slotMachine'] = {url: "pages/game/fish_slotMachine_deploy_list.html", title: "老虎机游戏配置"};
+
+
+
+    menuUrls['menu_high_risk_user_disabled'] = {url: "pages/game/highRiskUserDisabled.html", title: "高危用户禁用"};
+    //设置内容显示区高度
+    function setMainContentHeight() {
+        var clientHeight = document.documentElement.clientHeight;
+        var tapsHieghtStr = $("#taps").css("height");
+        var tapsHieght = Number(tapsHieghtStr.substring(0, tapsHieghtStr.length - 2));
+        var navbarHeightStr = $("#navbar").css("height");
+        var navbarHeight = Number(navbarHeightStr.substring(0, navbarHeightStr.length - 2));
+        $("#main-content").css("width", "100%");
+        $("#main-content").css("height", (clientHeight - tapsHieght - navbarHeight - 3) + "px");
+    }
+    var tapsPage = 1;//标签滑动页面
+    $(function () {
+        var userName = getCookie("name");
+        if (userName) {
+            $("#nickName").html(userName);
+        } else {
+            /*window.location.href = "login.html";*/
+            return;
+        }
+        var currentId = window.location.hash;
+        if (currentId) {
+            currentId = currentId.substring(1, currentId.length);
+            if (menuUrls[currentId] == null) {
+                //  addIframe("menu_user_list");
+            } else {
+                addIframe(currentId);
+            }
+        } else {
+            //  addIframe("menu_user_list");
+        }
+        setMainContentHeight();
+        $("#rightPage").on("click", function () {
+            var sumStr = $("#tapsDiv").css("width");
+            var sumLength = Number(sumStr.substring(0, sumStr.length - 2));
+
+            var pmStr = $("#breadcrumbs").css("width");
+            var pmLength = Number(pmStr.substring(0, pmStr.length - 2));
+
+            var leftPageStr = $("#leftPage").css("width");
+            var leftPageLength = Number(leftPageStr.substring(0, leftPageStr.length - 2));
+
+            var rightPageStr = $("#rightPage").css("width");
+            var rightPageLength = Number(rightPageStr.substring(0, rightPageStr.length - 2));
+
+            var pageWidth = (pmLength - rightPageLength - leftPageLength) * tapsPage;
+            if (sumLength - pageWidth <= 0) {
+                return;
+            }
+            $("#tapsDiv").animate({right: pageWidth + 'px'});
+            tapsPage++;
+        });
+
+        $("#leftPage").on("click", function () {
+            if (tapsPage <= 1) {
+                tapsPage = 1;
+                $("#tapsDiv").animate({right: '0px'});
+                return;
+            }
+            tapsPage--;
+            var sumStr = $("#tapsDiv").css("width");
+            var sumLength = Number(sumStr.substring(0, sumStr.length - 2));
+
+            var pmStr = $("#breadcrumbs").css("width");
+            var pmLength = Number(pmStr.substring(0, pmStr.length - 2));
+
+            var leftPageStr = $("#leftPage").css("width");
+            var leftPageLength = Number(leftPageStr.substring(0, leftPageStr.length - 2));
+
+            var rightPageStr = $("#rightPage").css("width");
+            var rightPageLength = Number(rightPageStr.substring(0, rightPageStr.length - 2));
+
+            var pageWidth = (pmLength - rightPageLength - leftPageLength) * (tapsPage - 1);
+            $("#tapsDiv").animate({right: pageWidth + 'px'});
+        });
+
+        $("#logout").on("click", function () {
+            $.ajax({
+                type: "get",
+                url: 'sysUser/logout',
+                dataType: 'json',
+                success: function (data) {
+                    delCookie("type");
+                    delCookie("userId");
+                    delCookie("permission");
+                    delCookie("name");
+                    delCookie("codes");
+                    toastr.success("退出成功！");
+                    toastr.call(function(){
+                        window.location.href = "login.html";
+                        }
+                    );
+                }
+            })
+        });
+        var type=getCookie("type");
+        if(type=="admin") {
+            $("#balanceLi").hide();
+            return;
+        }else{
+            $.ajax({
+                url:"sysUser/findUserBalance",
+                type:"get",
+                success:function(msg){
+                    $("#balanceText").text(" " + msg.data);
+                }
+            });
+        }
+    });
+
+    function addIframe(id) {
+        var event = window.event;
+        var obj = menuUrls[id];
+        if (obj == null) {
+            event.stopPropagation();    //  阻止事件冒泡
+            return;
+        }
+        if (document.getElementById(id) === null) {
+            $(".J_iframe").css("display", "none");
+            var html = "";
+            html += '<iframe height="100%" width="100%" class="J_iframe" id="' + id + '" frameborder="0" src="' + obj.url + '">'
+            html += '</iframe>';
+            $("#main-content").append(html);
+            $(".J_menuTab").removeClass("selectedTab");
+            var titleHtml = "";
+            titleHtml += '<a href="javascript:;" onclick="addIframe(\'' + id + '\')" id="tab_' + id + '" class="J_menuTab selectedTab"';
+            titleHtml += '	data-id="form_validate.html">' + obj.title + '<i';
+            titleHtml += '	class="fa fa-times-circle" onclick="delIframe(this,\'' + id + '\')"></i></a>	';
+            $("#tapsDiv").append(titleHtml);
+        } else {
+            $(".J_iframe").css("display", "none");
+            $(".J_menuTab").removeClass("selectedTab");
+            $("#" + id).css("display", "block");
+            $("#tab_" + id).addClass("selectedTab");
+        }
+        $(".active").removeClass("active");
+        $("#" + id + "_li").parent().parent().parent().addClass("active").addClass("hsub").addClass("open");
+        $("#" + id + "_li").parent().parent().parent().parent().parent().addClass("active").addClass("hsub").addClass("open");
+        $("#" + id + "_li").parent().addClass("active");
+
+        var url = window.location.href;
+        if (url.indexOf("#") != -1) {
+            url = url.substring(0, url.indexOf("#"));
+        }
+        window.location.hash =  "#" + id;
+        document.body.scrollTop = document.documentElement.scrollTop = 0;
+    }
+
+    function delIframe(obj, id) {
+        var nextShowObj = $("#" + id).next();
+        var nextId = $(nextShowObj).attr("id");
+        if (nextId === undefined) {
+            nextShowObj = $("#" + id).prev();
+            nextId = $(nextShowObj).attr("id");
+        }
+        if (nextId !== undefined) {
+            addIframe(nextId);
+        }
+        document.getElementsByTagName('body')[0].scrollTop = 0;
+        $("#" + id).remove();
+        $(obj).parent().remove();
+        var event = window.event;
+        event.stopPropagation();    //  阻止事件冒泡
+    }
+
+</script>
+</html>

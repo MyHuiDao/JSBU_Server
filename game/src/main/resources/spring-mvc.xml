@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+  http://www.springframework.org/schema/context
+  http://www.springframework.org/schema/context/spring-context-4.1.xsd
+  http://www.springframework.org/schema/mvc
+ http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd
+  http://code.alibabatech.com/schema/dubbo
+http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+   <!-- 提供方应用信息，用于计算依赖关系 -->  
+    <dubbo:application name="game-consumption1" />  
+  
+    <!-- 使用zookeeper注册中心暴露服务地址 -->  
+    <dubbo:registry address="zookeeper://127.0.0.1:2181" />  
+  
+    <!-- 用dubbo协议在20880端口暴露服务 -->  
+    <dubbo:protocol name="dubbo" port="20881" />  
+  	
+  	<!-- 使用注解方式暴露接口 -->     
+  	<dubbo:annotation package="com.huidao" />
+  		<!-- 关闭所有服务启动时的检查 -->
+	<dubbo:consumer check="false" />
+ 
+	 <context:component-scan base-package="com.huidao.game.web.**.controller" />
+	 <mvc:resources mapping="/**" location="/" />
+	 	<!-- 拦截器 -->
+	<mvc:interceptors>
+		<bean class="com.huidao.game.web.interceptor.ControllerInterceptor">
+		</bean>
+	</mvc:interceptors>
+ 	<mvc:annotation-driven>
+		<mvc:return-value-handlers>
+			<bean class="com.huidao.common.spring.ResponseJson"></bean>
+		</mvc:return-value-handlers>
+
+		 <mvc:message-converters register-defaults="true">  
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">  
+                <constructor-arg value="UTF-8" />  
+            </bean>  
+            <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">    
+                <property name="supportedMediaTypes" value="text/html;charset=UTF-8"/>    
+               <!--  <property name="features">    
+                    <array>    
+                        <value>WriteMapNullValue</value>    
+                        <value>WriteNullStringAsEmpty</value>    
+                    </array>    
+                </property>    --> 
+           </bean>  
+        </mvc:message-converters>  
+	</mvc:annotation-driven>
+</beans>
+

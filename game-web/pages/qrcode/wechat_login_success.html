@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <title>登录</title>
+    <link rel="stylesheet" type="text/css" href="login.css" />
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+    <div class="div_a">
+        <div class="line_height">
+            <img src="icon3.png" class="login_tb"/>
+        </div>
+        <div style="margin-top: 40px;height: 140px;">
+        	<input type="hidden" value="" id="REDIRECT_URI"/>
+        	<input type="hidden" value="" id="APPID"/>
+        	<div id="returnMoney" style="display:none;">
+	          	 <input type="text" placeholder="请输入微信号后期返现金额提现" id="weixin" class="input"/>
+	          	 <p style="color:red;">此输入的微信号为后期返现金额提现，请谨慎输入</p>
+	        </div>
+	        
+            <input type="button" class="button-style" id="login_auth" value="确定"/>
+        </div>
+        <div>
+            <img src="background_img.png" class="login_tb2" />
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+	var code = getRequest("code");
+	var id = getRequest("id");
+	var isFlag = false;
+	
+	$(function(){
+		$.ajax({
+	        url: ctxPath + '/qrCodeSysUser/get?id=' + id,
+	        type: 'get',
+	        async:false,
+	        success: function (data) {
+	            if (data.state) {
+	            	if(data.data.sysUserId == null){
+	            		$("#returnMoney").removeAttr("style");
+		               	isFlag = true;
+	            	}
+	            } else {
+	                alert(data.msg);
+	            }
+	        }
+	    })
+	    
+	    if(!isFlag){
+			$("#login_auth").val("正在跳转下载...");
+			$.ajax({
+		        url: ctxPath + '/weChat/weChatLogin?code='+code+'&id='+id+'&weixin='+$("#weixin").val(),
+		        type: 'get',
+		        success: function (data) {
+		            if (data.state) {
+		            	window.location.href = "../../download3.html"
+		            } else {
+		                alert(data.msg);
+		            }
+		        }
+		    });
+		}
+	})
+	
+	
+	
+	$("#login_auth").on("click",function(){
+		if(isFlag){
+			if($("#weixin").val() ==""){
+				alert("请输入微信号");
+				return;
+			}
+		}
+		
+		$.ajax({
+	        url: ctxPath + '/weChat/weChatLogin?code='+code+'&id='+id+'&weixin='+$("#weixin").val(),
+	        type: 'get',
+	        success: function (data) {
+	            if (data.state) {
+	            	window.location.href = "../../download3.html"
+	            } else {
+	                alert(data.msg);
+	            }
+	        }
+	    });
+		
+	});
+	
+</script>
+</html>

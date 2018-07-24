@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>推广物料</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <link rel="stylesheet" href="../../js/toastr.css"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/toastr.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div>
+
+                <div class="row search_tj_bar">
+                    <div class="col-xs-12">
+
+                        <div class="page-header">
+                            <h1>
+                                <small>
+                                    我的二维码
+                                </small>
+                            </h1>
+                        </div>
+
+                        <div class="col-xs-2">
+                            <img src="/game-admin/sysUser/getQrCode" width="200"/>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12">
+                        <div class="page-header">
+                            <h1>
+                                <small>
+                                    物料下载
+                                </small>
+                            </h1>
+                        </div>
+
+
+                        <div class="col-xs-2" align="center">
+                            <div>
+                                <img src="../../img/show/1.jpg" width="200"/>
+                            </div>
+                            <div style="height: 10px;"></div>
+                            <button id="download1" class="btn btn-primary btn-sm" onclick="download('1.jpg')">下载</button>
+                        </div>
+
+                        <div class="col-xs-2" align="center">
+                            <div>
+                                <img src="../../img/show/2.jpg" width="200"/>
+                            </div>
+                            <div style="height: 10px;"></div>
+                            <button id="download2" class="btn btn-primary btn-sm" onclick="download('2.jpg')">下载</button>
+                        </div>
+
+                        <div class="col-xs-2" align="center">
+                            <div>
+                                <img src="../../img/show/3.jpg" width="200"/>
+                            </div>
+                            <div style="height: 10px;"></div>
+                            <button id="download3" class="btn btn-primary btn-sm" onclick="download('3.jpg')">下载</button>
+                        </div>
+
+                        <div class="col-xs-2" align="center">
+                            <div>
+                                <img src="../../img/show/4.jpg" width="200"/>
+                            </div>
+                            <div style="height: 10px;"></div>
+                            <button id="download4" class="btn btn-primary btn-sm" onclick="download('4.jpg')">下载</button>
+                        </div>
+
+                        <div class="col-xs-2" align="center">
+                            <div>
+                                <img src="../../img/show/5.jpg" width="200"/>
+                            </div>
+                            <div style="height: 10px;"></div>
+                            <button id="download5" class="btn btn-primary btn-sm" onclick="download('5.jpg')">下载</button>
+                        </div>
+                        <div class="col-xs-2" align="center">
+                            <div>
+                                <img src="../../img/show/6.jpg" width="200"/>
+                            </div>
+                            <div style="height: 10px;"></div>
+                            <button id="download6" class="btn btn-primary btn-sm" onclick="download('6.jpg')">下载</button>
+                        </div>
+                        <div class="col-xs-2" align="center" style="margin-top: 15px;">
+                            <div>
+                                <img src="../../img/show/7.jpg" width="200"/>
+                            </div>
+                            <div style="height: 10px;"></div>
+                            <button id="download7" class="btn btn-primary btn-sm" onclick="download('7.jpg')">下载</button>
+                        </div>
+                        <div class="col-xs-2" align="center"  style="margin-top: 15px;">
+                            <div>
+                                <img src="../../img/show/8.jpg" width="200"/>
+                            </div>
+                            <div style="height: 10px;"></div>
+                            <button id="download8" class="btn btn-primary btn-sm" onclick="download('8.jpg')">下载</button>
+                        </div>
+                    </div>
+                </div>
+    </div>
+</div>
+<script>
+
+    function download(name){
+        window.open(ctxPath+'sysUser/getQrCodeShow?name='+name);
+    }
+
+
+
+</script>
+</body>
+</html>

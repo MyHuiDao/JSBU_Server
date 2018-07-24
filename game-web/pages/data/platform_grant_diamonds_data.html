@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>玩家系统留存率统计</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/My97DatePicker/WdatePicker.js"></script>
+    <!-- ECharts单文件引入 -->
+    <script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div>
+        <form id="queryForm">
+            <div class="widget-box">
+                <div class="widget-header widget-header-flat search_tj_bar_tit">
+                    <h5 class="widget-title">查询条件</h5>
+                </div>
+                <div class="row search_tj_bar">
+                    <div class="col-xs-12">
+                        <div class="col-xs-3">
+                            <label class="col-sm-4">开始日期：</label>
+
+                            <div class="input-group col-sm-8">
+                                <input class="form-control form-control1 search-query Wdate" id="startDate"
+                                       onFocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'endDate\',{d:-1}) || \'%y-%M-%d\' }'})"
+                                       name="params['startDate']" readonly/>
+                            </div>
+                        </div>
+                        <div class="col-xs-3">
+                            <label class="col-sm-4">结束日期：</label>
+
+                            <div class="input-group col-sm-8">
+                                <input class="form-control form-control1 search-query Wdate" id="endDate"
+                                       onFocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'startDate\',{d:+1})}',maxDate:'%y-%M-%d'})"
+                                       name="params['endDate']" readonly/>
+                            </div>
+                        </div>
+                        <div class="col-xs-3">
+                            <label class="col-sm-4">日期统计：</label>
+
+                            <div class="input-group col-sm-8">
+                                <select id="typeDate" name="params['typeDate']"
+                                        class="form-control form-control1 search-query">
+                                    <option value="1">日</option>
+                                    <option value="2">周</option>
+                                    <option value="3">月</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="input-group col-sm-8">
+                                <button id="seachBtn" type="submit" class="btn btn-primary  btn-sm"
+                                        style="margin-top:-3px;">
+                                    查找
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div id="main" style="height:700px"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    var data_url = ctxPath + '/dataDiamond/platformGrantDiamondNum';
+    //'/user/page';
+    $(function () {
+        // 路径配置
+        require.config({
+            paths: {
+                echarts: 'http://echarts.baidu.com/build/dist'
+            }
+        });
+        require(
+                [
+                    'echarts',
+                    'echarts/chart/line' // 使用柱状图就加载bar模块，按需加载
+                ],
+                function (ec) {
+                	
+                	var formValidate = $('#queryForm').validate(
+                     {
+                         rules: {
+                             "params['startDate']": {
+                                 required: true
+                             },
+                             "params['endDate']": {
+                                 required: true
+                             }
+                         },
+                         submitHandler: function (form) {
+                             userLoginDate();
+                         }
+                     });
+                    function initChart(xAxis, agentCount,groupCount) {
+                        // 基于准备好的dom，初始化echarts图表
+                        var myChart = ec.init(document.getElementById('main'));
+                        myChart.showLoading({
+                            text: '正在努力的读取数据中...'    //loading话术
+                        });
+                        var option = {
+                            title: {
+                                text: '发放钻石销量'
+                            },
+                            tooltip: {
+                                trigger: 'axis'
+                            },
+                            legend: {
+                                data: ['代理商','群主']
+                            },
+                            toolbox: {
+                                show: false
+                            },
+                            calculable: true,
+                            xAxis: [
+                                {
+                                    type: 'category',
+                                    
+                                    data: xAxis
+                                }
+                            ],
+                            yAxis: [
+                                {
+                                    type: 'value',
+                                    axisLabel: {
+                                        formatter: '{value}'
+                                    }
+                                }
+                            ],
+                            series: [
+                                {
+                                    name: '代理商',
+                                    type: 'line',
+                                    data: agentCount,
+                                    markPoint: {
+                                        data: [
+                                            {type: 'max', name: '最大值'},
+                                            {type: 'min', name: '最小值'}
+                                        ]
+                                    }
+                                    /* itemStyle: {normal: {
+                            			label : {show:true,position:'right',formatter:'{c} %'}
+                            		}}, */
+                                },{
+                                    name: '群主',
+                                    type: 'line',
+                                    data: groupCount,
+                                    markPoint: {
+                                        data: [
+                                            {type: 'max', name: '最大值'},
+                                            {type: 'min', name: '最小值'}
+                                        ]
+                                    }
+                                    /* itemStyle: {normal: {
+                            			label : {show:true,position:'right',formatter:'{c} %'}
+                            		}}, */
+                                }
+                            ]
+                        };
+                        myChart.setTheme('macarons');
+                        myChart.hideLoading();
+                        // 为echarts对象加载数据
+                        myChart.setOption(option);
+                    }
+
+                    function userLoginDate() {
+                        var xAxis = [];
+                        var agentCount = [];
+                        var groupCount = [];
+                        var startDate = $("#startDate").val();
+                        var endDate = $("#endDate").val();
+                        var val = $("#typeDate").val();
+                        startDate = new Date(startDate);
+                        endDate = new Date(endDate);
+                        startDate = startDate.getFullYear() + "-" + (parseInt(startDate.getMonth()) + 1) + "-" + parseInt(startDate.getDate());
+                        endDate = endDate.getFullYear() + "-" + (parseInt(endDate.getMonth()) + 1) + "-" + parseInt(endDate.getDate());
+                        if (val == "1") {
+                            var iDays = getDays(startDate, endDate);
+                            for (var i = 0; i <= iDays; i++) {
+                                var dateTime = DateAdd('d', i, new Date(startDate));
+                                var day = parseInt(dateTime.getDate());
+                                var month = parseInt(dateTime.getMonth()) + 1;
+                                xAxis.push(dateTime.getFullYear() + "-" + (month < 10 ? "0" + month : month) + "-" + (day < 10 ? "0" + day : day));
+                            }
+                        } else if (val == "2") {
+                            var startWeek = getYearWeek(startDate);
+                            var endWeek = getYearWeek(endDate);
+                            var iWeek = endWeek - startWeek;
+                            for (var i = 0; i <= iWeek; i++) {
+                                xAxis.push(startWeek + i);
+                            }
+                        } else if (val == "3") {
+                            var iMonths = getMonths(startDate, endDate);
+                            for (var i = 0; i < iMonths; i++) {
+                                var dateTime = DateAdd('m', i, new Date(startDate));
+                                var month = parseInt(dateTime.getMonth()) + 1;
+                                xAxis.push(dateTime.getFullYear() + "-" + (month < 10 ? "0" + month : month));
+                            }
+                        }
+                        $.ajax({
+                            url: data_url,
+                            data: $("#queryForm").serialize(),
+                            dataType: "json",
+                            type: "post",
+                            async: false,
+                            success: function (data) {
+                                execAjax(data);
+                                if (data.state) {
+                                    var obj = data.data;
+                                    for (var i = 0; i < xAxis.length; i++) {
+                                        var agentflag = false;
+                                        var groupflag = false;
+                                        for (var j = 0; j < obj.length; j++) {
+                                            if (xAxis[i] == obj[j].date) {
+                                            	if(obj[j].name=="group"){
+                                        			groupCount.push(obj[j].sumData);
+                                        			groupflag = true;
+                                        		}
+                                            	if(obj[j].name=="agent"){
+                                        			agentCount.push(obj[j].sumData);
+                                        			agentflag = true;
+                                        		}
+                                            }
+                                        }
+                                        if (!agentflag) {
+                                            agentCount.push(0);
+                                        }
+                                        if (!groupflag) {
+                                        	groupCount.push(0);
+                                        }
+                                    }
+                                    initChart(xAxis, agentCount,groupCount);
+                                } else {
+                                    alert(data.msg);
+                                }
+                            }
+                        });
+                    }
+                }
+        );
+    });
+</script>
+</body>
+</html>

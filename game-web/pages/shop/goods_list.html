@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>商品列表</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <link rel="stylesheet" href="../../js/toastr.css"/>
+    <script type="text/javascript" src="../../js/toastr.js"></script>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div>
+        <form id="queryForm">
+            <div class="widget-box">
+                <div class="widget-header widget-header-flat search_tj_bar_tit">
+                    <h5 class="widget-title">查询条件</h5>
+                </div>
+                <div class="row search_tj_bar">
+                    <div class="col-xs-12">
+                        <div class="col-xs-4">
+                            <label class="col-sm-4">商品名称：</label>
+
+                            <div class="input-group col-sm-8">
+                                <input class="form-control form-control1 search-query"
+                                       name="name" id="name"/>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <label class="col-sm-4">商品分类：</label>
+
+                            <div class="input-group col-sm-8">
+                                <select class="form-control form-control1 search-query"
+                                        name="shopClassId" id="shopClassId">
+                                    <option value="">请选择</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="bs_btn">
+            <button id="addBtn" class="btn btn-primary  btn-sm goods_add">
+                新增
+            </button>
+            <button class="btn btn-primary  btn-sm" type="button" id="resetBtn">
+                重 置
+            </button>
+            <button id="seachBtn" type="button" class="btn btn-primary  btn-sm goods_get">
+                查找
+            </button>
+        </div>
+        <table class="goods_view" id="grid-table"></table>
+        <div id="grid-pager"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    var list_url = 'goods/findPageGoodsAllData';
+    var grid_selector = "#grid-table";
+    var pager_selector = "#grid-pager";
+    $(function () {
+
+        $.ajax({
+            url:"shop/getExChangeGoldList",
+            type:"get",
+            async:true,
+            success:function(msg){
+                for(var i=0;i<msg.data.length;i++){
+                    $("#shopClassId").append("<option value='"+msg.data[i].id+"'>"+msg.data[i].name+"</option>");
+                }
+            }
+        });
+
+        paging_query(grid_selector,list_url,[{
+            field: 'id',
+            title: 'id',
+            align: 'center',
+            visible:false
+        },{
+            field: 'name',
+            title: '商品名称',
+            align: 'center',
+        },{
+            field: 'img',
+            title: '图片',
+            align: 'center'
+        }, {
+            field: 'shopClassName',
+            title: '商品分类',
+            align: 'center'
+        },{
+            field: 'price',
+            title: '价格',
+            align: 'center'
+        },{
+            field: 'stock',
+            title: '库存',
+            align: 'center'
+        },{
+            field: 'desc',
+            title: '详情',
+            align: 'center'
+        },{
+            field: 'seq',
+            title: '排序',
+            align: 'center'
+        },{
+            field: 'operating',
+            title: '操作',
+            align: 'center',
+            formatter:formaterDataAction,
+            widht:30
+        }
+        ],null);
+
+        $("#seachBtn").on('click', function () {
+            var name=$("#name").val();
+            var shopClassId=$("#shopClassId").val();
+            $(grid_selector).bootstrapTable('refresh', {'query': {'name':name,'shopClassId':shopClassId},silent: true});
+        });
+
+        $("#addBtn").on('click', function () {
+            window.location.href = 'goods_add.html';
+        });
+
+        $('#resetBtn').on('click', function () {
+            resetForm($('#queryForm'));
+        });
+    });
+
+
+    function formaterDataAction(cellvalue,rowObject,options) {
+        var html = '';
+        html += '<div class="small">'
+        html += '<button onclick="editEvent(\''
+                + rowObject['id']
+                + '\')" class="btn btn-xs btn-yellow goods_update" title="编辑" >'
+                + '<i class="ace-icon fa fa-pencil bigger-120"></i>'
+                + '</button>';
+        html += '<button onclick="delEvent(\''
+                + rowObject['id']
+                + '\')" class="btn btn-xs btn-danger goods_delete" title="删除" >'
+                + '<i class="ace-icon fa fa-trash-o bigger-120"></i>'
+                + '</button>';
+
+        html += '</div>';
+        return html;
+    }
+    function editEvent(id) {
+        window.location.href = "goods_update.html?id=" + id;
+    }
+    function delEvent(id) {
+        if (confirm("确定删除？")) {
+            $.ajax({
+                url: 'goods/deleteGoods?id=' + id,
+                type: 'get',
+                success: function (data) {
+                    if (!data.code) {
+                        alert(data.msg);
+                        return;
+                    }
+                    $(grid_selector).bootstrapTable("refresh");
+                }
+            })
+        }
+    }
+</script>
+</body>
+</html>

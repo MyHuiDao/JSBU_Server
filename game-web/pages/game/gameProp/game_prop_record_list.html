@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>游戏道具记录</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <script type="text/javascript" src="../../../assets/js/jquery.min.js"></script>
+    <script src="../../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div>
+        <table id="grid-table"></table>
+        <div id="grid-pager"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    var list_url = ctxPath + '/gamePropRecord/page';
+    var grid_selector = "#grid-table";
+    var pager_selector = "#grid-pager";
+
+    $(function () {
+        jqGrid_init(grid_selector, pager_selector, {
+            url: list_url,
+            colNames: ['id', '游戏编码', '道具名称', '数量', '类型', '创建时间','备注'],
+            colModel: [{
+                name: 'id',
+                index: 'id',
+                hidden: true
+            }, {
+                name: 'gameUserCode',
+                index: 'gameUserCode',
+                width: 30
+            }, {
+                name: 'propName',
+                index: 'propName',
+                width: 30
+            }, {
+                name: 'num',
+                index: 'num',
+                width: 30
+            }, {
+                name: 'type',
+                formatter: formaterType,
+                width: 30
+            }, {
+                name: 'createDate',
+                index: 'createDate',
+                width: 33
+            }, {
+                name: 'desc',
+                index: 'desc',
+                width: 33
+            }]
+        });
+        function formaterType(val) {
+            if (val == "0") {
+                return "充值";
+            }
+            if (val == "1") {
+               return "消耗";
+            }
+            return val;
+        }
+    });
+</script>
+</body>
+</html>

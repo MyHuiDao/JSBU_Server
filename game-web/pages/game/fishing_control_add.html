@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>捕鱼数值控制添加</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <link rel="stylesheet" href="../../js/toastr.css"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/toastr.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div class="table-responsive">
+        <form class="form-horizontal" id="add-form">
+            <div>
+                <div class="page-header">
+                    <h1>
+                        <small>捕鱼数值控制添加</small>
+                    </h1>
+                </div>
+                <div class="row padding_top_buttom_10">
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label
+                                    class="col-sm-3 control-label no-padding-right text-right">
+                                <span class="red">*</span> 整体档位:
+                            </label>
+
+                            <div class="col-sm-6">
+                                <select name="wholeDangWei" id="wholeDangWei">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label
+                                    class="col-sm-3 control-label no-padding-right text-right">
+                                <span class="red">*</span> 玩家档位:
+                            </label>
+
+                            <div class="col-sm-6">
+                                <select name="playerDangWei" id="playerDangWei">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row padding_top_buttom_10">
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label
+                                    class="col-sm-3 control-label no-padding-right text-right">
+                                <span class="red">*</span> 鱼阵档位:
+                            </label>
+
+                            <div class="col-sm-6">
+                                <select name="fishDangWei" id="fishDangWei">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label
+                                    class="col-sm-3 control-label no-padding-right text-right">
+                                <span class="red">*</span> 幅度档位:
+                            </label>
+
+                            <div class="col-sm-6">
+                                <select name="fuDuDangWei" id="fuDuDangWei">
+                                    <option value="1">1</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label
+                                    class="col-sm-3 control-label no-padding-right text-right">
+                                <span class="red">*</span> 类型:
+                            </label>
+
+                            <div class="col-sm-6">
+                                <select id="type" name="type">
+                                    <option value="0">公共</option>
+                                    <option value="1">区域</option>
+                                    <option value="2">个人</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="clearfix form-actions">
+                    <div class="center">
+                        <button class="btn btn-primary  btn-sm" type="button"
+                                onclick="javascript:history.back();">
+                            返 回
+                        </button>
+                        <button class="btn btn-primary  btn-sm" type="submit"
+                                id="submitButton">
+                            提交
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    var add_url ="fcp/addFishControllerProperty";
+    var formValidate = $('#add-form').validate(
+        {
+            rules: {
+                'wholeDangWei': {
+                    required: true,
+                    digits:true,
+                    min:0
+                },
+                'playerDangWei': {
+                    required: true,
+                    digits:true,
+                    max:100,
+                    min:0
+                },
+                'fishDangWei': {
+                    required: true,
+                    digits:true,
+                    max:100,
+                    min:0
+                },
+                'fuDuDangWei': {
+                    required: true,
+                    digits:true,
+                    max:100,
+                    min:0
+                },
+                'type': {
+                    required: true,
+                    digits:true,
+                    max:100,
+                    min:0
+                }
+            },
+            submitHandler: function (form) {
+                $.ajax({
+                    url: add_url,
+                    data: $(form).serialize(),
+                    type: 'post',
+                    dataType: 'json',
+                    success: function (data) {
+                        window.location.href = 'fishing_control_list.html';
+                    }
+                });
+            }
+        });
+</script>
+</body>
+</html>

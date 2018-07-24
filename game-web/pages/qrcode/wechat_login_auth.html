@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <title>登录</title>
+    <link rel="stylesheet" type="text/css" href="login.css" />
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+    <div class="div_a">
+        <div class="line_height">
+            <img src="icon3.png" class="login_tb"/>
+        </div>
+        <div style="margin-top: 40px;height: 140px;">
+        	<input type="hidden" value="" id="REDIRECT_URI"/>
+        	<input type="hidden" value="" id="APPID"/>
+        	<!-- <div class="">
+	          	 <input type="text" placeholder="请输入微信号后期返现金额提现" id="weixin" class="input"/>
+	          	 <p style="color:red;">此输入的微信号为后期返现金额提现，请谨慎输入</p>
+	        </div> -->
+	        <p style="color:red;">正在跳往授权登录页...</p>
+            <!-- <input type="button" class="button-style" id="login_auth" value="授权登录"/> -->
+        </div>
+        <div>
+            <img src="background_img.png" class="login_tb2" />
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+
+	var id = getRequest("id");
+	
+	/* $("#login_auth").on("click",function(){ */
+		$.ajax({
+		    url: ctxPath + '/qrCodeSysUser/appIdSecret',
+		    type: 'get',
+		    async:true,
+		    success: function (data) {
+		        if (data.state) {
+		        	var uri = data.data.redirectUri+"?id="+id;
+		        	var REDIRECT_URI = encodeURI(uri);
+		        	window.location.href = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+data.data.appId+"&redirect_uri="+REDIRECT_URI+"&response_type=code&scope=snsapi_userinfo#wechat_redirect";
+		        } else {
+		            alert(data.msg);
+		        }
+		    }
+		})
+	/* }); */
+</script>
+</html>

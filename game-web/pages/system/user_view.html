@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>用户详情</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <link rel="stylesheet" href="../../js/toastr.css"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/toastr.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div class="table-responsive">
+        <div class="page-header">
+            <h1>
+                <small> 用户详情</small>
+            </h1>
+        </div>
+        <div class="row">
+
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <label class="col-sm-5 control-label no-padding-right text-right">用户账号:</label>
+
+                    <div class="col-sm-7">
+                        <p name="account" class="form-control-static"></p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-5 control-label no-padding-right text-right">用户类型:</label>
+
+                    <div class="col-sm-7">
+                        <p name="type" class="form-control-static"></p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-5 control-label no-padding-right text-right">状态:</label>
+
+                    <div class="col-sm-7">
+                        <p name="status" class="form-control-static"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-6">
+
+                <div class="form-group">
+                    <label class="col-sm-5 control-label no-padding-right text-right">用户名称:</label>
+                    <div class="col-sm-7">
+                        <p name="nickName" class="form-control-static"></p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-5 control-label no-padding-right text-right">角色名称:</label>
+                    <div class="col-sm-7">
+                        <p name="roleName" id="roleName" class="form-control-static"></p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-5 control-label no-padding-right text-right">捕鱼规则:</label>
+                    <div class="col-sm-7">
+                        <p name="fishingName" id="fishingName" class="form-control-static"></p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="clearfix form-actions">
+            <div class="center">
+                <button class="btn btn-primary  btn-sm" type="button"
+                        onclick="window.location.href='user_list.html'">
+                    返 回
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var pkId = getRequest("id");
+    $(function () {
+        if (!pkId) {
+            alert("参数错误");
+            return;
+        }
+        $.ajax({
+            url: 'sysUser/findUserData?id=' + pkId,
+            dataType: 'json',
+            type: 'get',
+            success: function (data) {
+                if (data.code) {
+                    var type = data.data.type;
+                    var status = data.data.status;
+                    if (status!=null) {
+                        if (status == "0") {
+                            data.data.status = "正常";
+                        } else if (status == "1") {
+                            data.data.status = "禁用";
+                        }
+                    }
+                    initInputHtml('.form-control-static', data.data);
+                } else {
+                    alert(data.msg);
+                }
+            }
+        });
+
+        $.ajax({
+            url:"sysUser/getSysUserRole?sysUserId="+pkId,
+            type:"get",
+            async:true,
+            success:function(msg){
+                var html='';
+                for(var i=0;i<msg.data.length;i++){
+                    html+="<span class='label label-sm label-success'>"+msg.data[i].name+"</span> "
+                }
+                $("#roleName").append(html);
+            }
+        });
+
+        $.ajax({
+            url:"userFishingRule/getUserFishingRuleData?id="+pkId,
+            type:"get",
+            async:true,
+            success:function(msg){
+                var html='';
+                for(var i=0;i<msg.data.length;i++){
+                    html+="<span class='label label-sm label-warning'>"+msg.data[i].name+"</span> ";
+                }
+                $("#fishingName").append(html);
+            }
+        });
+
+    })
+</script>
+</body>
+</html>

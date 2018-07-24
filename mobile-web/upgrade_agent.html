@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>代理升级</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link href="css/main.css" rel="stylesheet"/>
+    <link href="js/toastr.css" rel="stylesheet"/>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/toastr.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/Ds_Auto.js"></script>
+    <script>
+        initHead();
+        DApp.init(1080, null, "width");
+    </script>
+</head>
+<body>
+<div class="personal-info">
+    <div style="height: 100px;"></div>
+    <div class="user-info">
+        <div class="user-name"><span id="nickName"></span></div>
+        <div class="user-grade">
+            <span id="agencyLevel"></span>
+            <br/>
+            <span id="code"></span>
+        </div>
+    </div>
+    <div style="height: 30px;"></div>
+    <div class="recharge-amount">
+        <div class="recharge-amount-style">
+            <span>充值金额</span>　
+            <select id="rechargeAmount">
+
+            </select>
+        </div>
+        <div>
+            <span id="nextLevel" style="color: red; line-height: 30px;"></span>
+        </div>
+    </div>
+    <div style="height: 30px;"></div>
+    <div class="recharge-amount">
+        <div class="recharge-amount-style">
+            <span>充值方式</span>　
+            <select id="rechargeMethod">
+                <option value="ZFB">支付宝</option>
+            </select>
+        </div>
+    </div>
+    <div style="height: 30px;"></div>
+    <div class="price-list-style">
+        <table id="goldList">
+            <thead>
+            <tr>
+                <td>免费代理</td>
+                <td>黄金代理</td>
+                <td>白金代理</td>
+                <td>钻石代理</td>
+            </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+    <div class="submit-style">
+        <button onclick="window.location.href='main.html'">返回</button>
+        <button id="upgrade">确认充值</button>
+    </div>
+    <form id="payment" action="http://order.z.jtpay.com/jh-web-order/order/receiveOrder" enctype="application/json"
+          method="post">
+        <input id="p1_yingyongnum" name="p1_yingyongnum" value="" type="hidden"/>
+        <input id="p2_ordernumber" name="p2_ordernumber" value="" type="hidden"/>
+        <input id="p3_money" name="p3_money" value="" type="hidden"/>
+        <input id="p6_ordertime" name="p6_ordertime" value="" type="hidden"/>
+        <input id="p7_productcode" name="p7_productcode" value="" type="hidden"/>
+        <input id="p8_sign" name="p8_sign" value="" type="hidden"/>
+        <input id="p9_signtype" name="p9_signtype" value="" type="hidden"/>
+        <input id="p10_bank_card_code" name="p10_bank_card_code" value="" type="hidden"/>
+        <input id="p14_customname" name="p14_customname" value="" type="hidden"/>
+        <input id="p16_customip" name="p16_customip" value="" type="hidden"/>
+        <input id="p23_charset" name="p23_charset" value="" type="hidden"/>
+        <input id="p25_terminal" name="p25_terminal" value="" type="hidden"/>
+        <input id="paytype" name="paytype" value="ZZ" type="hidden"/>
+    </form>
+</div>
+<script>
+    $(function () {
+        $.ajax({
+            url: '/gameGoldExchange/getGameGoldExchangeType',
+            data: {
+                "type": 2
+            },
+            type: 'get',
+            async: false,
+            success: function (msg) {
+                console.log(msg);
+                var obj = msg.data;
+                var html = '';
+                var tableHtml = '';
+                for (var i = 0; i < obj.length; i++) {
+                    html += '<option value="' + obj[i].id + '">' + Math.floor(obj[i].rmb) + '</option>';
+                    tableHtml += '<td>' + Math.floor(obj[i].rmb) + '元</td>';
+                }
+                $('#rechargeAmount').append(html);
+                $('#goldList tbody').append('<tr>' + tableHtml + '</tr>');
+
+            }
+        });
+        $.ajax({
+            url: "/sysUser/userAgentUpgrade",
+            type: "get",
+            async: false,
+            success: function (msg) {
+                var html = "";
+                var obj = msg.data;
+                $("#code").text('id:' + obj.code);
+                $("#agencyLevel").text(obj.name);
+                $("#nickName").text(obj.nickName);
+                nextLevel(obj.level);
+                loadLevel(obj.level);
+            }
+        });
+    });
+
+    function nextLevel(level) {
+        $.ajax({
+            url: '/agenLevel/getNextLevel',
+            data: {
+                'level': level
+            },
+            type: 'get',
+            success: function (msg) {
+                var obj = msg.data;
+                if (obj == null || obj == '') {
+                    $('#nextLevel').text('您当前已是最高等级');
+                    $('#upgrade').attr('disabled','disabled');
+                    return;
+                }
+                $('#nextLevel').text('您还需要充值' + obj.price + '元升级为' + obj.name);
+            }
+        });
+    }
+
+    function loadLevel(level) {
+        var amounts=$("#rechargeAmount option").length;
+        $("#rechargeAmount option").each(function (i,dom) {
+            if (level >= $(this).attr('value')) {
+                $(this).remove();
+            }
+            if (amounts == level) {
+                $("#rechargeAmount").append('<option>已是最高代理</option>');
+                $("#upgrade").attr('disabled','disabled');
+            }
+        });
+    }
+
+    $('#upgrade').on('click', function () {
+        var rechargeAmount = $('#rechargeAmount').val();
+        var rechargeMethod = $('#rechargeMethod').val();
+        order(rechargeAmount, rechargeMethod);
+    });
+
+    function order(gold, type) {
+        var isWeixin = false;
+        var terminal = 0;
+        var ua = window.navigator.userAgent.toLowerCase();
+        if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+            isWeixin = true;
+        }
+        var u = navigator.userAgent, app = navigator.appVersion;
+        var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //g
+        var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+        if (isAndroid) {
+            if (isWeixin) {
+                toastr.error('请在手机浏览器中打开支付');
+                return;
+            } else {
+            }
+            terminal = 3;
+        } else if (isIOS) {
+            if (isWeixin) {
+                toastr.error('请在Safari浏览器中打开支付');
+                return;
+            }
+            terminal = 2;
+        } else {
+            terminal = 1;
+        }
+        $.ajax({
+            url: '/palyLog/order?goldId=' + gold + '&productcode=' + type + '&terminal=' + terminal + '&type=1',
+            type: 'get',
+            async: false,
+            success: function (msg) {
+                var obj = msg.data;
+                $('#p1_yingyongnum').val(obj.p1_yingyongnum);
+                $('#p2_ordernumber').val(obj.p2_ordernumber);
+                $('#p3_money').val(obj.p3_money);
+                $('#p6_ordertime').val(obj.p6_ordertime);
+                $('#p7_productcode').val(obj.p7_productcode);
+                $('#p8_sign').val(obj.p8_sign);
+                $('#p9_signtype').val(obj.p9_signtype);
+                $('#p10_bank_card_code').val(obj.p10_bank_card_code);
+                $('#p14_customname').val(obj.p14_customname);
+                $('#p16_customip').val(obj.p16_customip);
+                $('#p23_charset').val(obj.p23_charset);
+                $('#p25_terminal').val(obj.p25_terminal);
+                $('#payment').submit();
+            }
+        });
+    }
+</script>
+</body>
+</html>

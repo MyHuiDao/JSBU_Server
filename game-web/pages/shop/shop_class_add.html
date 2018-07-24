@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>添加商品</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <link rel="stylesheet" href="../../js/toastr.css"/>
+    <script type="text/javascript" src="../../js/toastr.js"></script>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div class="table-responsive">
+        <form class="form-horizontal" id="add-form">
+            <div>
+                <div class="page-header">
+                    <h1>
+                        <small>添加商品</small>
+                    </h1>
+                </div>
+                <div class="row padding_top_buttom_10">
+                    <div class="col-xs-6">
+                        <div>
+                            <div class="form-group">
+                                <label
+                                        class="col-sm-3 control-label no-padding-right text-right">
+                                    <span class="red">*</span> 商品名称:
+                                </label>
+
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control"
+                                          id="name" name="name" style="width: 100%"/>
+                                    <div id="msg" name="msg" class="error" >商品已存在</div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clearfix form-actions">
+                    <div class="center">
+                        <button class="btn btn-primary  btn-sm" type="button"
+                                onclick="window.location.href='shop_class_list.html'">
+                            返回
+                        </button>
+                        <button class="btn btn-primary  btn-sm" type="button"
+                                id="submitButton">
+                            提交
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+    <script type="text/javascript">
+        var pkId = getRequest("id");
+            $(function(){
+               $('#msg').css("display","none");//加载时隐藏校验样式
+                $.validator.addMethod('name', function (name) {
+                    var checkName_url = "shop/checkName";
+                    $.ajax({
+                        url: checkName_url+'?name=' + name,
+                        type: 'get',
+                        dataType: 'json',
+                        successExec:true,//自定义不进入main.js弹框
+                        success: function (data) {
+                            if(data.code =="0") {
+                                $("#submitButton").attr("disabled", false);//启用提交按钮
+                                $('#msg').css("display", "none");//隐藏校验样式
+                                return true;
+                            }else{
+                                $("#submitButton").attr("disabled", true);//禁用提交按钮
+                                $('#msg').css("display", "");//显示校验样式
+                                return false;
+                            };
+                        }
+                    });
+                },null);
+            });
+    var formValidate = $('#add-form').validate(
+            {
+                rules :
+                {
+                    'name' :
+                    {
+                        required : true,
+                        checkName : true
+                    }
+                }
+            }
+    );
+
+    //提交操作
+    $("#submitButton").on('click', function () {
+        var addUrl = "shop/addShopByName";
+        var name = $("#name").val();
+        $.ajax({
+            async: false,
+            url: addUrl + '?name=' + name + "&seq=0",
+            type: 'get',
+            success: function (data) {
+                toastr.success('添加成功');
+                toastr.call(function(){
+                    window.location.href ='shop_class_list.html';
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>

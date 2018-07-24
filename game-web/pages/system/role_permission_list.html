@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>权限管理</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <link rel="stylesheet" href="../../js/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+    <link rel="stylesheet" href="../../js/toastr.css"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/toastr.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript" src="../../js/ztree/js/jquery.ztree.core.js"></script>
+    <script type="text/javascript" src="../../js/ztree/js/jquery.ztree.excheck.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div id="ztree" class="ztree"></div>
+    <input type="hidden" id="id" name="id">
+
+    <div class="clearfix form-actions">
+        <div class="center">
+            <button id="save" type="button" class="btn btn-primary  btn-sm">
+                保存
+            </button>
+            <button class="btn btn-primary  btn-sm" type="button"
+                    onclick="window.location.href='role_list.html'">
+                返回
+            </button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var pkId = getRequest("id");
+    var setting = {
+        data: {
+            simpleData: {
+                enable: true,
+                idKey: "id",
+                pIdKey: "parentId",
+                rootPId: "-1",
+            },
+            key: {
+                name: "name",
+            }
+        },
+        check: {
+            autoCheckTrigger: true,
+            enable: true,
+            chkStyle: "checkbox",
+            autoCheckTrigger: true,//勾选时是否触发onCheck 事件回调函数
+            dblClickExpand: false,
+            chkboxType: {"Y": "ps", "N": "ps"},
+        },
+        callback: {
+            onCheck: zTreeBeforeCheck,
+        }
+    };
+
+    var zTree;//父节点
+    var id;
+    var name;
+    var tId;
+    function zTreeBeforeCheck(event, treeId, treeNode, clickFlag){
+        id = treeNode.id;
+    }
+
+    function filter(treeId, parentNode, childNodes) {
+        if (!childNodes) return null;
+        for (var i=0, l=childNodes.length; i<l; i++) {
+            childNodes[i].name = childNodes[i].name.replace(/\.n/g, '.');
+        }
+        return childNodes;
+    }
+    var zNodes;
+    function get(){
+        $.ajax({
+            url:"auto/getAuthorityList",
+            type:"get",
+            success:function(msg){
+                zNodes=msg.data;
+                $.fn.zTree.init($("#ztree"), setting, zNodes);
+                setInit();
+            }
+        });
+    }
+
+    $(document).ready(function(){
+        get();
+    });
+
+    //初始化勾选所拥有的权限
+    function setInit() {
+        $.ajax({
+            url: 'role/getPermissionCodeByRoleId'+'?roleId=' + pkId,
+            type: 'get',
+            success: function (data) {
+                var treeObj = $.fn.zTree.getZTreeObj("ztree");
+                for (var i = 0; i < data.data.length; i++) {
+                    var permissionIdNode = treeObj.getNodeByParam('id', data.data[i].id);
+                    if(!permissionIdNode){
+                        continue;
+                    }
+                    permissionIdNode.checked = true;
+                   treeObj.updateNode(permissionIdNode);
+                }
+               //初始化默认展开父、子节点
+                var nodes = treeObj.getNodes();
+                if (nodes.length>0) {
+                    for(var i=0;i<nodes.length;i++){
+                        treeObj.expandNode(nodes[i], true, true, false);
+                    }
+                }
+            }
+        });
+    }
+
+        //保存选择的权限
+        $("#save").on('click', function () {
+            var treeObj = $.fn.zTree.getZTreeObj("ztree");
+            var sNodes = treeObj.getCheckedNodes(true);
+            var permissionStr = "";
+            for (var i = 0; i < sNodes.length; i++) {
+                permissionStr += sNodes[i].id+',';
+            }
+                $.ajax({
+                    type: 'post',
+                    url: 'role/setRolePermissions',
+                    data: {
+                        "permissions": permissionStr,
+                        "roleId": pkId
+                    },
+                    success: function (data) {
+                        if (data.code == '0') {
+                            window.location.href = "role_list.html";
+                        }
+                    }
+                });
+        });
+</script>
+</body>
+</html>

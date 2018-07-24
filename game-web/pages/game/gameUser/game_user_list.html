@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>游戏用户列表</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <link rel="stylesheet" href="../../../js/toastr.css"/>
+    <script type="text/javascript" src="../../../assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../js/toastr.js"></script>
+    <script src="../../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div>
+        <form id="queryForm">
+            <div class="widget-box">
+                <div class="widget-header widget-header-flat search_tj_bar_tit">
+                    <h5 class="widget-title">查询条件</h5>
+                </div>
+                <div class="row search_tj_bar">
+                    <div class="col-xs-12">
+                        <div class="col-xs-4">
+                            <label class="col-sm-4">用户id：</label>
+
+                            <div class="input-group col-sm-8">
+                                <input class="form-control form-control1 search-query"
+                                       name="code" id="code"/>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <label class="col-sm-4">游戏昵称：</label>
+
+                            <div class="input-group col-sm-8">
+                                <input class="form-control form-control1 search-query"
+                                       name="nickName" id="nickName"/>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <label class="col-sm-4">游戏账号：</label>
+
+                            <div class="input-group col-sm-8">
+                                <input class="form-control form-control1 search-query"
+                                       name="account" id="account"/>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div style="height: 50px;"></div>
+                    <div class="col-xs-12">
+                        <div class="col-xs-4">
+                            <label class="col-sm-4">发送邮件：</label>
+                            <div class="input-group col-sm-8">
+
+                                <input class="form-control form-control1 search-query"
+                                       name="title" id="title"/>
+                            </div>
+                        </div>
+                        <div class="col-sm-4" style="margin-top: -5px;">
+                            <button id="emailBtn" type="button" class="btn btn-primary btn-sm">
+                                查找
+                            </button>
+                        </div>
+                    </div>
+                    <div style="height: 40px;"></div>
+                    <div class="col-xs-12" id="emailList" style="display: none;">
+                        <div class="col-xs-4">
+                            <label class="col-sm-4">选择邮件：</label>
+                            <select id="emailId" name="emailId">
+
+                            </select>
+                        </div>
+                        <div class="col-sm-4" style="margin-top: -5px;">
+                            <button id="sendBtn" type="button" class="btn btn-primary btn-sm">
+                                发送
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="bs_btn">
+            <button class="btn btn-primary  btn-sm" type="button" id="kickOut">
+                踢出所有用户
+            </button>
+            <button class="btn btn-primary  btn-sm" type="button" id="resetBtn">
+                重 置
+            </button>
+            <button id="seachBtn" type="button" class="btn btn-primary  btn-sm">
+                查找
+            </button>
+        </div>
+        <table id="grid-table"></table>
+        <div id="grid-pager"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    var list_url ='sysUser/findUserAll';
+    var grid_selector = "#grid-table";
+    $(function () {
+        paging_query(grid_selector,list_url,[{
+            align : 'center',
+            checkbox: true,                          // 显示复选框
+            formatter: function (i,row) {            // 每次加载 checkbox 时判断当前 row 的 id 是否已经存在全局 Set() 里
+                if($.inArray(row.id,overAllIds)!=-1){// 因为 判断数组里有没有这个 id
+                    return {
+                        checked : true               // 存在则选中
+                    }
+                }
+            }
+        },{
+            field: 'id',
+            title: 'id',
+            align: 'center',
+            visible:false
+        },{
+            field: 'code',
+            title: '用户ID',
+            align: 'center'
+        },{
+            field: 'nickName',
+            title: '用户昵称',
+            align: 'center'
+        },{
+            field: 'account',
+            title: '账号',
+            align: 'center',
+            visible:false
+        },{
+            field: 'weixinId',
+            title: '微信ID',
+            align: 'center',
+            visible:false
+        },{
+            field: 'deviceId',
+            title: '设备ID',
+            align: 'center',
+            visible:false
+        },{
+            field: 'sex',
+            title: '性别',
+            align: 'center',
+            formatter:function(value,row,index){
+                if(value==0){
+                    return "女"
+                }else{
+                    return "男";
+                }
+            }
+        },{
+            field: 'mobile',
+            title: '手机号',
+            align: 'center',
+            formatter:function(value,row,index){
+                if(!value){
+                    return "未绑定"
+                }else{
+                    return value;
+                }
+            }
+        },{
+            field: 'isBind',
+            title: '是否绑定手机号',
+            align: 'center',
+            visible:false,
+            formatter:function(value,row,index){
+                if(value=='0'){
+                    return "未绑定"
+                }else{
+                    return "已绑定";
+                }
+            }
+        },{
+            field: 'userType',
+            title: '玩家类型',
+            align: 'center',
+            formatter: function(value,row,index) {
+                if(value=='free'){
+                    return "免费玩家";
+                }else{
+                    return "付费玩家";
+                }
+            },
+            visible:false
+        },{
+            field: 'userState',
+            title: '玩家状态',
+            align: 'center',
+            formatter:function(value,row,index){
+                if(value=='0'){
+                    return "正常"
+                }else{
+                    return "禁用";
+                }
+            }
+        },{
+            field: 'gold',
+            title: '金币',
+            align: 'center'
+        },{
+            field: 'isVip',
+            title: '是否为VIP',
+            align: 'center',
+            formatter:function(value,row,index){
+                if(value=='0'){
+                    return "非会员"
+                }else{
+                    return "会员";
+                }
+            },
+            visible:false
+        },{
+            field: 'vipLevel',
+            title: 'vip等级',
+            align: 'center'
+        },{
+            field: 'recommendUserId',
+            title: '推荐人openId',
+            align: 'center',
+            visible:false
+        },{
+            field: 'parentCode',
+            title: '上级ID',
+            align: 'center'
+        },{
+            field: 'agentName',
+            title: '代理级别',
+            align: 'center'
+        },{
+            field: 'createTime',
+            title: '创建时间',
+            align: 'center'
+        },{
+            field: 'createIp',
+            title: '创建ip',
+            align: 'center'
+        },{
+            field: 'operating',
+            title: '操作',
+            align: 'center',
+            formatter:formaterDataAction,
+            widht:30
+        }
+        ],null);
+
+        $('#grid-table').on('uncheck.bs.table check.bs.table check-all.bs.table uncheck-all.bs.table',function(e,rows){
+            var datas = $.isArray(rows) ? rows : [rows];        // 点击时获取选中的行或取消选中的行
+            examine(e.type,datas);                              // 保存到全局 Set() 里
+        });
+
+
+    });
+
+    var overAllIds = new Array();  //全局数组
+
+    function examine(type,datas){
+        if(type.indexOf('uncheck')==-1){
+            $.each(datas,function(i,v){
+                // 添加时，判断一行或多行的 id 是否已经在数组里 不存则添加　
+                overAllIds.indexOf(v.id) == -1 ? overAllIds.push(v.id) : -1;
+            });
+        }else{
+            $.each(datas,function(i,v){
+                overAllIds.splice(overAllIds.indexOf(v.id),1);    //删除取消选中行
+            });
+        }
+        // console.log(overAllIds);
+    }
+
+
+    $("#seachBtn").on('click', function () {
+        var code=$("#code").val();
+        var account=$("#account").val();
+        var nickName=$("#nickName").val();
+        $(grid_selector).bootstrapTable('refresh', {'query': {'code':code,'account':account,'nickName':nickName},silent: true});
+    });
+
+    $("#emailBtn").on('click',function(){
+        var title=$("#title").val();
+        $.ajax({
+            url:"gameEmail/findGameEmailAll",
+            type:"get",
+            data:{
+                "title":title
+            },
+            async:false,
+            success:function(msg){
+                $("#emailList").css("display","block");
+                var obj=msg.data.rows;
+                var html='';
+                for(var i=0;i<obj.length;i++){
+                    html+='<option value="'+obj[i].id+'">'+obj[i].title+'</option>';
+                }
+                $("#emailId").append(html);
+            }
+        });
+    });
+
+    $("#sendBtn").on('click',function(){
+        var emailId=$("#emailId").val();
+        var ids=overAllIds;
+        var id='';
+        for(var i=0;i<overAllIds.length;i++){
+            if(i==overAllIds.length){
+                id+=ids[i];
+            }else{
+                id+=ids[i]+",";
+            }
+        }
+        $.ajax({
+           url:"gameEmail/sendEmail",
+            data:{
+                "emailId":emailId,
+                "userIds":id
+            },
+           type:"post",
+           async:false,
+           success:function(msg){
+               if(msg.code==0){
+                   toastr.success("发送成功!");
+                   toastr.call(function(){
+                       window.location.reload();
+                   });
+               }
+           }
+        });
+    });
+
+
+    function formaterDataAction(cellvalue,rowObject,options) {
+        var html = '';
+        html += '<div class="small">';
+        html += '<button onclick="viewEvent(\''
+            + rowObject['id']
+            + '\')" class="btn btn-xs btn-info user_gold_log_get" title="查看用户金币来源" >'
+            + '<i class="ace-icon fa fa-eye bigger-120"></i>'
+            + '</button>';
+        html += '<button onclick="viewUserGoldEvent(\''
+            + rowObject['id']
+            + '\')" class="btn btn-xs btn-warning user_gold_log_get" title="查看用户金币变化情况" >'
+            + '<i class="ace-icon fa fa-flag bigger-120"></i>'
+            + '</button>';
+
+        /*html += '<button onclick="userFishingRuleEvent(\''
+            + rowObject['id']
+            + '\')" class="btn btn-xs btn-info user_fishing_rule_get" title="修改用户捕鱼规则" >'
+            + '<i class="ace-icon fa fa-pencil bigger-120"></i>'
+            + '</button>';*/
+
+
+        html += '<button onclick="userStalls(\''
+            + rowObject['id']
+            + '\')" class="btn btn-xs btn-yellow fish_controller_property_user" title="添加用户捕鱼档位" >'
+            + '<i class="fa fa-sort-numeric-desc bigger-120"></i>'
+            + '</button>';
+
+
+
+        html += '<button onclick="adjustGoldCoins(\''
+            + rowObject['id']
+            + '\')" class="btn btn-xs btn-info user_gold_adjustment" title="调整金币" >'
+            + '<i class="fa fa-bank" aria-hidden="true"></i>'
+            + '</button>';
+
+        html += '<button onclick="sendCustomerService(\''
+            + rowObject['id']+'\',\''+rowObject['nickName']+'\',\''+encodeURIComponent(rowObject['headImg'])
+            + '\')" class="btn btn-xs btn-warning customer_service_authority" title="联系客服" >'
+            + '<i class="fa fa-bell-o bigger-120"></i>'
+            + '</button>';
+
+        html += '<button onclick="kickOutUser(\''
+            + rowObject['id']
+            + '\')" class="btn btn-xs btn-yellow fish_controller_property_user" title="踢出用户" >'
+            + '<i class="fa fa-plane" aria-hidden="true"></i>'
+            + '</button>';
+
+        html += '</div>';
+        return html;
+    }
+    $('#resetBtn').on('click', function () {
+        resetForm($('#queryForm'));
+    });
+
+    $('#kickOut').on('click',function(){
+        $.ajax({
+            url:"kuc/kickOutUserAll",
+            type:"get",
+            success:function(){
+                toastr.success('已成功踢出');
+            }
+        });
+    });
+
+    function sendCustomerService(id,nickName,headImg){
+        window.open('../../../chat.html?userId='+id+'&nickName='+nickName+"&headImg="+headImg);
+    }
+    function viewEvent(id) {
+        window.location.href = "game_userGoldLog_list.html?id=" + id;
+    }
+    function viewUserGoldEvent(id){
+        window.location.href = "../../data/user_gold_log_data.html?id=" + id;
+    }
+    function userFishingRuleEvent(id){
+        window.location.href="../../system/user_fishingRole.html?id="+id;
+    }
+    function adjustGoldCoins(id){
+        window.location.href='user_gold_adjustment.html?id='+id;
+    }
+    function userStalls(id){
+        window.location.href="user_stalls.html?id="+id;
+    }
+
+    function kickOutUser(id){
+        $.ajax({
+            url:"kuc/kickOutUser",
+            type:"get",
+            data:{
+                "userId":id
+            },
+            success:function(msg){
+                toastr.success('踢出成功!');
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

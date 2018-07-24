@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>捕鱼规则添加</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <link rel="stylesheet" href="../../js/toastr.css"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/toastr.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div class="table-responsive">
+        <form class="form-horizontal" id="add-form">
+            <div class="page-header">
+                <h1>
+                    <small>捕鱼规则添加</small>
+                </h1>
+            </div>
+            <div class="row padding_top_buttom_10">
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right text-right"><span class="red">*</span>最大金币:</label>
+
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control inputVal" id="maxGold" name="maxGold" value="" autocomplete="off" style="width: 100%" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right text-right"><span class="red">*</span>最小金币:</label>
+
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control inputVal" id="minGold" name="minGold" value="" autocomplete="off" style="width: 100%" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right text-right"><span class="red">*</span>赢的概率(%):</label>
+
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control inputVal" id="winNum" name="winNum" value="" autocomplete="off" style="width: 100%" />
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right text-right"><span class="red">*</span>类型:</label>
+
+                        <div class="col-sm-6">
+                            <select id="type">
+                                <option value="0">公共规则</option>
+                                <option value="1">个人规则</option>
+                                <option value="2">房间规则</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right text-right"><span class="red">*</span>规则名称:</label>
+
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control inputVal" id="name" name="name" value="" autocomplete="off" style="width: 100%" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right text-right"><span class="red">*</span>类型:</label>
+
+                        <div class="col-sm-6">
+                            <select id="roomType">
+                                <option value="gold">金币场</option>
+                                <option value="experience">体验场</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="clearfix form-actions">
+                <div class="center">
+                    <button class="btn btn-primary  btn-sm" type="button"
+                            onclick="window.location.href='fishingRole_list.html'">
+                        返 回
+                    </button>
+                    <button class="btn btn-primary  btn-sm" type="submit"
+                            id="submitButton">
+                        提交
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    var add_url = "fishingRule/addFishingRule";
+    var formValidate = $('#add-form').validate(
+        {
+            submitHandler: function (form) {
+                var maxGold = $("#maxGold").val();
+                var minGold = $("#minGold").val();
+                var winNum=$("#winNum").val();
+                if(winNum>100){
+                    alert("赢的概率不能大于100");
+                    return;
+                }
+                var type=$("#type option:selected").val();
+                var name=$("#name").val();
+                var roomType=$("#roomType").val();
+                $.ajax({
+                    url: add_url,
+                    data: {
+                        "maxGold":maxGold,
+                        "minGold":minGold,
+                        "winNum":winNum,
+                        "type":type,
+                        "name":name,
+                        "roomType":roomType
+                    },
+                    type: 'post',
+                    success: function (data) {
+                        alert("添加成功");
+                        window.location.href = 'fishingRole_list.html';
+                    }
+                });
+            }
+        });
+</script>
+</body>
+</html>

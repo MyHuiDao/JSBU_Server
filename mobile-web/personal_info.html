@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>个人资料</title>
+    <link href="css/main.css" rel="stylesheet"/>
+    <link href="js/toastr.css" rel="stylesheet"/>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/toastr.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/Ds_Auto.js"></script>
+    <script>
+        initHead();
+        DApp.init(1080,null,"width");
+    </script>
+</head>
+<body>
+    <div class="personal-info">
+        <div style="height: 100px;"></div>
+        <div class="user-info">
+            <div class="user-name"><span id="nickName"></span></div>
+            <div class="user-grade">
+                <span id="level"></span>
+                <br/>
+                <span id="code"></span>
+            </div>
+        </div>
+
+        <div class="info-card">
+
+           <div class="user-phone"><span>手机号码：</span><input type="text" name="phone" id="phone" readonly="readonly"/></div>
+           <div class="user-percentage"><span>　　提成：</span><input type="text" name="percentage1" id="percentage1" readonly="readonly"/></div>
+           <div class="user-percentage"><span>推广提成：</span><input type="text" name="percentage2" id="percentage2" readonly="readonly"/></div>
+           <div class="user-percentage"><span>分享提成：</span><input type="text" name="percentage3" id="percentage3" readonly="readonly"/></div>
+        </div>
+
+        <div style="height: 50px;"></div>
+        <div class="user-operating">
+             <button id="logout">登出账号</button>
+             <button onclick="window.location.href='main.html'">返回</button>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            $.ajax({
+                url: '/sysUser/personalCenter',
+                dataType: 'json',
+                type: 'get',
+                success: function (data) {
+                    var obj=data.data;
+                    $("#nickName").text(obj.nickName);
+                    $("#code").text('ID:'+obj.code);
+                    $("#phone").val(obj.mobile);
+                    $("#percentage1").val(obj.proportion1);
+                    $("#percentage2").val(obj.proportion2);
+                    $("#percentage3").val(obj.proportion3);
+                    var level=obj.level;
+                    switch (level){
+                        case 1:
+                            $("#level").text('免费代理');
+                            break;
+                        case 2:
+                            $("#level").text('黄金代理');
+                            break;
+                        case 3:
+                            $("#level").text('白金代理');
+                            break;
+                        case 4:
+                            $("#level").text('钻石代理');
+                            break;
+                    }
+                }
+            });
+        });
+        $("#logout").on("click", function () {
+            $.ajax({
+                type: "get",
+                url: '/sysUser/logout',
+                dataType: 'json',
+                success: function (data) {
+                    delCookie("userId");
+                    delCookie("gameUserId");
+                    delCookie("money");
+                    toastr.success("退出成功！");
+                    toastr.call(function(){
+                            window.location.href = "login.html";
+                        }
+                    );
+                }
+            })
+        });
+
+    </script>
+</body>
+</html>

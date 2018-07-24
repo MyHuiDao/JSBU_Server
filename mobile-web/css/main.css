@@ -1,0 +1,858 @@
+* {
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline:none;
+}
+
+body, html {
+    width: 100%;
+    min-height: 100%;
+}
+
+.main {
+    width: 1080px;
+    height: 1920px;
+    margin: 0 auto;
+    background-image: url("../img/back.png");
+    background-color: #E4E4E3;
+    background-size: 100% 100%;
+}
+
+.title {
+    width: 100%;
+    padding-top: 350px;
+}
+
+.title p {
+    width: 924px;
+    height: 120px;
+    line-height: 120px;
+    font-size: 80px;
+    text-align: center;
+    margin: 0 auto;
+    color: #0473B3;
+    letter-spacing: 10px;
+}
+
+.input_div {
+    background-color: #7EB5D3;
+    width: 991px;
+    margin: 0 auto;
+    height: 785px;
+    margin-top: 50px;
+    background-size: 100% 100%;
+}
+
+.account {
+    padding-top: 100px;
+    padding-left: 100px;
+    width: 800px;
+    height: 120px;
+}
+
+.account span {
+    font-size: 60px;
+    color: white;
+    width: 200px;
+    display: inline-block;
+    letter-spacing: 4px;
+}
+
+.account input {
+    width: 500px;
+    height: 120px;
+    margin-left: 20px;
+    border-radius: 5px;
+    background-color: #0072B1;
+    color: white;
+    font-size: 55px;
+    padding-left: 25px;
+}
+
+.password{
+    margin-top: 35px;
+    padding-left: 100px;
+    width: 800px;
+    height: 120px;
+}
+
+.password span{
+    font-size: 60px;
+    color: white;
+    width: 200px;
+    display: inline-block;
+    letter-spacing: 4px;
+}
+
+.password input {
+    width: 500px;
+    height: 120px;
+    margin-left: 20px;
+    border-radius: 5px;
+    background-color: #0072B1;
+    color: #FFFFFF;
+    font-size: 55px;
+    padding-left: 25px;
+}
+
+.validate{
+    margin-top: 0px;
+    padding-left: 100px;
+    width: 800px;
+    height: 120px;
+}
+
+.validate span{
+    font-size: 60px;
+    color: white;
+    width: 200px;
+    display: inline-block;
+    letter-spacing: 4px;
+}
+
+.validate input {
+    width: 300px;
+    height: 120px;
+    border-radius: 5px;
+    background-color: #0072B1;
+    color: #FFFFFF;
+    font-size: 55px;
+    margin-left: 20px;
+    padding-left: 10px;
+}
+
+.validate img{
+    width: 260px;
+    height: 120px;
+    position: relative;
+    top: 45px;
+    left: 6px;
+}
+
+.login_btn{
+    margin: 0 auto;
+    text-align: center;
+    margin-top: 100px;
+}
+
+.login_btn button{
+    width: 345px;
+    height: 130px;
+    font-size: 70px;
+    color: #FFFFFF;
+    background-color: #0072B1;
+    border-radius: 5px;
+}
+.personal-info{
+    width: 1080px;
+    height: 1920px;
+    margin: 0 auto;
+    background-image: url("../img/personal_info.png");
+    background-color: #E4E4E3;
+    background-size: 100% 100%;
+}
+.user-info{
+    width: 1050px;
+    margin-left: 15px;
+    background-image: url("../img/card.png");
+    text-align: center;
+    background-size: 100% 100%;
+}
+.user-info div{
+    display: inline-block;
+}
+.user-name{
+    line-height: 200px;
+}
+.user-name span{
+    font-size: 100px;
+    color: white;
+}
+.user-grade{
+    margin-top: 95px;
+    float: right;
+    margin-right: 50px;
+}
+.user-grade span{
+    font-size: 50px;
+    color: white;
+}
+.info-card{
+    background-image: url("../img/info_card.png");
+    width: 910px;
+    margin: 0 auto;
+    height: 900px;
+    margin-top: 50px;
+    background-size: 100% 100%;
+}
+.info-card div{
+    padding-left: 50px;
+    margin-top: 120px;
+}
+.info-card input{
+    vertical-align:middle;
+}
+.user-phone{
+    font-size: 60px;
+    color: #DDF7FE;
+    display: inline-block;
+    letter-spacing: 4px;
+}
+.user-phone input{
+    height: 80px;
+    width: 400px;
+    border-radius: 30px;
+    background-color: #034f6f;
+    font-size: 60px;
+    color: white;
+    padding-left: 20px;
+}
+.user-phone input::-webkit-input-placeholder { /* WebKit browsers */
+    color: white;
+}
+.user-percentage{
+    font-size: 60px;
+    color: #DDF7FE;
+    display: inline-block;
+    letter-spacing: 4px;
+    margin-top: 60px;
+}
+.user-percentage input {
+    height: 80px;
+    width: 300px;
+    border-radius: 30px;
+    background-color: #034f6f;
+    font-size: 60px;
+    padding-left: 20px;
+    color: white;
+}
+.user-percentage input::-webkit-input-placeholder { /* WebKit browsers */
+    color: white;
+}
+.user-operating{
+    text-align: center;
+}
+.user-operating button{
+    width: 260px;
+    height: 100px;
+    font-size: 50px;
+    color: white;
+    background-color: #0072B1;
+    border-radius: 5px;
+    margin-left: 100px;
+    margin-right: 100px;
+}
+.user-main{
+    width: 1080px;
+    height: 1920px;
+    margin: 0 auto;
+    background-image: url("../img/main.png");
+    background-color: #E4E4E3;
+    background-size: 100% 100%;
+}
+.balance-card{
+    background-image: url("../img/balance.png");
+    width: 1042px;
+    height: 385px;
+    margin: 0 auto;
+    margin-top: 50px;
+    background-size: 100% 100%;
+}
+.user-balance{
+    margin-left: 50px;
+}
+.user-balance span{
+    font-size: 90px;
+    color: white;
+    line-height:385px;
+}
+.login{
+    height: 280px;
+}
+.login img{
+    width: 605px;
+    margin-top: 165px;
+    margin-left: 460px;
+}
+.model-proxy{
+    margin-top: 45px;
+}
+.model-proxy img{
+    width: 384px;
+    margin-left: 15px;
+}
+.agency-management{
+    margin-top: 45px;
+}
+.agency-management ul{
+    list-style: none;
+}
+.agency-management ul li{
+    display: inline-block;
+    margin-left: 20px;
+}
+.agency-management ul li img{
+    width: 241px;
+}
+.model-personal-center{
+    margin-top: 90px;
+    margin-left: 15px;
+}
+.model-personal-center img{
+    width: 383px;
+}
+.update-password {
+    width: 1080px;
+    height: 1920px;
+    margin: 0 auto;
+    background-image: url("../img/update_password.png");
+    background-color: #E4E4E3;
+    background-size: 100% 100%;
+}
+.update-operating{
+    width: 1080px;
+    padding-top: 100px;
+    margin: 0 auto;
+    text-align: center;
+}
+.update-operating div{
+    margin-top: 100px;
+}
+.password-style{
+ margin-top: 10px;
+}
+.password-style span{
+    display: inline-block;
+    color: white;
+    font-size: 75px;
+    background-color: #00A9D0;
+    width:400px;
+    border-radius: 30px;
+}
+.password-style input{
+    margin-left: 15px;
+    height: 120px;
+    width: 500px;
+    display: inline-block;
+    position: relative;
+    top: -10px;
+    border-radius: 10px;
+    background-color: #07628E;
+    font-size: 66px;
+    color: white;
+    padding-left: 15px;
+}
+.update-password-btn{
+    margin-top:100px;
+    text-align: center;
+}
+.update-password-btn button{
+    width: 260px;
+    height: 120px;
+    font-size: 50px;
+    color: white;
+    background-color: #0072B1;
+    margin-left: 50px;
+    border-radius: 5px;
+}
+.promotion-background{
+    width: 1080px;
+    height: 1920px;
+    margin: 0 auto;
+    background-image: url("../img/my_promotion.png");
+    background-color: #E4E4E3;
+    background-size: 100% 100%;
+}
+.my-promotion-title{
+    margin-top: 60px;
+    text-align: center;
+}
+.my-promotion-title img{
+    width: 529px;
+}
+.proxy-info{
+    margin: 0 auto;
+    width: 1075px;
+    height: 1000px;
+    overflow-y: auto;
+}
+.proxy-info-template{
+    background-image: url("../img/template.png");
+    width: 1075px;
+    height: 255px;
+    margin-top: 20px;
+    background-size: 100% 100%;
+}
+
+.proxy-link{
+    position: absolute;
+    width: 1080px;
+    height: 1920px;
+    z-index: 9999;
+    margin: 0 auto;
+    top: 0px;
+    background-color: black;
+}
+
+.proxy-link .proxy-link-div{
+    position: relative;
+    background-color: white;
+    width: 900px;
+    height: 300px;
+    top: 600px;
+    text-align: center;
+    margin: 0 auto;
+    border-radius: 10px;
+}
+
+.proxy-link .proxy-link-button{
+    margin-top: 200px;
+    margin-left: 450px;
+}
+.proxy-link-button button{
+    position: relative;
+    width: 260px;
+    height: 120px;
+    font-size: 60px;
+    top: 600px;
+    color: white;
+    background-color: #0072B1;
+    border-radius: 5px;
+}
+
+.number-style .zfDate{
+    display: inline-block;
+    color: white;
+    font-size: 50px;
+    margin-left: 20px;
+}
+.number-style .proxyRegistLink{
+    display: inline-block;
+    color: white;
+    font-size: 50px;
+    margin-left: 20px;
+}
+.number-style .proportion{
+    display: inline-block;
+    margin-left: 100px;
+    font-size: 70px;
+    line-height: 90px;
+    color: white;
+}
+.order-style{
+    margin-top: 10px;
+}
+.order-style div{
+    float: left;
+    line-height: 120px;
+}
+.order-style .userName{
+    font-size: 55px;
+    color:white;
+    margin-left: 15px;
+    width: 200px;
+    height: 100px;
+    overflow: hidden;
+}
+.order-style .userAmount{
+    font-size: 50px;
+    color: white;
+    margin-left: 50px;
+    width: 500px;
+}
+.order-style .userObtainReward{
+    font-size: 60px;
+    color: white;
+    margin-left: 0px;
+}
+.return-style{
+    margin-top: 200px;
+    margin-left: 450px;
+}
+.return-style button{
+    width: 260px;
+    height: 120px;
+    font-size: 60px;
+    color: white;
+    background-color: #0072B1;
+    border-radius: 5px;
+}
+.withdraw-style{
+    width: 1080px;
+    height: 1920px;
+    margin: 0 auto;
+    background-image: url("../img/withdraw.png");
+    background-color: #E4E4E3;
+    background-size: 100% 100%;
+}
+.withdrawal-amount{
+    background-image: url("../img/withdrawal_amount_img.png");
+    width: 1044px;
+    height: 405px;
+    margin-left: 19px;
+    background-size: 100% 100%;
+}
+.prompt{
+    padding-top: 20px;
+    margin-left: 50px;
+}
+.prompt-amount{
+    display: inline-block;
+}
+.prompt-amount span{
+    font-size: 60px;
+    color: white;
+}
+.prompt-amount input{
+    width: 400px;
+    height: 90px;
+    margin-top: 50px;
+    border:3px solid #0072B1;
+    border-radius: 5px;
+    background-color: #036892;
+    font-size: 60px;
+    color: white;
+    padding-left: 15px;
+}
+.prompt-info{
+    display: inline-block;
+    position: relative;
+    top: 20px;
+}
+.prompt-info span{
+    color: red;
+    font-size: 40px;
+    margin-left: 15px;
+}
+.withdrawal-withdraw-type select{
+    width: 360px;
+    height: 80px;
+    background-color: #034f6f;
+    color: white;
+    font-size: 50px;
+    border-radius: 5px;
+}
+.withdrawal-account{
+    background-image: url("../img/withdrawal_account_img.png");
+    width: 1037px;
+    height: 767px;
+    margin-left: 19px;
+    margin-top: 10px;
+    background-size: 100% 100%;
+}
+.withdrawal-account div{
+    padding-top: 40px;
+}
+.withdrawal-account span{
+    font-size: 50px;
+    color: #DDF7FE;
+    display: inline-block;
+    letter-spacing: 4px;
+}
+.withdrawal-account-amount input{
+    height: 80px;
+    width: 300px;
+    border-radius: 5px;
+    background-color: #034f6f;
+    font-size: 50px;
+    color: white;
+    padding-left: 20px;
+}
+.withdrawal-account-zfbAccount input{
+    height: 80px;
+    width: 500px;
+    border-radius: 5px;
+    background-color: #034f6f;
+    font-size: 50px;
+    color: white;
+    padding-left: 20px;
+}
+.withdrawal-account-zfbName input{
+    height: 80px;
+    width: 500px;
+    border-radius: 5px;
+    background-color: #034f6f;
+    font-size: 50px;
+    color: white;
+    padding-left: 20px;
+}
+
+.withdrawal-account-phone input{
+    height: 80px;
+    width: 500px;
+    border-radius: 5px;
+    background-color: #034f6f;
+    font-size: 50px;
+    color: white;
+    padding-left: 20px;
+}
+.withdrawal-account-vilidateCode{
+    display: inline-block;
+}
+.withdrawal-account-vilidateCode input{
+    height: 80px;
+    width: 300px;
+    border-radius: 5px;
+    background-color: #034f6f;
+    font-size: 50px;
+    color: white;
+    padding-left: 20px;
+}
+
+.withdrawal-account div{
+    margin-left: 50px;
+}
+.withdrawal-account button{
+    width: 260px;
+    height: 90px;
+    background-color: #0072B1;
+    font-size: 45px;
+    color: white;
+    border-radius: 5px;
+    margin-left: 20px;
+}
+.material-promotion{
+    width: 1080px;
+    height: 1920px;
+    margin: 0 auto;
+    background-image: url("../img/material_promotion.png");
+    background-color: #E4E4E3;
+    background-size: 100% 100%;
+}
+.my-qrCode-style{
+   text-align: center;
+    padding-top: 50px;
+}
+.my-qrCode-style span{
+    width: 534px;
+    display: inline-block;
+    font-size: 90px;
+    color: #0072B1;
+}
+.qrCode-show{
+    margin: 0 auto;
+    background-repeat: no-repeat;
+    margin-left: 315px;
+    background-size: 100% 100%;
+}
+.qrCode-show img{
+    margin-top: 40px;
+    width: 460px;
+}
+.material-img-style{
+    text-align: center;
+    margin-top: 160px;
+}
+.material-img-style span{
+    width: 587px;
+    display: inline-block;
+    font-size: 90px;
+    color: #0072B1;
+}
+.meterial-download-img{
+    width: 765px;
+    height: 363px;
+    margin: 0 auto;
+    background-image: url("../img/download_background.png");
+    display: inline-block;
+    margin-left: 150px;
+    overflow-x: auto;
+    margin-top: 50px;
+}
+.wl-sum{
+    width: 4555px;
+}
+.wl{
+    width: 765px;
+    float: left;
+    position: relative;
+}
+.meterial-download-img img{
+    width: 765px;
+    height: 363px;
+}
+.meterial-download-img button{
+    width: 220px;
+    height: 100px;
+    background-color: #0084D0;
+    color: white;
+    font-size: 60px;
+    position: absolute;
+    bottom: 0px;
+    left: 272px;
+    border-radius: 10px;
+}
+.meterial-download-btn {
+    margin-top: 20px;
+    text-align: center;
+}
+.meterial-download-btn button{
+    display: inline-block;
+    width: 220px;
+    height: 100px;
+    font-size: 60px;
+    color: white;
+    background-color: #0072B1;
+}
+.prompt{
+    text-align: center;
+    color: red;
+}
+.agent-info-table{
+    text-align: center;
+    margin-top: 20px;
+}
+.agent-info-table table{
+    border-radius: 30px;
+}
+.agent-info-table table,td{
+    width: 1060px;
+    margin: 0 auto;
+    border-collapse:collapse;
+    border: 5px solid #0279B5;
+    font-size: 45px;
+    color: white;
+}
+.commission-info{
+    margin-top: 50px;
+}
+.commission-info ul{
+    list-style: none;
+    margin-left: 50px;
+}
+.commission-info ul li{
+    margin-top: 20px;
+}
+.commission-info ul li img{
+    width: 607px;
+}
+.commission-info ul li span{
+    color: white;
+    font-size: 60px;
+    position: absolute;
+    left: 100px;
+    line-height: 100px;
+}
+.return-btn-style{
+    width: 220px;
+    height: 110px;
+    background-color: #0072B1;
+    font-size: 50px;
+    color: white;
+    border-radius: 5px;
+    position: relative;
+    top: -35px;
+    margin-left: 50px;
+}
+.load-more{
+    margin-top: 20px;
+    text-align: center;
+    width: 1080px;
+    background-image: url("../img/bottom_img.png");
+}
+.load-more button{
+    width: 260px;
+    height: 120px;
+    color: white;
+    font-size: 55px;
+    background-color: #0084D0;
+    border-radius:15px;
+}
+.upgrade-info{
+    text-align: center;
+}
+.upgrade-info span{
+    color: red;
+}
+.recharge-amount{
+    text-align: center;
+}
+.recharge-amount-style span{
+    font-size: 60px;
+    color: #4193BD;
+
+}
+.recharge-amount-style input{
+    width: 500px;
+    height: 100px;
+    padding-left: 15px;
+    border-radius: 5px;
+    background-color: #00A9D0;
+    color: white;
+    font-size: 60px;
+}
+.recharge-amount-style select{
+    width: 500px;
+    height: 100px;
+    background-color: #00A9D0;
+    color: white;
+    font-size: 60px;
+    border-radius: 5px;
+}
+.price-list-style table{
+    border-collapse:collapse;
+    color: white;
+    text-align: center;
+    border: 1px solid #2785B9;
+    background-color: #00A9D0;
+}
+.price-list-style tr td{
+    border-collapse:collapse;
+    border: 3px solid #0E78B4;
+    font-size: 50px;
+    line-height: 160px;
+}
+.submit-style{
+   text-align: center;
+}
+.submit-style button{
+    margin-top: 200px;
+    width: 260px;
+    height: 140px;
+    background-color: #0E78B4;
+    font-size: 55px;
+    color: white;
+    border-radius: 5px;
+}
+.customer-service button{
+    width: 260px;
+    height: 110px;
+    background-color: #0072B1;
+    color: white;
+    font-size: 55px;
+    margin-top: 50px;
+    border-radius:5px;
+}
+.customer-service div{
+    width: 740px;
+    height: 450px;
+    position: absolute;
+    background-color: #00A9D0;
+    top: -650px;
+    left: -300px;
+    border-radius: 5px;
+    box-shadow: 0.02rem 0.02rem 0.02rem 0.02rem #666;
+    text-align: center;
+}
+.customer-service div img{
+    width: 82px;
+    margin-left: 300px;
+    top: 25px;
+    position: relative;
+}
+.customer-service div span{
+    color: white;
+    font-size: 55px;
+}
+.customer-service div input{
+    margin-left: 20px;
+    margin-top: 60px;
+    width: 700px;
+    height: 120px;
+    border-radius: 5px;
+    background-color: #036892;
+    color: white;
+    font-size: 55px;
+    z-index: 999;
+}

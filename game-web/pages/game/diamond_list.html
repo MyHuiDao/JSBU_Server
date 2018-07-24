@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>钻石兑换列表</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <link rel="stylesheet" href="../../js/toastr.css"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/toastr.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div>
+        <form id="queryForm">
+            <div class="widget-box">
+                <div class="widget-header widget-header-flat search_tj_bar_tit">
+                    <h5 class="widget-title">查询条件</h5>
+                </div>
+                <div class="row search_tj_bar">
+                    <div class="col-xs-12">
+                        <div class="col-xs-4">
+                            <label class="col-sm-4">钻石数量：</label>
+                            <div class="input-group col-sm-8">
+                                <input class="form-control form-control1 search-query"
+                                       name="params['number']" />
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <label class="col-sm-4">激活码：</label>
+                            <div class="input-group col-sm-8">
+                                <input class="form-control form-control1 search-query"
+                                       name="params['code']" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="bs_btn">
+            <button id="addBtn" class="btn btn-primary  btn-sm">
+                新增
+            </button>
+            <button class="btn btn-primary  btn-sm" type="button" id="resetBtn">
+                 重 置
+            </button>
+            <button id="seachBtn" type="button" class="btn btn-primary  btn-sm">
+                查找
+            </button>
+            <button id="deleteBtn" type="button" class="btn btn-primary  btn-sm diamond_code_delete">
+                删除
+            </button>
+        </div>
+        <table id="grid-table"></table>
+        <div id="grid-pager"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    var list_url = ctxPath + '/diamonds/page';
+    var grid_selector = "#grid-table";
+    var pager_selector = "#grid-pager";
+    $(function() {
+        jqGrid_init(grid_selector, pager_selector, {
+            url : list_url,
+            colNames : [ 'id', '激活码', '数量', '创建时间','是否激活','激活人','激活时间'],
+            colModel : [ {
+                name : 'id',
+                index : 'id',
+                hidden : true
+            }, {
+                name : 'code',
+                index : 'code',
+                width : 30,
+                sortable: false
+            }, {
+                name : 'number',
+                index : 'number',
+                width : 30,
+                sortable: false
+            }, {
+                name : 'createDate',
+                width : 30,
+                sortable: false
+            }, {
+                name : 'isActivate',
+                formatter:formatterIsActivate,
+                width : 30,
+                sortable: false
+            },{
+                name : 'userName',
+                width : 30,
+                sortable: false
+            },{
+                name : 'activateDate',
+                width : 30,
+                sortable: false
+            }],
+            multiselect:true
+
+        });
+
+        $("#seachBtn").on('click', function() {
+            $(grid_selector).jqGrid('setGridParam', {
+                postData : $('#queryForm').serialize(),
+                page : 1
+            }).trigger("reloadGrid");
+        });
+        $("#deleteBtn").on('click',function(){
+            var ids = $(grid_selector).jqGrid('getGridParam','selarrrow');
+            if(!ids||ids.length==0){
+                alert("至少选择一条数据");
+                return;
+            }
+            $.ajax({
+                url:ctxPath+"/diamonds/delete?ids="+ids,
+                type:'get',
+                success:function(data){
+                    if(!data.state){
+                        alert(data.msg);
+                        return;
+                    }
+                    $(grid_selector).trigger("reloadGrid");
+                }
+            });
+
+        });
+        $("#addBtn").on('click', function() {
+            window.location.href = 'diamond_add.html';
+        });
+
+        $('#resetBtn').on('click', function() {
+            resetForm($('#queryForm'));
+        });
+    });
+
+
+
+
+    function formatterIsActivate(val){
+        if(val=="Y"){
+            return "是";
+        }else if(val=="N"){
+            return "否";
+        }
+    }
+</script>
+</body>
+</html>

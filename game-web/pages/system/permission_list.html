@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>权限管理</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <link rel="stylesheet" href="../../js/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+    <link rel="stylesheet" href="../../js/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+    <link rel="stylesheet" href="../../js/toastr.css"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/toastr.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript" src="../../js/ztree/js/jquery.ztree.core.js"></script>
+    <script type="text/javascript" src="../../js/ztree/js/jquery.ztree.excheck.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div id="ztree" class="ztree"></div>
+    <input type="hidden" id="id" name="id">
+
+    <div class="clearfix form-actions">
+        <div class="center">
+            <button id="addBtn" class="btn btn-primary  btn-sm authority_new">
+                新增
+            </button>
+            <button class="btn btn-primary  btn-sm authority_update" type="button" id="update">
+                修改
+            </button>
+            <button id="delete" type="button" class="btn btn-primary  btn-sm authority_delete">
+                删除
+            </button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var setting = {
+        data: {
+            simpleData: {
+                enable: true,
+                idKey: "id",
+                pIdKey: "parentId",
+                rootPId: "-1",
+            },
+            key: {
+                name: "name"
+            }
+        },
+        callback: {
+            onClick: onClick
+        }
+    };
+    var zTree;
+    var id;
+    var name;
+    var tId;
+    function onClick(event, treeId, treeNode, clickFlag) {
+        id = treeNode.id;
+        getParentNode();
+    }
+
+    //获取ztree的父节点
+    function getParentNode(){
+        var treeObj = $.fn.zTree.getZTreeObj("ztree");
+        var sNodes = treeObj.getSelectedNodes();
+        if(sNodes[0].getParentNode()==null){
+            name="顶级节点";
+            tId=null;
+            return;
+        }
+        name=treeObj.getNodeByTId(sNodes[0].getParentNode().tId).name;
+        tID=sNodes[0].getParentNode().tId;
+    }
+
+    function filter(treeId, parentNode, childNodes) {
+        if (!childNodes) return null;
+        for (var i=0, l=childNodes.length; i<l; i++) {
+            childNodes[i].name = childNodes[i].name.replace(/\.n/g, '.');
+        }
+        return childNodes;
+    }
+    var zNodes;
+
+    function get(){
+        $.ajax({
+            type:"post",
+            async:false,
+            url:"auto/getAuthorityList",
+            success:function(msg){
+                for(var i=0;i<msg.data.length;i++){
+                    msg.data[i].name=msg.data[i].name+"("+msg.data[i].code+")";
+                }
+                zNodes=msg.data;
+                $.fn.zTree.init($("#ztree"), setting, zNodes);
+            }
+        });
+    }
+
+    $(document).ready(function(){
+        get();
+        var treeObj = $.fn.zTree.getZTreeObj("ztree");
+        treeObj.expandAll(true);
+    });
+
+
+    $("#addBtn").on('click', function () {
+        if (!id) {
+            window.location.href = "permission_add.html";
+        } else {
+            window.location.href = "permission_add.html?id=" + id+"&name="+name+"&tId="+tId;
+        }
+    });
+    $("#update").on('click', function () {
+        if (!id) {
+            toastr.success("至少选择一条数据");
+            return;
+        }
+        window.location.href = "permission_update.html?id=" + id+"&name="+name;
+    });
+    $("#delete").on('click', function () {
+        if (!id) {
+            toastr.success("至少选择一条数据");
+            return;
+        }
+        $.ajax({
+            async: false,
+            cache: false,
+            type: 'POST',
+            url: "auto/deleteAuthority?id=" + id,
+            success: function (data) {
+                window.location.reload(true);
+            }
+        });
+    });
+
+</script>
+</body>
+</html>

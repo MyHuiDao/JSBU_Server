@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>游戏用户列表</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div>
+        <form id="queryForm">
+            <div class="widget-box">
+                <div class="widget-header widget-header-flat search_tj_bar_tit">
+                    <h5 class="widget-title">查询条件</h5>
+                </div>
+                <div class="row search_tj_bar">
+                    <div class="col-xs-12">
+                        <div class="col-xs-4">
+                            <label class="col-sm-4">游戏编码：</label>
+
+                            <div class="input-group col-sm-8">
+                                <input class="form-control form-control1 search-query"
+                                       name="params['code']"/>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <label class="col-sm-4">游戏昵称：</label>
+
+                            <div class="input-group col-sm-8">
+                                <input class="form-control form-control1 search-query"
+                                       name="params['name']"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="bs_btn">
+            <button class="btn btn-primary  btn-sm" type="button" id="resetBtn">
+                重 置
+            </button>
+            <button id="seachBtn" type="button" class="btn btn-primary  btn-sm">
+                查找
+            </button>
+        </div>
+        <table id="grid-table"></table>
+        <div id="grid-pager"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    var list_url = ctxPath + '/gameUser/gameUserDiamondRecordPage';
+    
+    var grid_selector = "#grid-table";
+    var pager_selector = "#grid-pager";
+    $(function () {
+        jqGrid_init(grid_selector, pager_selector, {
+            url: list_url,
+            colNames: ['gameUserId','游戏编码', '昵称', '消耗量','操作'],
+            
+            colModel: [{
+                name: 'gameUserId',
+                index: 'gameUserId',
+                width: 30,
+                hidden: true
+            },{
+                name: 'gameUserCode',
+                index: 'gameUserCode',
+                width: 30,
+                sortable: false
+            }, {
+                name: 'gameUserName',
+                index: 'gameUserName',
+                width: 30,
+                sortable: false
+            }, {
+                name: 'sumNumber',
+                index: 'sumNumber',
+                width: 30,
+                sortable: false
+            }, {
+                name: 'data_action',
+                formatter: formaterDataAction,
+                width: 10
+            }]
+        });
+
+        $("#seachBtn").on('click', function () {
+            $(grid_selector).jqGrid('setGridParam', {
+                postData: $('#queryForm').serialize(),
+                page: 1
+            }).trigger("reloadGrid");
+        });
+
+        $('#resetBtn').on('click', function () {
+            resetForm($('#queryForm'));
+        });
+    });
+    
+    
+    function formaterDataAction(cellvalue, options, rowObject) {
+        var html = '';
+        html += '<div class="small">'
+        html += '<button onclick="gameUserCodeAction(\''
+                + rowObject['gameUserId']
+                + '\')" class="btn btn-xs btn-info game_data_user_lose_diamond" title="查看" >'
+                + '<i class="ace-icon fa fa-eye bigger-120"></i>'
+                + '</button>';
+        html += '</div>';
+        return html;
+    }
+    
+    function gameUserCodeAction(gameUserId){
+    	window.location.href = 'game_user_lose_diamond_record_list.html?gameUserId='+gameUserId;
+    }
+    
+</script>
+</body>
+</html>

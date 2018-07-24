@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>代理商钻石存量</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <!-- ECharts单文件引入 -->
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div>
+        <form id="queryForm">
+            <div class="widget-box">
+                <div class="widget-header widget-header-flat search_tj_bar_tit">
+                    <h5 class="widget-title">查询条件</h5>
+                </div>
+                <div class="row search_tj_bar">
+                    <div class="col-xs-12">
+                        <div class="col-xs-4">
+                            <label class="col-sm-4">系统操作人：</label>
+
+                            <div class="input-group col-sm-8">
+                                <input class="form-control form-control1 search-query"
+                                       name="params['operSysUserName']"/>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <label class="col-sm-4">进出类型：</label>
+
+                            <div class="input-group col-sm-8">
+                                <select class="form-control form-control1 search-query" id="sType"
+                                        name="params['type']">
+                                        <option value="0">进货</option>
+                                        <option value="1">出货</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bs_btn">
+            <button class="btn btn-primary  btn-sm" type="button" id="returnBtn">
+                    返回
+                </button>
+                <button class="btn btn-primary  btn-sm" type="button" id="resetBtn">
+                    重 置
+                </button>
+                <button id="seachBtn" type="button" class="btn btn-primary  btn-sm">
+                    查找
+                </button>
+            </div>
+        </form>
+        <div id="main" style="height:400px;display:none;margin-bottom: 50px"></div>
+        <table id="grid-table"></table>
+        <div id="grid-pager"></div>
+    </div>
+</div>
+<script type="text/javascript">
+	var sysUserStockId = getRequest("sysUserStockId");
+	
+    var list_url = ctxPath + '/stock/findStockOper?params["stockId"]='+sysUserStockId;
+    var grid_selector = "#grid-table";
+    var pager_selector = "#grid-pager";
+    $(function () {
+        jqGrid_init(grid_selector, pager_selector, {
+            url: list_url,
+            colNames: ['ID','相关用户', '游戏用户', '游戏用户编码','系统用户编码','进出类型','数量','操作时间','系统操作人','描述','当前库存数量'],
+            colModel: [{
+                name: 'stockId',
+                index: 'stockId',
+                hidden: true,
+            }, {
+                name: 'sysUserName',
+                index: 'sysUserName',
+                sortable: false
+            }, {
+                name: 'gameUserName',
+                index: 'gameUserName',
+                sortable: false
+            }, {
+                name: 'gameUserCode',
+                index: 'gameUserCode',
+                hidden: false,
+            }, {
+                name: 'sysUserCode',
+                index: 'sysUserCode',
+                hidden: false,
+            }, {
+                name: 'type',
+                index: 'type',
+                hidden: false,
+                formatter:getType
+            }, {
+                name: 'num',
+                index: 'num',
+                sortable: false
+            }, {
+                name: 'operDate',
+                index: 'operDate',
+                sortable: false
+            }, {
+                name: 'operSysUserName',
+                index: 'operSysUserName',
+                sortable: false
+            }, {
+                name: 'desc',
+                index: 'desc',
+                sortable: false
+            }, {
+                name: 'currentSock',
+                index: 'currentSock',
+                sortable: false
+            }]
+
+        });
+
+        $("#seachBtn").on('click', function () {
+            $(grid_selector).jqGrid('setGridParam', {
+                postData: $('#queryForm').serialize(),
+                page: 1
+            }).trigger("reloadGrid");
+        });
+
+        $('#resetBtn').on('click', function () {
+            resetForm($('#queryForm'));
+        });
+        
+        $('#returnBtn').on('click', function () {
+            window.location.href = 'sys_stock_num_list.html';
+        });
+        
+    });
+    
+    function getType(cellValue, options, rowObject){
+    	var temp = '';
+    	
+    	if(cellValue == 0){
+    		temp = '进货';
+    	}else{
+    		temp = '出货';
+    	}
+    	return temp;
+    }
+    
+    
+</script>
+</body>
+</html>

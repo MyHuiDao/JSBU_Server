@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>捕鱼规则设置</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <link rel="stylesheet" href="../../js/toastr.css"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/toastr.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div class="table-responsive">
+        <form class="form-horizontal" id="add-form">
+            <input type="hidden" id="id" name="id"/>
+            <div class="page-header">
+                <h1>
+                    <small>捕鱼规则设置</small>
+                </h1>
+            </div>
+            <div class="row padding_top_buttom_10">
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label
+                                class="col-sm-3 control-label no-padding-right text-right">
+                            <span class="red">*</span>捕鱼规则设置:
+                        </label>
+
+                        <div class="col-sm-6">
+                            <select class="form-control user_fishing_rule_add" id="fishingRuleName" name="fishingRuleName">
+
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div style="height: 20px;"></div>
+                    <div class="clearfix form-actions user_fishing_rule_get">
+                        <div class="center">
+                            <table id="userFishingRule" class="table">
+                                <thead>
+                                <tr>
+                                    <td>
+                                        规则名称
+                                    </td>
+                                    <td>
+                                        状态
+                                    </td>
+                                    <td>
+                                        操作
+                                    </td>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+            </div>
+            <div class="clearfix form-actions">
+                <div class="center">
+                    <button class="btn btn-primary  btn-sm" type="button"
+                            onclick="window.location.href='../game/gameUser/game_user_list.html'">
+                        返 回
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    var pkId = getRequest("id");
+    //角色路径
+    var userFishingRule_link="userFishingRule/getUserFishingRuleData?id="+pkId;
+
+    $(function() {
+        $.ajax({
+            url:userFishingRule_link,
+            type:"get",
+            async:false,
+            success:function(msg){
+                var html='';
+                var status="启用";//状态信息
+                var statusNum=1;//状态码
+                var statusBtn="禁用";//按钮信息
+                for(var i=0;i<msg.data.length;i++){
+                    if(msg.data[i].status==1){
+                        status="禁用";
+                        statusNum=0;
+                        statusBtn="启用";
+                    }
+                    html+="<tr><td>"+msg.data[i].name+"</td>" +
+                        "<td>"+status+"</td>";
+                    html+= '<td><a onclick="updateEvent(\''
+                        + msg.data[i].id+'\',\''+statusNum
+                        + '\')" class="btn btn-xs btn-info user_fishing_rule_disabled">'+statusBtn
+                        + '</a>';
+                    html+= '<a onclick="delEvent(\''
+                        + msg.data[i].id
+                        + '\')" class="btn btn-xs btn-danger user_fishing_rule_delete" title="删除" >'
+                        + '<i class="ace-icon fa fa-trash-o bigger-120"></i>'
+                        + '</a></td></tr>';
+                }
+                $("#userFishingRule tbody").append(html);
+            }
+        });
+    });
+
+    function updateEvent(id,status){
+        $.ajax({
+            url:'userFishingRule/updateUserFishingRule',
+            type:'get',
+            data: {
+                "id":id,
+                "status":status
+            },
+            async:true,
+            success:function(data){
+                window.location.reload();
+            }
+        });
+    }
+
+    function delEvent(id) {
+        $.ajax({
+            url: 'userFishingRule/deleteUserFishingRule?id=' + id,
+            type: 'get',
+            async:true,
+            success: function (data) {
+                window.location.reload();
+            }
+        });
+    }
+
+    $(function(){
+        $.ajax({
+            url:"fishingRule/findFishingRuleAll?type=1",
+            type:"get",
+            async:false,
+            success:function(data){
+                var obj=data.data;
+                var html="";
+                html="<option></option>";
+                for(var i=0;i<obj.length;i++){
+                    html+="<option value='"+obj[i].id+"'>"+obj[i].name+"</option>";
+                }
+                $("#fishingRuleName").append(html);
+            }
+        });
+        $("#fishingRuleName").change(function(){
+            addSysUserFishingRule();
+        });
+    });
+    /**
+     * 将选中的数据添加到表格中
+     */
+    function addSysUserFishingRule(){
+        var fishingRuleId= $('#fishingRuleName option:selected').val();//选中的值
+        $.ajax({
+            url:"userFishingRule/addUserFishingRule",
+            type:"post",
+            data:{"userId":pkId,"fishingRuleId":fishingRuleId},
+            async:true,
+            success:function(data){
+                window.location.reload();
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

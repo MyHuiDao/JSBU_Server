@@ -1,0 +1,240 @@
+<html lang="zh-CN" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>捕鱼种类设置</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="description" content="overview &amp; stats" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <link rel="stylesheet" href="../../js/toastr.css"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js">
+    </script>
+    <script type="text/javascript" src="../../js/toastr.js"></script>
+    <script src="../../js/main.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+
+<body>
+
+<div class="page-content">
+    <div>
+        <form id="queryForm">
+            <div class="widget-box">
+                <div class="widget-header widget-header-flat search_tj_bar_tit">
+                    <h5 class="widget-title">查询条件</h5>
+                </div>
+                <div class="row search_tj_bar">
+                    <div class="col-xs-12">
+                        <div class="col-xs-4">
+                            <label class="col-sm-4">当前概率系数：</label>
+
+                            <div class="input-group col-sm-8">
+                                <input type="hidden" id="settigId" name="settigId"/>
+                                <input class="form-control form-control1 search-query" id="updatePower"
+                                       name="updatePower"/>
+                            </div>
+                        </div>
+                        <div class="col-xs-4 game_fish_reset">
+                            <div class="col-xs-8">
+                            <button class="btn btn-primary btn-sm" type="button" id="resetBtn" style="margin-top: -5px;">
+                                修 改
+                            </button>
+                                &nbsp;&nbsp;
+                            <button class="btn btn-primary btn-sm" type="button" id="refreshFish" style="margin-top: -5px;">
+                                刷新缓存
+                            </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div>
+        <table id="grid-table" class="table table-bordered">
+            <thead>
+            <tr>
+                <th>名称</th>
+                <th>类型</th>
+                <th>最小金币</th>
+                <th>最大金币</th>
+                <th>鱼权值</th>
+                <th>出现概率(%)</th>
+                <th>鱼的速度(注意:速度用逗号分隔1-5)</th>
+                <th>捕获对比参数</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    var number=0;
+    //获取value
+    function getValue(){
+        $.ajax({
+            url:"setting/getValue?key=fish_probability",
+            type:"get",
+            async:false,
+            success:function(msg){
+                $("#updatePower").val(msg.data);
+                $("#settigId").val(msg.id);
+                number=msg.data;
+            }
+        });
+    }
+    $(function(){
+        getValue();
+        $.ajax({
+            url:"gameFish/findGameFishData",
+            type:"get",
+            success:function(data){
+                var html="";
+                var obj=data.data;
+                //用户保存总值
+                var markSum=0;
+                //获取概率系数
+                var value=number;
+                //保存出现的概率总和
+                var probabilitySum=0;
+                //保存出现的概率
+                var probability=0;
+                //显示出现的概率
+                var showProbability=0;
+                for(var i=0;i<obj.length;i++){
+                    markSum+=obj[i].power;
+                }
+                for(var i=0;i<obj.length;i++){
+                    probabilitySum+=((markSum-value-obj[i].power)/(markSum-570));
+                }
+                var sum=0;
+                for(var i=0;i<obj.length;i++){
+                    showProbability=(((markSum-value-obj[i].power)/(markSum-570))/probabilitySum)*100;
+                    html='<tr><td>'+obj[i].name+''+
+                        '<input type="hidden" name="name" id="name" value="'+obj[i].name+'"></td>'+
+                        '<td>'+obj[i].type+
+                        '<input type="hidden" name="type" id="type" value="'+obj[i].type+'">'+
+                        '<input type="hidden" name="id" id="id" value="'+obj[i].id+'"></td>'+
+                        '<td><input type="input" name="goldMin" id="goldMin" value="'+obj[i].goldMin+'"</td>'+
+                        '<td><input type="input" name="goldMax" id="goldMax" value="'+obj[i].goldMax+'"</td>'+
+                        '<td><input type="input" name="power" id="power" value="'+obj[i].power+'"</td>'+
+                        '<td>'+showProbability+'</td>'+
+                        '<td><input type="input" name="speed" id="speed" value="'+obj[i].speed+'"></td>'+
+                        '<td><input type="input" name="contrast" id="contrast" value="'+obj[i].contrast+'"></td>'+
+                        '<td><button type="button" class="btn btn-primary btn-xs game_fish_update" onclick="editEvent(this)">修改</button>'+
+                        '</tr>';
+                    $("#grid-table tbody").append(html);
+                    sum+=showProbability;
+                }
+            }
+        });
+        $.ajax({
+            url:"setting/getKeyGameSetting?key=fish_probability",
+            type:"get",
+            success:function(msg){
+                $("#settigId").val(msg.data.id);
+            }
+        });
+    });
+
+    $("#refreshFish").on("click",function(){
+            $.ajax({
+                url:"gameFish/refreshFish",
+                type:"get",
+                success:function(msg){
+                    toastr.success("刷新成功");
+                    toastr.call(function(){
+                        window.location.reload();
+                    });
+                }
+            });
+    });
+    function editEvent(obj) {
+        var id= $(obj).parent().parent().find("input[name='id']").val();
+        var name= $(obj).parent().parent().find("input[name='name']").val();
+        var type= $(obj).parent().parent().find("input[name='type']").val();
+        var goldMin= $(obj).parent().parent().find("input[name='goldMin']").val();
+        var goldMax= $(obj).parent().parent().find("input[name='goldMax']").val();
+        var power= $(obj).parent().parent().find("input[name='power']").val();
+        var speed= $(obj).parent().parent().find("input[name='speed']").val();
+        var contrast= $(obj).parent().parent().find("input[name='contrast']").val();
+        var speedArray=speed.split(',');
+        if(speedArray.length>3){
+            toastr.success("鱼的速度不能超过3个");
+            return;
+        }
+        for(var i=0;i<speedArray.length;i++){
+            if(parseInt(speedArray[i])!=speedArray[i]){
+                toastr.success("输入的值必须为整数");
+                return;
+            }
+            if(parseInt(speedArray[i])>5||speedArray<=0){
+                toastr.success("数值不能小于0大于5");
+                return;
+            }
+        }
+        $.ajax({
+            url:"gameFish/updateGameFish",
+            type:"post",
+            data:{
+                "id":id,
+                "name":name,
+                "type":type,
+                "goldMin":goldMin,
+                "goldMax":goldMax,
+                "power":power,
+                "speed":speed,
+                "contrast":contrast
+            },
+            async:false,
+            success:function(msg){
+                if(msg.code){
+                    toastr.success("修改成功!");
+                }
+
+            }
+        });
+    }
+
+    //重置概率系数
+     $("#resetBtn").on("click",function(){
+        var id=$("#settigId").val();
+        var value= $("#updatePower").val();
+        $.ajax({
+            url:"setting/updSetting",
+            type:"post",
+            data:{
+                "id":id,
+                "value":value
+            },
+            success:function(data){
+                if(data.code){
+                    refreshEvent("fish_probability");
+                    window.location.reload();
+                }
+            }
+        });
+    });
+    function refreshEvent(value) {
+        $.ajax({
+            url: 'setting/refresh'+'?key='+value,
+            type: 'get',
+            async:false,
+            success: function (data) {
+                if(data.code == 0){
+                    toastr.success("已刷新");
+                }
+            }
+        });
+    }
+
+
+</script>
+</body>
+</html>

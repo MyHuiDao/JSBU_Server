@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>版本创建</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <link rel="stylesheet" href="../../js/toastr.css"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/toastr.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div class="table-responsive">
+        <form class="form-horizontal" id="add-form">
+            <div>
+                <div class="page-header">
+                    <h1>
+                        <small>添加版本</small>
+                    </h1>
+                </div>
+                <div class="row padding_top_buttom_10">
+                    <div class="col-xs-6">
+                        <div>
+                            <div class="form-group">
+                                <label
+                                        class="col-sm-3 control-label no-padding-right text-right">
+                                    <span class="red">*</span> 版本号:
+                                </label>
+
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control"
+                                           name="version" style="width: 100%"/>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div>
+                            <div class="form-group">
+                                <label
+                                        class="col-sm-3 control-label no-padding-right text-right">
+                                    <span class="red">*</span> 类型:
+                                </label>
+
+                                <div class="col-sm-6">
+                                    <select name="os" id="os" class="form-control" style="width:100%">
+                                        <option value="0">安卓</option>
+                                        <option value="1">ios</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div>
+                            <div class="form-group">
+                                <label
+                                        class="col-sm-3 control-label no-padding-right text-right">
+                                    <span class="red">*</span> 下载地址:
+                                </label>
+
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control"
+                                           name="downLoadUrl" style="width: 100%"/>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clearfix form-actions">
+                    <div class="center">
+                        <button class="btn btn-primary  btn-sm" type="button"
+                                onclick="javascript:history.back();">
+                            返 回
+                        </button>
+                        <button class="btn btn-primary  btn-sm" type="submit"
+                                id="submitButton">
+                            提交
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    var add_url = ctxPath + "/version/add";
+    var formValidate = $('#add-form').validate(
+            {
+                rules: {
+                    'version': {
+                        required: true,
+                        checkVersion: true
+                    },
+                    'os': {
+                        required: true
+                    },
+                    'downLoadUrl': {
+                        required: true
+                   },
+//                     'diamondNum': {
+//                         required: true,
+//                         number: true,
+//                         min: 1
+//                     }
+                },
+                submitHandler: function (form) {
+                    $.ajax({
+                        url: add_url,
+                        data: $(form).serialize(),
+                        type: 'post',
+                        dataType: 'json',
+                        success: function (data) {
+                        	execAjax(data);
+                            if (data.state) {
+                                window.location.href = 'version_list.html';
+                            } else {
+                                alert(data.msg);
+                            }
+                        }
+                    });
+                }
+            });
+    $.validator.addMethod("checkVersion", function (val) {
+        var flag = false;
+        $.ajax({
+            url: ctxPath + "/version/checkVersion?version=" + val+"&os="+$("#os").val(),
+            type: 'get',
+            async: false,
+            success: function (data) {
+            	execAjax(data);
+                if (data.state) {
+                    flag = true;
+                } else {
+                    flag = false;
+                }
+                return flag;
+            }
+        });
+        return flag;
+    }, "该编号已存在");
+</script>
+</body>
+</html>

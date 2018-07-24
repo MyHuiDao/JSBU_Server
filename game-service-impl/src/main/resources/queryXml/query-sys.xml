@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml-body>
+
+	<sql-query name="getPermissionsByUserId">
+	<![CDATA[
+			SELECT
+			p.id id,
+			p. CODE `code`,
+			p. NAME `name`,
+			p.parent_id parentId
+		FROM
+			sys_permission p
+		LEFT JOIN sys_role_permission srp on srp.permission_id=p.id
+		LEFT JOIN sys_user_role sur ON sur.role_id=srp.role_id
+		where
+		1=1
+		{ and sur.sys_user_id= :sysUserId}
+
+	]]>
+	</sql-query>
+
+
+
+	<sql-query name="getPermissionCodeByRoleId">
+		select sp.code,sp.id from sys_permission sp
+		inner join sys_role_permission srp on srp.permission_id=sp.id
+		where
+		1=1
+		{and srp.role_id=:roleId}
+
+	</sql-query>
+
+	<sql-query name="findSysUserRole">
+		<![CDATA[
+			select 
+			sur.id id,
+			sr.id roleId,
+			su.id sysUserId,
+			sr.name name
+			from 
+			sys_user_role sur
+			inner join sys_user su on sur.sys_user_id=su.id 
+			inner join sys_role sr on sur.role_id=sr.id 
+			where
+			1=1
+			{and su.id=:sysUserId}
+		]]>
+	</sql-query>
+
+	<sql-query name="getPermissionCode">
+		<![CDATA[
+			select sp.code from sys_user su 
+			inner join sys_user_role sur on sur.sys_user_id=su.id {and su.id=:userId}
+			inner join sys_role_permission srp on srp.role_id=sur.role_id
+			inner join sys_permission sp on sp.id=srp.permission_id
+			where 
+			1=1
+			{and su.id=:userId}
+		]]>
+	</sql-query>
+
+	<sql-query name="getUserLoginAllData">
+		<![CDATA[
+			select count(1)as count,DATE_FORMAT(ul.login_time,'%Y-%m-%d')as time 
+			from user_login ul 
+			where ul.login_time>= :startDate
+			and  ul.login_time<= :endDate
+			group by DATE_FORMAT(ul.login_time,'%Y-%m-%d')
+		]]>
+	</sql-query>
+	<sql-query name="getUserLoginAllData1">
+		<![CDATA[
+			select count(distinct ul.user_id)as count,DATE_FORMAT(ul.login_time,'%Y-%m-%d')as time 
+			from user_login ul
+			where ul.login_time>= :startDate
+			and  ul.login_time<= :endDate
+			group by DATE_FORMAT(ul.login_time,'%Y-%m-%d')
+			
+		]]>
+	</sql-query>
+
+	<sql-query name="statisticsUserOnline">
+		<![CDATA[
+		select * from(
+		select  IFNULL(tt.count,0) count,d1.time from (
+			&unionSql
+		) d1
+
+		LEFT JOIN
+
+		(select count(DISTINCT uo.id) count,d.time from user_online uo LEFT JOIN
+			(
+			&unionSql
+		) d on 1=1
+		where (uo.online_time_start<=d.time and uo.online_time_end>=d.time) 
+		or (uo.online_time_start<=d.time and uo.online_time_end is null)
+		group by d.time
+		) tt on d1.time=tt.time) a order by date_format(a.time,'%Y-%M-%d %H:%i:%s') asc;
+		]]>
+	</sql-query>
+
+	<sql-query name="getPeriodData">
+		<![CDATA[
+			select count(1) count,uo.online_time_start time
+			from user_online uo 
+			where 
+			1=1
+			and (DATE_FORMAT(uo.online_time_start,'%Y-%m-%d')>=:startDate and DATE_FORMAT(uo.online_time_end,'%Y-%m-%d')<=:endDate ) 
+			or (DATE_FORMAT(uo.online_time_end,'%Y-%m-%d')=null and DATE_FORMAT(uo.online_time_start,'%Y-%m-%d')>=:startDate )
+		]]>
+	</sql-query>
+
+	<sql-query name="getUserFishingRuleData">
+		<![CDATA[
+			select ufr.id,fr.name,ufr.`status` from user_fishing_rule ufr 
+			inner join fishing_rule fr on ufr.fishing_rule_id=fr.id
+			inner join `user` u on u.id=ufr.user_id
+			where 1=1
+			{and u.id=:userId}
+		]]>
+	</sql-query>
+
+	<sql-query name="findPageGoodsAllData">
+		<![CDATA[
+			select g.id,g.`name`,g.img,g.price,g.shop_class_id shopClassId,g.stock,g.`desc`,g.seq,sc.`name` shopClassName 
+			from goods g 
+			left join shop_class sc on sc.id=g.shop_class_id
+			where
+			1=1
+			{and g.name like :name}
+			{and g.shop_class_id=:shopClassId}
+		]]>
+	</sql-query>
+
+	<sql-query name="countUserRegistData">
+		select IFNULL(count(1),0) count
+		from user u
+		where
+		1=1
+		{and DATE_FORMAT(u.create_time,'%Y-%m-%d')=:date}
+	</sql-query>
+
+	<sql-query name="countUserRegistData1">
+		select IFNULL(count(1),0) count
+		from user u
+		where
+		u.union_id is not null
+		{and
+		DATE_FORMAT(u.create_time,'%Y-%m-%d')=:date}
+	</sql-query>
+
+	<sql-query name="findPrivateFishingRuleByUserId">
+		select fr.* from fishing_rule fr
+		inner join
+		user_fishing_rule urf on urf.fishing_rule_id=fr.id
+		where
+		1=1
+		{and
+		urf.user_id=:userId}
+		{and fr.room_type=:roomType}
+
+	</sql-query>
+
+	<sql-query name="findPrivateFishingRuleByAreaId">
+		select fr.* from fishing_rule fr inner JOIN
+		game_area_rule gar ON fr.id=gar.rule_id where gar.area_id=:areaId
+		and
+		fr.room_type=:roomType
+	</sql-query>
+
+
+
+	<sql-query name="getUserId">
+		select ufr.user_id userId from fishing_rule
+		fr
+		INNER JOIN user_fishing_rule ufr
+		on ufr.fishing_rule_id=fr.id
+		where
+		1=1 {and fr.type=:type}
+	</sql-query>
+
+	<sql-query name="getRecommendUserNumber">
+		select u.* from user u
+		where
+		1=1
+		{and
+		PERIOD_DIFF( date_format( now( ) , '%Y%m' ) , date_format(
+		u.create_time, '%Y%m' ) ) =1 }
+		{and u.recommend_user_id=:userId}
+	</sql-query>
+
+	<sql-query name="getFishingRule">
+		select fr.`name` frName,gar.id frId,gar.id
+		areaRuleId from fishing_rule fr
+		inner join game_area_rule gar on
+		gar.rule_id=fr.id
+		where
+		1=1
+		{and gar.area_id=:areaId}
+	</sql-query>
+
+	<sql-query name="findPayLogAll">
+		select pl.*,u.`code` code,u.nick_name
+		nickName from pay_log pl
+		inner join `user` u on u.id=pl.user_id
+		where
+		1=1
+		{and u.`code`=:code}
+		{and pl.status=:status}
+		order by pl.create_date
+		desc
+	</sql-query>
+
+	<!-- 查询代理提现记录 -->
+	<sql-query name="findSysUserGetCash">
+		select u.`code` code,u.nick_name
+		nickName,sugs.* from sys_user_get_cash sugs
+		inner join sys_user su on
+		su.id=sugs.sys_user_id
+		inner join `user` u on
+		u.id=su.game_user_id
+		where
+		1=1
+		{and u.code=:code}
+
+	</sql-query>
+
+	<sql-query name="findAgentBonusLog">
+		select abl.*,u.nick_name userName,p.nick_name
+		proxyName,pl.price price,u.code `code` from agent_bonus_log abl
+		LEFT
+		join `user` u on u.id=abl.user_id
+		LEFT join `user` p on
+		p.id=u.recommend_user_id
+		LEFT join pay_log pl on pl.id=abl.pay_id
+		where
+		1=1
+		{and u.code=:code}
+	</sql-query>
+	<sql-query name="personalCenter">
+		select u.code code,u.nick_name
+		nickName,al.`level`
+		level,al.proportion1,al.proportion2,al.proportion3,u.mobile
+		mobile,u.gold gold
+		from sys_user su
+		inner join `user` u on
+		u.id=su.game_user_id
+		inner join agen_level al on
+		al.id=su.agen_level_id
+		where
+		1=1
+		{and su.id=:id}
+	</sql-query>
+	<sql-query name="userAgentUpgrade">
+		select u.code code,u.nick_name
+		nickName,al.name,al.`level`,al.proportion1,al.proportion2,al.proportion3,aa.audit_date
+		agencyTime,sum(abl.bonus_money) income
+		from agen_level al
+		inner join
+		sys_user su on al.id=su.agen_level_id
+		inner join `user` u on
+		u.id=su.game_user_id
+		inner join agen_apply aa on
+		aa.game_user_id=su.game_user_id
+		left join agent_bonus_log abl on
+		abl.user_id=su.game_user_id
+		where
+		1=1
+		and su.id=:id
+	</sql-query>
+
+	<sql-query name="findAgentInfo">
+		select u.id,u.code,u.nick_name,su.status
+		status,al.`level` agenLevel,tu.code topId,u.create_time,su.create_date
+		auditDate from sys_user su
+		inner join `user` u on u.id=su.game_user_id
+		inner join agen_level al on al.id=su.agen_level_id
+		left join `user` tu
+		on tu.id=u.recommend_user_id
+		where
+		1=1
+		{and u.code=:code}
+		{and u.nick_name
+		like :nickName}
+		GROUP BY u.`code` order BY su.create_date
+		desc
+	</sql-query>
+
+
+	<sql-query name="findAgentInfo1">
+		select u.id,u.code,u.nick_name,su.status
+		status,al.`level` agenLevel,tu.code topId,u.create_time,su.create_date
+		auditDate from sys_user su
+		inner join `user` u on u.id=su.game_user_id
+		inner join agen_level al on al.id=su.agen_level_id
+		left join `user` tu
+		on tu.id=u.recommend_user_id
+		where
+		1=1
+		{and u.code=:code}
+		{and u.nick_name
+		like :nickName}
+		and (select count(*) from user where recommend_user_id=u.id)>=5
+		GROUP BY u.`code`  order BY su.create_date
+		desc
+	</sql-query>
+	<sql-query name="findUserNoSendMsg">
+	<![CDATA[
+		select user_id id from customer_service_msg where status=2 and type=1 GROUP BY user_id
+	]]>
+	</sql-query>
+	<sql-query name="getUserGameEmail">
+		select ge.title,ge.content,ge.create_time
+		from game_email ge
+		left join email_user eu on eu.email_id=ge.id
+		where
+		eu.user_id=:id
+		and eu.`status`!='2'
+		and
+		DATE_FORMAT(ge.invalid_time,'%Y-%m-%d %H:%i:%s')>DATE_FORMAT(:date
+		,'%Y-%m-%d %H:%i:%s') order by ge.create_time,eu.`status` desc
+	</sql-query>
+
+	<sql-query name="getUserNotGameEmail">
+		select ge.id from game_email ge
+		LEFT JOIN
+		email_user eu on ge.id=eu.email_id
+		and eu.user_id =:id
+		and
+		DATE_FORMAT(ge.invalid_time,'%Y-%m-%d %H:%i:%s')>DATE_FORMAT(:date
+		,'%Y-%m-%d %H:%i:%s')
+		where eu.user_id is null
+	</sql-query>
+
+	<sql-query name="findSysUserAll">
+		<![CDATA[
+			select u.code,su.* from sys_user su 
+			left join `user` u on u.id=su.game_user_id
+			where
+			1=1
+			and su.status!=2
+			and su.id!='1'
+			{and u.code=:code}
+			{and su.nick_name=:nickName}
+			order by su.create_date desc
+		]]>
+	</sql-query>
+
+	<sql-query name="findProxyGameGoldExchange">
+		<![CDATA[
+			select ge.* from game_gold_exchange ge
+			inner join agen_level al on al.gold_id=ge.id ORDER BY al.`level`
+		]]>
+	</sql-query>
+
+<sql-query name="findPageUser">
+		<![CDATA[
+		select
+		        u.`create_ip` `createIp`,
+		        u.`code` `code`,
+		        u.`salt` `salt`,
+		        u.`device_id` `deviceId`,
+		        u.`create_time` `createTime`,
+		        u.`is_bind` `isBind`,
+		        u.`is_vip` `isVip`,
+		        u.`head_img` `headImg`,
+		        u.`sex` `sex`,
+		        u.`mobile` `mobile`,
+		        u.`experience` `experience`,
+		        u.`weixin_id` `weixinId`,
+		        u.`user_state` `userState`,
+		        u.`gold` `gold`,
+		        u.`password` `password`,
+		        u.`user_type` `userType`,
+		        u.`weixin_open_id` `weixinOpenId`,
+		        u.`nick_name` `nickName`,
+		        u.`union_id` `unionId`,
+		        u.`id` `id`,
+		        u.`vip_level` `vipLevel`,
+		        u.`account` `account`,
+		        u.`recommend_user_id` `recommendUserId`,
+		        u.`lock_gold` `lockGold`,
+		        u1.code parentCode,
+		        al.name agentName
+		    from
+		        `user` u left join user u1 on u.recommend_user_id=u1.id
+		        left join sys_user su on su.game_user_id=u.id
+		        left join agen_level al on al.id=su.agen_level_id
+		    where
+		     1=1
+		        { and u.`nick_name`like :nickName } 
+		        { and u.`code`=:code } 
+		        { and u.`account`=:account }
+		        { and u.`recommend_user_id`=:recommendUserId }  
+		    order by
+		        u.`create_time` desc
+		]]>
+		</sql-query>
+	
+	
+</xml-body>

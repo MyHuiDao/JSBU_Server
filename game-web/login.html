@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta charset="utf-8"/>
+    <title>金沙渔港后台管理系统</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link rel="stylesheet" href="js/ztree/css/demo.css" />
+    <link rel="stylesheet" href="js/ztree/css/zTreeStyle/zTreeStyle.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="assets/css/ace-fonts.css" />
+    <link rel="stylesheet" href="assets/css/ace.min.css" id="main-ace-style" />
+    <link rel="stylesheet" href="assets/css/ace-custom.css" />
+    <link rel="stylesheet" href="assets/css/bootstrap-table.css" />
+    <link rel="stylesheet" href="js/toastr.css"/>
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="assets/css/ace-part2.min.css" />
+	<![endif]-->
+
+    <script type="text/javascript" src="assets/js/jquery.min.js"></script>
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="assets/css/ace-ie.min.css" />
+	<![endif]-->
+    <script src="assets/js/ace-extra.min.js"></script>
+    <!--[if lte IE 8]>
+    <script src="assets/js/html5shiv.min.js"></script>
+    <script src="assets/js/respond.min.js"></script>
+	<![endif]-->
+    <script type="text/javascript">
+		if ('ontouchstart' in document.documentElement)
+			document.write("<script src='assets/js/jquery.mobile.custom.min.js'><"+"/script>");
+	</script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <!--[if lte IE 8]>
+    <script src="assets/js/excanvas.min.js"></script>
+    <![endif]-->
+    <script src="assets/js/jquery-ui.custom.min.js"></script>
+    <script src="assets/js/jquery.ui.touch-punch.min.js"></script>
+    <script src="assets/js/jquery.validate.min.js" type="text/javascript"></script>
+    <script src="assets/js/jquery.validate.zh_ch.js"></script>
+    <script src="assets/js/bootstrap-table.js"></script>
+    <script src="assets/js/bootstrap-table-locale-all.min.js"></script>
+    <script src="js/ztree/js/jquery.ztree.core.js"></script>
+    <script src="assets/js/bootstrap-table-zh-CN.js"></script>
+    <script src="assets/js/ace-elements.min.js"></script>
+    <script src="assets/js/ace.min.js"></script>
+    <script src="js/toastr.js"></script>
+    <meta name="description" content="User login page"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+</head>
+
+<body class="login-layout light-login" style="margin-top: 10%">
+<div class="main-container">
+    <div class="main-content">
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1">
+                <div class="login-container">
+
+                    <div class="position-relative">
+                        <div id="login-box"
+                             class="login-box visible widget-box no-border">
+                            <div class="widget-body">
+                                <div class="widget-main">
+                                    <h4 class="header blue lighter bigger">金沙渔港后台管理系统</h4>
+
+                                    <div class="space-6"></div>
+                                    <form id="login_from">
+                                        <fieldset>
+                                            <label class="block clearfix"> <span
+                                                    class="block input-icon input-icon-right"> <input
+                                                    type="text" class="form-control" placeholder="用户名"
+                                                    id="account" name="account"/> <i class="ace-icon fa fa-user"></i>
+												</span>
+                                            </label> <label class="block clearfix"> <span
+                                                class="block input-icon input-icon-right"> <input
+                                                type="password" class="form-control" id="password" name="password"
+                                                placeholder="密码"/> <i class="ace-icon fa fa-lock"></i>
+												</span>
+                                            </label>
+
+                                            <label class="block clearfix"> <span
+                                                    class="block input-icon input-icon-right"> <input
+                                                    type="text" class="form-control" placeholder="验证码"
+                                                    id="validateCode" name="validateCode"/> <i class="ace-icon fa fa-lock"></i>
+												</span>
+                                                <div style="height: 10px;"></div>
+                                                <img id="validateCodeImg" src="/game-admin/validate/imageCode" style="width: 100px;height: 30px;font-size: 12px;"/>
+                                                <a href="#" onclick="uploadImg()">看不清？换一张</a>
+                                            </label>
+
+                                            <div class="space"></div>
+
+                                            <div class="clearfix">
+                                                <button type="button" id="login"
+                                                        class="width-35 pull-right btn btn-sm btn-primary">
+                                                    <i class="ace-icon fa fa-key"></i> <span
+                                                        class="bigger-110">登录</span>
+                                                </button>
+                                            </div>
+
+                                            <div class="space-4"></div>
+                                        </fieldset>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script type="text/javascript">
+
+    (function (factory) {
+        if (typeof define === 'function' && define.amd) {
+            // AMD. Register as anonymous module.
+            define(['jquery'], factory);
+        } else {
+            // Browser globals.
+            factory(jQuery);
+        }
+    }(function ($) {
+
+        var pluses = /\+/g;
+
+        function encode(s) {
+            return config.raw ? s : encodeURIComponent(s);
+        }
+
+        function decode(s) {
+            return config.raw ? s : decodeURIComponent(s);
+        }
+
+        function stringifyCookieValue(value) {
+            return encode(config.json ? JSON.stringify(value) : String(value));
+        }
+
+        function parseCookieValue(s) {
+            if (s.indexOf('"') === 0) {
+                // This is a quoted cookie as according to RFC2068, unescape...
+                s = s.slice(1, -1).replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+            }
+
+            try {
+                // Replace server-side written pluses with spaces.
+                // If we can't decode the cookie, ignore it, it's unusable.
+                s = decodeURIComponent(s.replace(pluses, ' '));
+            } catch(e) {
+                return;
+            }
+
+            try {
+                // If we can't parse the cookie, ignore it, it's unusable.
+                return config.json ? JSON.parse(s) : s;
+            } catch(e) {}
+        }
+
+        function read(s, converter) {
+            var value = config.raw ? s : parseCookieValue(s);
+            return $.isFunction(converter) ? converter(value) : value;
+        }
+
+        var config = $.cookie = function (key, value, options) {
+
+            // Write
+            if (value !== undefined && !$.isFunction(value)) {
+                options = $.extend({}, config.defaults, options);
+
+                if (typeof options.expires === 'number') {
+                    var days = options.expires, t = options.expires = new Date();
+                    t.setDate(t.getDate() + days);
+                }
+
+                return (document.cookie = [
+                    encode(key), '=', stringifyCookieValue(value),
+                    options.expires ? '; expires=' + options.expires.toUTCString() : '', // use expires attribute, max-age is not supported by IE
+                    options.path    ? '; path=' + options.path : '',
+                    options.domain  ? '; domain=' + options.domain : '',
+                    options.secure  ? '; secure' : ''
+                ].join(''));
+            }
+
+            // Read
+
+            var result = key ? undefined : {};
+
+            // To prevent the for loop in the first place assign an empty array
+            // in case there are no cookies at all. Also prevents odd result when
+            // calling $.cookie().
+            var cookies = document.cookie ? document.cookie.split('; ') : [];
+
+            for (var i = 0, l = cookies.length; i < l; i++) {
+                var parts = cookies[i].split('=');
+                var name = decode(parts.shift());
+                var cookie = parts.join('=');
+
+                if (key && key === name) {
+                    // If second argument (value) is a function it's a converter...
+                    result = read(cookie, value);
+                    break;
+                }
+
+                // Prevent storing a cookie that we couldn't decode.
+                if (!key && (cookie = read(cookie)) !== undefined) {
+                    result[name] = cookie;
+                }
+            }
+
+            return result;
+        };
+
+        config.defaults = {};
+
+        $.removeCookie = function (key, options) {
+            if ($.cookie(key) !== undefined) {
+                // Must not alter options, thus extending a fresh object...
+                $.cookie(key, '', $.extend({}, options, { expires: -1 }));
+                return true;
+            }
+            return false;
+        };
+
+    }));
+
+    /**
+     * cookie操作
+     */
+    function setCookie(name, value, time) {
+        var exp = new Date();
+        if (time == 0) {
+            time = 365;
+        }
+        if (time != null) {
+            $.cookie(name,value, { expires: time, path: '/' });
+        } else {
+            $.cookie(name,value, { path: '/' });
+        }
+
+    }
+
+    function getCookie(name) {
+        return $.cookie(name);
+    }
+
+    function delCookie(name) {
+        $.removeCookie(name,{ path: '/' });
+    }
+    var formValidate = $('#login_from').validate({
+        rules: {
+            'account': {
+                required: true
+            },
+            'password': {
+                required: true
+            }
+        }
+    });
+    $(function () {
+        $("#login").on("click", function () {
+            login();
+        });
+        $(window).on("keyup", function (e) {
+            if (e.keyCode == 13) {
+                login();
+            }
+        });
+    });
+    delCookie("name");
+    delCookie("type");
+    delCookie("userId");
+    delCookie("permission");
+    delCookie("codes");
+    function login() {
+        var formFlag = formValidate.form();
+        if (!formFlag) {
+            return;
+        }
+        var account = $("#account").val();
+        var password = $("#password").val();
+        var validateCode=$("#validateCode").val();
+        if(password=='888888'){
+            alert("您的密码不安全，登录成功后请立即修改密码!");
+        }
+        $.ajax({
+            url:"/game-admin/sysUser/userLogin",
+            dataType: 'json',
+            headers:{
+                "validateCode":validateCode
+            },
+            successExec:true,
+            data: {
+                account: account,
+                password: password
+            },
+            type: 'post',
+            success: function (data) {
+                if(data.code==-1){
+                    toastr.error(data.msg);
+                    $("#validateCodeImg").attr('src','/game-admin/validate/imageCode?'+Math .random()+'');
+                    return;
+                }
+                setCookie("userId", data.data.id,0);
+                setCookie("type", data.data.type,0);
+                setCookie("name", data.data.nickName,0);
+                window.location.href = "index.html";
+            }
+        });
+    }
+    function uploadImg(){
+        $("#validateCodeImg").attr('src','/game-admin/validate/imageCode?'+Math .random()+'');
+    }
+</script>
+</html>

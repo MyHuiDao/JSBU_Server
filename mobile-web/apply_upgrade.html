@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>申请升级</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <link href="css/main.css" rel="stylesheet"/>
+    <link href="js/toastr.css" rel="stylesheet"/>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/toastr.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/Ds_Auto.js"></script>
+    <script>
+        initHead();
+        DApp.init(1080,null,"width");
+    </script>
+</head>
+<body>
+<div class="personal-info">
+    <div style="height: 100px;"></div>
+    <div class="user-info">
+        <div class="user-name"><span id="nickName"></span></div>
+        <div class="user-grade">
+            <span id="agencyLevel"></span>
+            <br/>
+            <span id="code"></span>
+        </div>
+    </div>
+    <div class="agent-info-table">
+            <table id="price-table">
+                <thead>
+                    <tr style="background-color: #00A9D0;">
+                        <td>
+                            代理级别
+                        </td>
+                        <td>
+                            提成比例
+                        </td>
+                        <td>
+                            推广奖励
+                        </td>
+                        <td>
+                            分享奖励
+                        </td>
+                        <td>
+                            充值奖励
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+    </div>
+    <div class="commission-info">
+        <ul>
+            <li>
+                <img src="img/commission_info_img.png"/>
+                <span id="proportion1"></span>
+            </li>
+            <li>
+                <img src="img/promotion_info_img.png"/>
+                <span id="proportion2">推广提成：</span>
+                <button class="return-btn-style" onclick="window.location.href='upgrade_agent.html'">升级代理</button>
+            </li>
+            <li>
+                <img src="img/share_info_img.png"/>
+                <span id="proportion3">分享提成：</span>
+                <button class="return-btn-style" onclick="window.location.href='main.html'">返回</button>
+            </li>
+        </ul>
+    </div>
+    <div class="upgrade-info">
+        <span>提示：深蓝色是您当前代理级别，前往游戏中充值相应的金额会自动升级对应代理级别</span>
+    </div>
+</div>
+<script>
+    $(function(){
+        //保存当前用户代理等级
+        var level;
+        $.ajax({
+            url:"/sysUser/userAgentUpgrade",
+            type:"get",
+            async:false,
+            success:function(msg){
+                var html="";
+                var levelStr="";
+                var obj=msg.data;
+                level=obj.level;
+                $("#code").text('id:'+obj.code);
+                $("#agencyLevel").text(obj.name);
+                $("#nickName").text(obj.nickName);
+                $("#proportion1").text('提成：'+obj.proportion1);
+                $("#proportion2").text('推广提成：'+obj.proportion2);
+                $("#proportion3").text('分享提成：'+obj.proportion3);
+            }
+        });
+        $.ajax({
+            url:"/agenLevel/findAgenLevelAll",
+            type:"get",
+            success:function(msg) {
+                var html="";
+                var obj=msg.data;
+                for(var i=0;i<obj.length;i++){
+                    if(obj[i].level==level){
+                        html="<tr style='background-color:#034E88;'>";
+                    }else {
+                        html = "<tr style='background-color: #00A9D0'>";
+                    }
+                    html+= "<td>"+obj[i].name+"</td>" +
+                        "<td>"+obj[i].proportion1+"%</td>" +
+                        "<td>"+obj[i].proportion2+"%</td>" +
+                        "<td>"+obj[i].proportion3+"%</td>" +
+                        "<td>"+obj[i].price+"</td>" +
+                        "</tr>";
+                    $("#price-table tbody").append(html);
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

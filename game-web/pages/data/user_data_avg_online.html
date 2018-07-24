@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>用户平均在线时长统计</title>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/My97DatePicker/WdatePicker.js"></script>
+    <!-- ECharts单文件引入 -->
+    <script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div>
+        <form id="queryForm">
+            <div class="widget-box">
+                <div class="widget-header widget-header-flat search_tj_bar_tit">
+                    <h5 class="widget-title">查询条件</h5>
+                </div>
+                <div class="row search_tj_bar">
+                    <div class="col-xs-12">
+                        <div class="col-xs-3">
+                            <label class="col-sm-3">开始日期：</label>
+
+                            <div class="input-group col-sm-8">
+                                <input class="form-control form-control1 search-query Wdate" id="startDate"
+                                       onFocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'endDate\') || \'%y-%M-%d\' }'})"
+                                       name="params['startDate']" readonly/>
+                            </div>
+                        </div>
+                        <div class="col-xs-3">
+                            <label class="col-sm-4">结束日期：</label>
+
+                            <div class="input-group col-sm-8">
+                                <input class="form-control form-control1 search-query Wdate" id="endDate"
+                                       onFocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'startDate\')}',maxDate:'%y-%M-%d'})"
+                                       name="params['endDate']" readonly/>
+                            </div>
+                        </div>
+                        <div class="col-xs-3">
+                            <label class="col-sm-4">日期统计：</label>
+
+                            <div class="input-group col-sm-8">
+                                <select id="typeDate" name="params['typeDate']"
+                                        class="form-control form-control1 search-query">
+                                    <option value="1">日</option>
+                                    <option value="2">周</option>
+                                    <option value="3">月</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="input-group col-sm-8">
+                                <button id="seachBtn" type="submit" class="btn btn-primary  btn-sm"
+                                        style="margin-top:-3px;">
+                                    查找
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div id="main" style="height:700px"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    var list_url = ctxPath + '/dataGameUser/userAverageOnline';
+    //'/user/page';
+    $(function () {
+        // 路径配置
+        require.config({
+            paths: {
+                echarts: 'http://echarts.baidu.com/build/dist'
+            }
+        });
+        require(
+                [
+                    'echarts',
+                    'echarts/chart/line' // 使用柱状图就加载bar模块，按需加载
+                ],
+                function (ec) {
+                    var formValidate = $('#queryForm').validate(
+                            {
+                                rules: {
+                                    "params['startDate']": {
+                                        required: true
+                                    },
+                                    "params['endDate']": {
+                                        required: true
+                                    }
+                                },
+                                submitHandler: function (form) {
+                                    userAvgOnline();
+                                }
+                            });
+
+                    function initChart(xAxis, dataCount) {
+                        // 基于准备好的dom，初始化echarts图表
+                        var myChart = ec.init(document.getElementById('main'));
+                        myChart.showLoading({
+                            text: '正在努力的读取数据中...',    //loading话术
+                        });
+                        var option = {
+                            title: {
+                                text: '平均在线时长统计'
+                            },
+                            tooltip: {
+                                trigger: 'axis'
+                            },
+                            legend: {
+                                data: ['在线时长(分钟)']
+                            },
+                            toolbox: {
+                                show: false,
+                            },
+                            calculable: true,
+                            xAxis: [
+                                {
+                                    type: 'category',
+                                    boundaryGap: false,
+                                    data: xAxis
+                                }
+                            ],
+                            yAxis: [
+                                {
+                                    type: 'value',
+                                    axisLabel: {
+                                        formatter: '{value}'
+                                    }
+                                }
+                            ],
+                            series: [
+                                {
+                                    name: '在线时长(分钟)',
+                                    type: 'line',
+                                    data: dataCount,
+                                    markPoint: {
+                                        data: [
+                                            {type: 'max', name: '最大值'},
+                                            {type: 'min', name: '最小值'}
+                                        ]
+                                    }
+                                }
+                            ]
+                        };
+                        myChart.setTheme('macarons');
+                        myChart.hideLoading();
+                        // 为echarts对象加载数据
+                        myChart.setOption(option);
+                    }
+
+                    function userAvgOnline() {
+                        var xAxis = [];
+                        var dataCount = [];
+                        $.ajax({
+                            url: list_url,
+                            data: $("#queryForm").serialize(),
+                            dataType: "json",
+                            type: "post",
+                            async: false,
+                            success: function (data) {
+                                execAjax(data);
+                                if (data.state) {
+                                    var obj = data.data;
+                                    for (var i = 0; i < obj.length; i++) {
+                                        xAxis.push(obj[i].date);
+                                        dataCount.push(obj[i].sumData);
+                                    }
+                                    initChart(xAxis, dataCount);
+                                } else {
+                                    alert(data.msg);
+                                }
+                            }
+                        });
+                    }
+                }
+        );
+    });
+</script>
+</body>
+</html>

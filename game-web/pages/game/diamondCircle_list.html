@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>钻石圈数列表</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <link rel="stylesheet" href="../../js/toastr.css"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/toastr.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div>
+        <div class="bs_btn">
+            <button id="addBtn" class="btn btn-primary  btn-sm diamond_circle_add">
+                新增
+            </button>
+            <button id="seachBtn" type="button" class="btn btn-primary  btn-sm">
+                刷新缓存
+            </button>
+        </div>
+        <table id="grid-table"></table>
+        <div id="grid-pager"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    var list_url = ctxPath + '/gameDiamondCircle/page';
+    var grid_selector = "#grid-table";
+    var pager_selector = "#grid-pager";
+    $(function () {
+        jqGrid_init(grid_selector, pager_selector, {
+            url: list_url,
+            colNames: ['id', '钻石数量', '圈数', '操作'],
+            colModel: [{
+                name: 'id',
+                index: 'id',
+                hidden: true
+            }, {
+                name: 'diamondNum',
+                index: 'diamondNum',
+                width: 30,
+                sortable: false
+            }, {
+                name: 'circleNum',
+                index: 'circleNum',
+                width: 30,
+                sortable: false
+            }, {
+                name: 'data_action',
+                formatter: formaterDataAction,
+                width: 33
+            }]
+        });
+        function formaterDataAction(cellvalue, options, rowObject) {
+            var html = '';
+            html += '<div class="small">'
+            html += '<button onclick="editEvent(\''
+                    + rowObject['id']
+                    + '\')" class="btn btn-xs btn-yellow diamond_circle_edit" title="编辑" >'
+                    + '<i class="ace-icon fa fa-pencil bigger-120"></i>'
+                    + '</button>';
+            html += '<button onclick="delEvent(\''
+                    + rowObject['id']
+                    + '\')" class="btn btn-xs btn-danger diamond_circle_delete" title="删除" >'
+                    + '<i class="ace-icon fa fa-trash-o bigger-120"></i>'
+                    + '</button>';
+
+            html += '</div>';
+            return html;
+        }
+
+        $("#seachBtn").on('click', function () {
+            $.ajax({
+                url: ctxPath + '/gameDiamondCircle/refresh',
+                type: 'get',
+                success: function (data) {
+                    execAjax(data);
+                    if (data.state) {
+                        alert("刷新成功");
+                    } else {
+                        alert(data.msg);
+                    }
+                }
+            });
+        });
+        $("#addBtn").on('click', function () {
+            window.location.href = 'diamondCircle_add.html';
+        });
+    });
+    function editEvent(id) {
+        window.location.href = "diamondCircle_update.html?id=" + id;
+    }
+
+    function delEvent(id) {
+        if (confirm("确定删除？")) {
+            $.ajax({
+                url: ctxPath + '/gameDiamondCircle/delete?id=' + id,
+                type: 'get',
+                success: function (data) {
+                    execAjax(data);
+                    if (data.state) {
+                        $(grid_selector).jqGrid('setGridParam', {
+                            postData: $('#queryForm').serialize(),
+                            page: 1
+                        }).trigger("reloadGrid");
+                    } else {
+                        alert(data.msg);
+                    }
+                }
+            })
+        }
+    }
+</script>
+</body>
+</html>

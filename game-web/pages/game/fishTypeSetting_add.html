@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>鱼类型添加</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <link rel="stylesheet" href="../../js/toastr.css"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/toastr.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div class="table-responsive">
+        <form class="form-horizontal" id="add-form">
+            <div class="page-header">
+                <h1>
+                    <small>添加鱼类型</small>
+                </h1>
+            </div>
+            <div class="row padding_top_buttom_10">
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label
+                                class="col-sm-3 control-label no-padding-right text-right">
+                            <span class="red">*</span> 级别:
+                        </label>
+
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="level"
+                                   name="level" autocomplete="off" style="width: 100%"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label
+                                class="col-sm-3 control-label no-padding-right text-right">
+                            <span class="red">*</span> 初始数量:
+                        </label>
+
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="initCount"
+                                   name="initCount" autocomplete="new-password" style="width: 100%"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label
+                                class="col-sm-3 control-label no-padding-right text-right">
+                            <span class="red">*</span> 最大数量:
+                        </label>
+
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="maxCount"
+                                   name="maxCount" autocomplete="new-password" style="width: 100%"/>
+                        </div>
+                    </div>
+                    <!--<input type="hidden" name="img" id="img"/>-->
+                </div>
+
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label
+                                class="col-sm-3 control-label no-padding-right text-right">
+                            <span class="red">*</span> 名称:
+                        </label>
+
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="name"
+                                   name="name" autocomplete="new-password" style="width: 100%"/>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="clearfix form-actions">
+                <div class="center">
+                    <button class="btn btn-primary  btn-sm" type="button"
+                            onclick="window.location.href='exchange_list.html'">
+                        返 回
+                    </button>
+                    <button class="btn btn-primary  btn-sm" type="submit"
+                            id="submitButton">
+                        提交
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    var add_url = "fishTypeSetting/addFishTypeSetting";
+    var formValidate = $('#add-form').validate(
+        {
+            submitHandler: function (form) {
+                var level=$("#level").val();
+                var initCount=$("#initCount").val();
+                var maxCount=$("#maxCount").val();
+                var name=$("#name").val();
+                $.ajax({
+                    url: add_url,
+                    data: {
+                        "level":level,
+                        "initCount":initCount,
+                        "maxCount":maxCount,
+                        "name":name,
+                    },
+                    type: 'post',
+                    success: function (data) {
+                        if (data.code) {
+                            toastr.success('添加成功');
+                            toastr.call(function(){
+                                window.location.href = 'fishTypeSetting_list.html';
+                            });
+                        } else {
+                            toastr.error(data.msg);
+                        }
+                    }
+                });
+            }
+        });
+</script>
+</body>
+</html>

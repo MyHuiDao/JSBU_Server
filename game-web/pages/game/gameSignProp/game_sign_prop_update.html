@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>签到赠送道具</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <script type="text/javascript" src="../../../assets/js/jquery.min.js"></script>
+    <script src="../../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div class="table-responsive">
+        <form class="form-horizontal" id="add-form">
+            <div>
+                <div class="page-header">
+                    <h1>
+                        <small>修改签到赠送道具</small>
+                    </h1>
+                </div>
+                <div class="row padding_top_buttom_10">
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label
+                                    class="col-sm-3 control-label no-padding-right text-right">
+                                <span class="red">*</span> 签到天数:
+                            </label>
+
+                            <div class="col-sm-6">
+                               <input type="hidden" id="id" name="id"/>
+                               <input type="text" class="form-control inputVal"
+                                       name="signNum" style="width: 100%"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label
+                                    class="col-sm-3 control-label no-padding-right text-right">
+                                <span class="red">*</span> 类型:
+                            </label>
+
+                            <div class="col-sm-6">
+                                <select name="type" id="type" class="form-control inputVal" style="width:100%">
+                                        <option value="0">累计签到</option>
+                                        <option value="1">天数签到</option>
+                                    </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label
+                                    class="col-sm-3 control-label no-padding-right text-right">
+                                <span class="red">*</span>数量:
+                            </label>
+
+                            <div class="col-sm-6">
+                               <input type="text" class="form-control inputVal"
+                                       name="num" style="width: 100%"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label
+                                    class="col-sm-3 control-label no-padding-right text-right">
+                                <span class="red">*</span> 游戏道具:
+                            </label>
+
+                            <div class="col-sm-6">
+                                <select name="propId" id="propId" class="form-control inputVal" style="width:100%"></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clearfix form-actions">
+                    <div class="center">
+                        <button class="btn btn-primary  btn-sm" type="button"
+                                onclick="javascript:history.back();">
+                            返 回
+                        </button>
+                        <button class="btn btn-primary  btn-sm" type="submit"
+                                id="submitButton">
+                            提交
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+	var pkId = getRequest("id");
+
+    var add_url = ctxPath + "/gameSignProp/update";
+    var formValidate = $('#add-form').validate(
+    		{
+                rules: {
+                    'signNum': {
+                        required: true,
+                        number: true,
+                        min: 1
+                    },
+                    'type': {
+                        required: true
+                    },
+                    'num': {
+                        required: true,
+                        number: true,
+                        min: 1
+                    },
+                    'propId': {
+                    	required: true
+                    }
+                },
+                submitHandler: function (form) {
+                    $.ajax({
+                        url: add_url,
+                        data: $(form).serialize(),
+                        type: 'post',
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.state) {
+                                window.location.href = 'game_sign_prop_list.html';
+                            } else {
+                                alert(data.msg);
+                            }
+                        }
+                    });
+                }
+            });
+    
+    $(function(){
+    	
+    	 $.ajax({
+    	        url: ctxPath + '/gameProp/getTypeName',
+    	        type: 'get',
+    	        success: function (data) {
+    	            execAjax(data);
+    	            if (data.state) {
+    	            	var html = '';
+    	            	for(var i = 0;i < data.data.length;i++){
+    	            		html += '<option value='+data.data[i].id+'>'+data.data[i].name+'</option>';
+    	            	}
+    	            	$("#propId").html(html);
+    	            } else {
+    	                alert(data.msg);
+    	            }
+    	        }
+    	    })
+    	
+    	
+        if (!pkId) {
+            alert("参数错误");
+            return;
+        }
+        $("#id").val(pkId);
+
+        $.ajax({
+            url: ctxPath + '/gameSignProp/get?id=' + pkId,
+            dataType: 'json',
+            type: 'get',
+            success: function (data) {
+                execAjax(data);
+                if (data.state) {
+                	initInputVal('.inputVal', data.data);
+                } else {
+                    alert(data.msg);
+                }
+            }
+        });
+    })
+</script>
+</body>
+</html>

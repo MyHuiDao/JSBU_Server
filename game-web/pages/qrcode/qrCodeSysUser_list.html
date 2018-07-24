@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>二维码对应用户</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script src="../../layer/layer.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div id="tong" style="display:none;"><img src="" id="imgSrc"/></div>
+<div class="page-content">
+    <div>
+        <div class="bs_btn">
+            <button id="addBtn" class="btn btn-primary  btn-sm qrCode_sysUser_add">
+                新增
+            </button>
+        </div>
+        <table id="grid-table"></table>
+        <div id="grid-pager"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    var list_url = ctxPath + '/qrCodeSysUser/page';
+    var grid_selector = "#grid-table";
+    var pager_selector = "#grid-pager";
+    $(function () {
+        jqGrid_init(grid_selector, pager_selector, {
+            url: list_url,
+            colNames: ['id', '系统用户', '二维码Key','创建时间', '操作'],
+            colModel: [{
+                name: 'id',
+                index: 'id',
+                hidden: true
+            }, {
+                name: 'sysUserId',
+                index: 'sysUserId',
+                width: 30,
+                sortable: false
+            }, {
+                name: 'qrKey',
+                index: 'qrKey',
+                width: 30,
+                sortable: false
+            }, {
+                name: 'createDate',
+                index: 'createDate',
+                width: 30,
+                sortable: false
+            }, {
+                name: 'data_action',
+                formatter: formaterDataAction,
+                width: 33
+            }]
+        });
+        function formaterDataAction(cellvalue, options, rowObject) {
+            var html = '';
+            html += '<div class="small">'
+            if(rowObject['sysUserId']  == "" || rowObject['sysUserId'] == undefined){
+            	html += '<button onclick="delEvent(\''
+                    + rowObject['id']
+                    + '\')" class="btn btn-xs btn-danger currency_rule_delete" title="删除" >'
+                    + '<i class="ace-icon fa fa-trash-o bigger-120"></i>'
+                    + '</button>';
+            }
+            html += '<button onclick="getEvent(\''
+                + rowObject['id']
+                + '\')" class="btn btn-xs btn-info qr_code_sys_user_query" title="查看二维码" >'
+                + '<i class="ace-icon fa fa-eye bigger-120"></i>'
+                + '</button>';
+
+            html += '</div>';
+            return html;
+        }
+
+        $("#seachBtn").on('click', function () {
+            $(grid_selector).trigger("reloadGrid");
+        });
+        $("#addBtn").on('click', function () {
+            window.location.href = 'qrCodeSysUser_add.html';
+        });
+    });
+    
+    function getEvent(id){
+    	var qrCode_path = ctxPath + '/qrCodeSysUser/qrCode?id='+id;
+    	$("#imgSrc").attr("src",qrCode_path);
+    	//页面层-图片
+    	layer.open({
+    	  type: 1,
+    	  title: false,
+    	  closeBtn: 0,
+    	  area: '400px',
+    	  skin: 'layui-layer-nobg', //没有背景色
+    	  shadeClose: true,
+    	  content: $('#tong')
+    	});
+    }
+
+    function delEvent(id) {
+        if (confirm("确定删除？")) {
+            $.ajax({
+                url: ctxPath + '/qrCodeSysUser/delete?id=' + id,
+                type: 'get',
+                success: function (data) {
+                    execAjax(data);
+                    if (data.state) {
+                        $(grid_selector).jqGrid('setGridParam', {
+                            postData: $('#queryForm').serialize(),
+                            page: 1
+                        }).trigger("reloadGrid");
+                    } else {
+                        alert(data.msg);
+                    }
+                }
+            })
+        }
+    }
+</script>
+</body>
+</html>

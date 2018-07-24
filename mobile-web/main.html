@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>金鲨鱼港后台管理系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <link href="css/main.css" rel="stylesheet"/>
+    <link href="js/toastr.css" rel="stylesheet"/>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/toastr.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/Ds_Auto.js"></script>
+    <script>
+        initHead();
+        DApp.init(1080,null,"width");
+    </script>
+</head>
+<body>
+    <div class="user-main">
+        <div class="login">
+            <img src="img/jinshayugang.png"/>
+        </div>
+        <div class="withdrawal-amount">
+            <div class="prompt">
+                <div class="prompt-amount">
+                    <div>
+                        <span>推广费：</span>
+                        <input type="text" name="promotionFee" id="amout" readonly="readonly"/>
+                    </div>
+                    <!--<div>
+                        <span>游戏币：</span>
+                        <input type="text" name="gameGold" id="gameGold" readonly="readonly"/>
+                    </div>-->
+                </div>
+            </div>
+        </div>
+        <div class="model-proxy">
+            <img src="img/dailiguanli.png"/>
+        </div>
+        <div class="agency-management">
+            <ul>
+                <li>
+                    <img id="findMyPromotionAll" src="img/my_spread_btn.png"/>
+                </li>
+                <li>
+                    <img id="findMySubagent" src="img/proxy_spread_btn.png"/>
+                </li>
+                <li>
+                    <img id="getQrCodeShow" src="img/materials_btn.png"/>
+                </li>
+                <li>
+                    <img id="userAgentUpgrade" src="img/apply_upgrade_btn.png"/>
+                </li>
+            </ul>
+        </div>
+        <div class="model-personal-center">
+            <img src="img/personal_center.png"/>
+        </div>
+        <div class="agency-management">
+            <ul>
+                <li>
+                    <img id="personalCenter" src="img/personal_btn.png"/>
+                </li>
+                <li>
+                    <img id="modifyPassWord" src="img/update_pasword_btn.png"/>
+                </li>
+                <li>
+                    <img id="getCash" src="img/withdraw_btn.png"/>
+                </li>
+            </ul>
+        </div>
+    </div>
+<script>
+    $(function(){
+
+        $.ajax({
+            url:"/sysUser/getBalance",
+            type:"get",
+            success:function(msg){
+                $("#amout").val(msg.data);
+            }
+        });
+        $.ajax({
+            url:'/sysUser/getUserGoldBalance',
+            type:'get',
+            success:function(msg){
+                $("#gameGold").val(msg.data);
+            }
+        });
+
+        var money=getCookie('money');
+        $('#balance').text(money);
+        var gameUserId=getCookie('gameUserId');
+        //我的推广
+        jumpUrl('#findMyPromotionAll','my_promotion.html');
+        //我的代理推广
+        jumpUrl('#findMySubagent','agency_promotion.html');
+        //物料下载
+        jumpUrl('#getQrCodeShow','material_promotion.html');
+        //申请升级
+        jumpUrl('#userAgentUpgrade','apply_upgrade.html');
+        //个人资料
+        jumpUrl('#personalCenter','personal_info.html');
+        //修改密码
+        jumpUrl('#modifyPassWord','update_password.html');
+        //提现
+        jumpUrl('#getCash','withdraw.html');
+
+    });
+    function jumpUrl(id,url){
+        $(id).on('click',function(){
+            window.location.href=url;
+        });
+    }
+
+</script>
+</body>
+</html>

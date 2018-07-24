@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>乐币规则</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="overview &amp; stats"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/My97DatePicker/WdatePicker.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="text/javascript">
+        initHead("../../");
+    </script>
+</head>
+<body>
+<div class="page-content">
+    <div>
+    	<form id="queryForm">
+            <div class="widget-box">
+                <div class="widget-header widget-header-flat search_tj_bar_tit">
+                    <h5 class="widget-title">查询条件</h5>
+                </div>
+                <div class="row search_tj_bar">
+                    <div class="col-xs-12">
+                        <div class="col-xs-4">
+                            <label class="col-sm-4">日期：</label>
+
+                            <div class="input-group col-sm-8">
+                                <input class="form-control form-control1 search-query Wdate" id="startDate" name="params['startDate']"
+                                       onFocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'%y-%M-%d'})"
+                                       readonly/>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <label class="col-sm-4">按某个维度：</label>
+
+                            <div class="input-group col-sm-8">
+                                <select class="form-control form-control1 search-query" id="sDay"
+                                        name="params['day']">
+                                        <option value="1">日</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="bs_btn">
+            <button id="seachBtn" type="button" class="btn btn-primary  btn-sm"
+	                 style="margin-top:-3px;">
+      	查找
+	         </button>
+        </div>
+        <table id="grid-table"></table>
+        <div id="grid-pager"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    var list_url = ctxPath + '/dataGameUser/gameUserRetention';
+    var grid_selector = "#grid-table";
+    var pager_selector = "#grid-pager";
+    $(function () {
+    	$("#startDate").val(new Date().Format("yyyy-MM-dd hh:mm:ss"));
+    	
+        jqGrid_init(grid_selector, pager_selector, {
+        	postData : $('#queryForm').serialize(),
+            url: list_url,
+            rowNum : -1,
+            colNames: ['日期', '用户数', '+1','+2', '+3','+4','+5','+6','+7','+14','+30'],
+            colModel: [{
+                name: 'date',
+                index: 'date',
+                width: 30,
+                sortable: false
+            }, {
+                name: 'userData',
+                index: 'userData',
+                width: 30,
+                sortable: false
+            }, {
+                name: 'userDataPlus1',
+                index: 'userDataPlus1',
+                width: 30,
+                sortable: false
+            }, {
+                name: 'userDataPlus2',
+                index: 'userDataPlus2',
+                width: 30,
+                sortable: false
+            }, {
+                name: 'userDataPlus3',
+                index: 'userDataPlus3',
+                width: 30,
+                sortable: false
+            }, {
+                name: 'userDataPlus4',
+                index: 'userDataPlus4',
+                width: 30,
+                sortable: false
+            }, {
+                name: 'userDataPlus5',
+                index: 'userDataPlus5',
+                width: 30,
+                sortable: false
+            }, {
+                name: 'userDataPlus6',
+                index: 'userDataPlus6',
+                width: 30,
+                sortable: false
+            }, {
+                name: 'userDataPlus7',
+                index: 'userDataPlus7',
+                width: 30,
+                sortable: false
+            }, {
+                name: 'userDataPlus14',
+                index: 'userDataPlus14',
+                width: 30,
+                sortable: false
+            }, {
+                name: 'userDataPlus30',
+                index: 'userDataPlus30',
+                width: 30,
+                sortable: false
+            }]
+        });
+    	
+        $("#seachBtn").on('click', function () {
+        	$(grid_selector).jqGrid('setGridParam', {
+                postData : $('#queryForm').serialize(),
+                page : 1
+            }).trigger("reloadGrid");
+        });
+        
+        var newHeight = $(window).height() - 340;
+        $(".ui-jqgrid .ui-jqgrid-bdiv").css("cssText","height: "+newHeight+"px!important;");
+    });
+    
+ // 对Date的扩展，将 Date 转化为指定格式的String
+ // 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符， 
+ // 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字) 
+ // 例子： 
+ // (new Date()).Format("yyyy-MM-dd hh:mm:ss.S") ==> 2006-07-02 08:09:04.423 
+ // (new Date()).Format("yyyy-M-d h:m:s.S")      ==> 2006-7-2 8:9:4.18 
+ Date.prototype.Format = function (fmt) { //author: meizz 
+     var o = {
+         "M+": this.getMonth() + 1, //月份 
+         "d+": this.getDate(), //日 
+         "h+": this.getHours(), //小时 
+         "m+": this.getMinutes(), //分 
+         "s+": this.getSeconds(), //秒 
+         "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+         "S": this.getMilliseconds() //毫秒 
+     };
+     if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+     for (var k in o)
+     if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+     return fmt;
+ }
+ 
+</script>
+</body>
+</html>
